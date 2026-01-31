@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #4a90e2;
+    font-family: sans-serif;
+}
+
+canvas {
+    display: block;
+}
+
+#ui {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+    color: white;
+    border-radius: 8px;
+    pointer-events: none;
+}

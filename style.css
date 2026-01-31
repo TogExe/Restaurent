@@ -1,0 +1,170 @@
+/* 1. SETUP & FONT */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Keeps padding from breaking your widths */
+}
+
+:root {
+  /* Catppuccin Mocha Palette */
+  --base: #1e1e2e;    /* Deep background */
+  --surface-alt: #232542; /* Cell background */
+  --surface: #1e1f36; /* Cell background */
+  --overlay: #45475a; /* Border color */
+  --text: #cdd6f4;    /* Main text */
+  --mauve: #cba6f7;   /* Accent (Header text) */
+  --sapphire: #5fccff;/* Secondary accent */
+  --softlime: #71b495;
+  --other: #6275b0;
+  /*Additional hover palette*/
+  --h-base: #3f3f4e;    /* Deep background */
+  --h-surface-alt: #5c5f7f; /* Cell background */
+  --h-surface: #5d5e70; /* Cell background */
+  --h-overlay: #585a6b; /* Border color */
+  --h-text: #cdd6f4;    /* Main text */
+  --h-mauve: #c194f5;   /* Accent (Header texts) */
+  --h-sapphire: #8ad3f5;/* Secondary accent */
+  --h-softlime: #73eab2;
+  --h-other: #5f6ccb;
+}
+
+body {
+    font-family: 'JetBrains Mono', monospace;
+    background-color: #1e1e2e; /*Catppuccin Base */
+    /*background-image: linear-gradient(var(--surface-alt),var(--surface));*/
+    color: #cdd6f4;           /* Main Text */
+    padding: 30px;
+    line-height: 1.6;
+}
+
+html {
+  /* Ensures the gradient has a coordinate system to fill */
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-image: linear-gradient(to bottom, var(--surface-alt), var(--surface));
+  background-attachment: fixed; /* Optional: keeps the gradient from scrolling */
+}
+
+.logo{
+    margin-bottom: 10px;
+}
+
+/* 2. HEADER SECTION */
+header {
+    margin: 1;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 60px;
+    font-weight: 500;
+    color: #cba6f7; /* Mauve Accent */
+    transition: 0.07s; /* Makes the font-weight change smooth */
+}
+
+header h1:hover {
+    font-weight: 510; /* Subtle weight change on hover */
+    transition: 0.07s; /* Makes the font-weight change smooth */
+}
+
+header p {
+    font-size: 18px;
+    color: #bac2de;
+}
+
+/* 3. NAVIGATION (The Row) */
+.nav-links {
+    display: flex;       /* Puts items in a row */
+    list-style: none;    /* Removes dots */
+    gap: 15px;           /* Space between the buttons */
+    margin-bottom: 20px;
+}
+
+.nav-links li {
+    background-color: #313244;
+    /* Use px here so the size NEVER changes based on the window */
+    padding: 5px 15px; 
+    border-radius: 5px;
+    
+    /* Set the speed to 0.2s or 0.3s. 
+       0.07s is so fast it looks like a glitch! */
+    transition: all 0.2s ease; 
+}
+
+.nav-links li:hover {
+    background-color: #45475a; 
+    transform: translateY(-3px); 
+    
+    /* Keep padding the SAME as above to stop the shaking */
+    padding: 5px 15px; 
+    
+    /* You can change border-radius slightly, 
+       but keeping it close helps it look smooth */
+    border-radius: 8px; 
+}
+
+.nav-links a {
+    text-decoration: none; /* Removes underline */
+    color: #f5e0dc;        /* Rosewater color */
+    font-weight: bold;
+}
+
+/* 4. CONTACT FORM (The Centered Box) */
+.contact-form {
+    background-color: #313244;
+    width: 100%;
+    max-width: 400px;    /* Prevents it from getting too wide */
+    margin: 0 auto;      /* This centers the whole box */
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #45475a;
+}
+
+.contact-form h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Form Spacing */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;      /* Puts label on its own line */
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+input, textarea {
+    width: 100%;         /* Fills the container */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #45475a;
+    background-color: #1e1e2e;
+    color: white;
+    font-family: inherit;
+}
+
+/* 5. BUTTONS */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #89b4fa; /* Blue accent */
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background-color: #b4befe;
+    filter: brightness(1.1);
+}
