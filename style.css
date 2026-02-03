@@ -57,8 +57,9 @@ body {
 
 /* 2. HEADER SECTION */
 header {
-    margin: 1;
-    margin-bottom: 30px;
+    padding-left: 10px;
+    margin-top: 170px;
+    margin-bottom: 500px;
 }
 
 header h1 {
@@ -136,6 +137,34 @@ header p {
     margin-bottom: 15px;
 }
 
+.lined {
+    display: flex;
+    gap: 10px;
+}
+
+.Cook {
+    border: 1px;
+    background-color: #5c5f7f;
+    max-width: 500px;
+    padding: 20px;
+    border-radius: 10px;
+    .items {
+        display: flex;
+        font-size: medium;
+        max-width: 100%;
+    }
+    margin-bottom: 10px;
+}
+.Cook>h4{
+    font-size: xx-large;
+}
+.Cook>image{
+    width: 10px;
+    height: 10px;
+    object-fit: cover;
+    aspect-ratio: 1/1;
+}
+
 label {
     display: block;      /* Puts label on its own line */
     margin-bottom: 5px;
@@ -163,6 +192,7 @@ button {
     cursor: pointer;
     transition: 0.2s;
 }
+
 
 button:hover {
     background-color: #b4befe;
