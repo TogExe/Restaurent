@@ -198,3 +198,15 @@ button:hover {
     background-color: #b4befe;
     filter: brightness(1.1);
 }
+
+.menu-container{
+    display: flex;
+    gap: 10px;
+    .card{
+        border: 1px;
+        border-radius: 10px;
+        padding:10px;
+        background-color: #5f6ccb;
+        display: flex;
+    }
+}
