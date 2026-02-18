@@ -210,3 +210,17 @@ button:hover {
         display: flex;
     }
 }
+
+.rounded-img {
+  /* 1. The Rounding */
+  border-radius: 12px;         /* Change to 50% for a perfect circle */
+  
+  /* 2. The Size Control */
+  max-width: 100%;             /* Ensures it never overflows its parent container */
+  width: 400px;                /* Sets a preferred maximum width */
+  height: auto;                /* Maintains the original aspect ratio (very important!) */
+  
+  /* 3. The Polish */
+  display: block;              /* Removes the tiny gap at the bottom of images */
+  border: 2px solid #eaeaea;   /* Optional: adds a thin frame */
+}
