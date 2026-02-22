@@ -37,30 +37,88 @@
             Les meilleurs plats de cergy: 
         </h1>
     </header>
-    <nav class="dish-menu" style="display: flex; flex-direction: column;">
-        <ul>
-            <li style="float: left;">
-                <a href="">
-                    <span style="display: block;">
-                        <p>
-                            Pizza pour une journée entiere
-                        </p>
-                        <img src="https://preview.redd.it/the-most-bizarre-brazilian-pizzas-v0-i2lpmrbfu5491.jpg?width=640&crop=smart&auto=webp&s=81995ea87b9b2c76c4ad74225fe624276a7e945d" alt="Pizza Complete">
-                    </span>
-                </a>
-            </li>
-            <li style="float: left;">
-                <a href="">
-                    <span style="display: block;"">
-                         <p>
-                            Pizza Marine
-                         </p>
-                         <img src="https://preview.redd.it/the-most-bizarre-brazilian-pizzas-v0-1id9jhefu5491.jpg?width=610&format=pjpg&auto=webp&s=158c5c7a60fd9bfa3e1f1896ed0940a47da6c81d" alt="Pizza Marine">
-                    </span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+   
+    <div class="dish-menu">
+        <div>
+            <input type="text" placeholder="rechercher un plat" class="search-bar">
+            <button class="search-button">Rechercher</button>
+        </div> <br>
+        <div class="sort-menu">
+            <label for="sort">Trier par:</label>
+            <select id="sort" name="sort">
+                <option value="popularity">Popularité</option>
+                <option value="price-asc">Prix: du moins cher au plus cher</option>
+                <option value="price-desc">Prix: du plus cher au moins cher</option>
+                <option value="rating">Note</option>
+            </select>
+        </div>
+        <div class="filter-menu">
+            <label for="filter">Filtrer par:</label>
+            <select id="filter" name="filter">
+                <option value="all">Tous les plats</option>
+                <option value="vegetarian">Plats végétariens</option>
+                <option value="vegan">Plats véganes</option>
+                <option value="gluten-free">Plats sans gluten</option>
+                <option value="milk-free">Plats sans lactose</option>
+            </select>
+        </div>
+        Pizzas vegetarianes: <br><br>
+        <nav class="dish-menu" style="display: flex; flex-direction: column; overflow-x: auto; padding: 20px;";>
+            <ul>
+                <li style="float: left; min-width: 80px;">
+                    <a href="">
+                        <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                Pizza pour une journée entiere
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left; min-width: 80px;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                Hehe, c'est la meme pizza que la premiere
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left; min-width: 80px;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                omg, c'est la meme pizza que les deux premieres
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                devinez quoi, c'est la meme pizza que les trois premieres
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                encore la meme pizza que les quatre premieres
+                            </p>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    
     <footer>
         <ul class="footer">
             <li>
