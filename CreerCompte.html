@@ -1,74 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Se Connecter</title>
+    <title>Créer un compte - Le Restaurant</title>
     <link rel="stylesheet" href="style.css">
 </head>
-</head>
 <body>
-     <nav>
+
+    <nav>
         <div class="logo">
             <h2>Restaurant</h2>
         </div>
         <ul class="nav-links">
-            <li><a href="Accueil.html">Accueil</a></li>
+            <li><a href="index.html">Accueil</a></li>
             <li><a href="Menu.html">Menu</a></li>
             <li><a href="Contact.html">Nous Contacter</a></li>
-            <li class="Account"><a href="CreerCompte.html">Se Connecter</a></li>
+            <li class="Account"><a href="SeConnecter.html">Se Connecter</a></li>
         </ul>
     </nav>
-    <section class="connect-form contact-form">
-        <form action="CreerCompte.html" method="post">
-            <p>
-                Creer une compte
-            </p>
-             <div class="label-form form-group">
-                Nom Complet:
+
+    <main style="display: flex; justify-content: center; align-items: center; min-height: 80vh; padding: 40px 20px;">
+        
+        <section class="contact-form" style="max-width: 550px; width: 100%;">
+            <h2>Créer un compte</h2>
+            
+            <form action="SeConnecter.html" method="post">
+                
+                <div class="form-group">
+                    <label for="name">Nom Complet</label>
+                    <input type="text" id="name" name="name" placeholder="Jean Dupont" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="telephone">Téléphone</label>
+                    <input type="tel" id="telephone" name="telephone" placeholder="06 12 34 56 78" required>
+                </div>
+
+                <div class="lined">
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="repassword">Confirmez</label>
+                        <input type="password" id="repassword" name="repassword" required>
+                    </div>
+                </div>
+                
+                <button type="submit" style="margin-top: 15px;">Créer le compte</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 25px; border-top: 1px solid var(--overlay); padding-top: 20px;">
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 10px;">
+                    <i>Vous avez déjà un compte ?</i>
+                </p>
+                <a href="SeConnecter.html" style="font-weight: bold; letter-spacing: 0;">
+                    Connectez-vous ici
+                </a>
             </div>
-            <div class="input-form">
-                <input type="text" name="name">
-            </div>
-            <div class="label-form">
-                Email:
-            </div>
-            <div class="input-form">
-                <input type="email" name="email">
-            </div>
-            <div class="label-form">
-                Telephone:
-            </div>
-            <div class="input-form">
-                <input type="tel" name="telephone">
-            </div>
-             <div class="label-form">
-                Creez une mot de passe:
-            </div>
-            <div class="input-form">
-                <input type="password" name="password">
-            </div>
-             <div class="label-form">
-                Reinserez votre mot de passe:
-            </div>
-            <div class="input-form">
-                <input type="password" name="repassword">
-            </div> <br>
-            <div class="input-form sub">
-                <input type="submit" name="createaccount" value="Creer La Compte">
-            </div> <br>
-        </form>
-        <div>
-            <p>
-                <i>Vous avez deja un compte?</i>
-            </p>
-            <br/>
-            <div class="rounded-border">
-            <a href="SeConnecter.html" class="change-connect">
-                Rentrez dans votre compte
-            </a>
-            </div>
-        </div>
-    </section>
+
+        </section>
+    </main>
+
 </body>
 </html>
