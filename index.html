@@ -2,34 +2,188 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>le RésTAURant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">L'appel de la Montagne</div>
+    <nav>
+    <div class="logo">Restaurant</div>
         <ul class="nav-links">
-            <li><a href="index.html">La maison</a></li>
-            <li><a href="menu.html">Menu</a></li>
-            <li><a href="contact.html">Contact</a></li>
+             <a href="Accueil.html"> 
+                 <li class="selected">
+                    Accueil
+                </li>
+            </a>
+            <a href="Menu.html">
+                <li>
+                    Menu
+                </li>
+            </a>
+            <a href="">
+                <li>
+                    Nous Contacter
+                </li>
+            </a>
+            <a href="CreerCompte.html">
+                <li class="Account">
+                   Se Connecter
+                </li>
+            </a>
         </ul>
     </nav>
-
-    <header class="hero">
-        <h1>Le gout dans La nourriture</h1>
-        <p>Experience inoubliable</p>
-        <button class="btn-primary">flemme de design un beau bouton</button>
+    <header>
+        <h1>le restaurant</h1> 
+        <p>Ici on a les meilleurs des meilleurs</p>
     </header>
+    <div class="dish-menu">
+        <div>
+            <input type="text" placeholder="rechercher un plat" class="search-bar">
+            <button class="search-button">Rechercher</button>
+        </div> <br><br>
+        Plats du jour: <br><br>
+        <nav class="dish-menu" style="display: flex; flex-direction: column; overflow-x: auto; padding: 20px;";>
+            <ul>
+                <li style="float: left; min-width: 80px;">
+                    <a href="">
+                        <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                Pizza pour une journée entiere
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left; min-width: 80px;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                Hehe, c'est la meme pizza que la premiere
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left; min-width: 80px;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                omg, c'est la meme pizza que les deux premieres
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                devinez quoi, c'est la meme pizza que les trois premieres
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                encore la meme pizza que les quatre premieres
+                            </p>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <br><br><br>
+        Plats frequentement commandes: <br><br>
+        <nav class="dish-menu" style="display: flex; flex-direction: column; overflow-x: auto; padding: 20px;";>
+            <ul>
+                <li style="float: left; min-width: 80px;">
+                    <a href="">
+                        <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                Pizza pour une journée entiere
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left; min-width: 80px;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                Hehe, c'est la meme pizza que la premiere
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left; min-width: 80px;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                omg, c'est la meme pizza que les deux premieres
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                devinez quoi, c'est la meme pizza que les trois premieres
+                            </p>
+                        </span>
+                    </a>
+                </li>
+                <li style="float: left;">
+                    <a href="">
+                       <span style="display:block;">
+                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
+                            <p>
+                                encore la meme pizza que les quatre premieres
+                            </p>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+    </div>
 
-    <section class="features">
-        <div class="card">
-            <h3>Ingrédients froids</h3>
-            <p>Produit dans des usines fait maison</p>
-        </div>
-        <div class="card">
-            <h3>Nous sommes expert</h3>
-            <p>Certifié depuis 2026.</p>
-        </div>
-    </section>
+
+    <h3>
+        Notre selection de cuisinieurs: 
+    </h3>
+    <div class="Cook">
+        <p>
+            Lorem Ipsum is simply dummy text of the printing 
+            and typesetting industry. Lorem Ipsum has been the 
+            industry's standard dummy text ever since the 1500s
+        </p>
+    </div>
+    <div class="Cook">
+        <p>
+        Lorem Ipsum is simply dummy text of the printing 
+        and typesetting industry. Lorem Ipsum has been the 
+        industry's standard dummy text ever since the 1500s
+        </p>
+    </div>
+    <footer>
+        <ul class="footer">
+            <li>
+                <p>
+                    Notre Email: plsspeed@gmail.com
+                </p>
+            </li>
+            <li>
+                <p>Telephone: 123456789</p>
+            </li>
+        </ul>
+    </footer>
 </body>
 </html>
