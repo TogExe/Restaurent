@@ -1,132 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu</title>
+    <title>Menu - Le Restaurant</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <nav>
-    <div class="logo">Restaurant</div>
+        <div class="logo">
+            <h2>Restaurant</h2>
+        </div>
         <ul class="nav-links">
-             <a href="Accueil.html"> 
-                 <li>
-                    Accueil
-                </li>
-            </a>
-            <a href="Menu.html">
-                <li>
-                    Menu
-                </li>
-            </a>
-            <a href="">
-                <li>
-                    Nous Contacter
-                </li>
-            </a>
-            <a href="CreerCompte.html">
-                <li class="Account">
-                   Se Connecter
-                </li>
-            </a>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="Menu.html">Menu</a></li>
+            <li><a href="Contact.html">Nous Contacter</a></li>
+            <li class="Account"><a href="CreerCompte.html">Se Connecter</a></li>
         </ul>
     </nav>
+
     <header>
-        <h1>
-            Les meilleurs plats de cergy: 
-        </h1>
+        <h1>Les meilleurs plats de Cergy</h1>
+        <p>Explorez notre carte complète</p>
     </header>
    
-    <div class="dish-menu">
-        <div>
-            <input type="text" placeholder="rechercher un plat" class="search-bar">
-            <button class="search-button">Rechercher</button>
-        </div> <br>
-        <div class="sort-menu">
-            <label for="sort">Trier par:</label>
-            <select id="sort" name="sort">
-                <option value="popularity">Popularité</option>
-                <option value="price-asc">Prix: du moins cher au plus cher</option>
-                <option value="price-desc">Prix: du plus cher au moins cher</option>
-                <option value="rating">Note</option>
-            </select>
-        </div>
-        <div class="filter-menu">
-            <label for="filter">Filtrer par:</label>
-            <select id="filter" name="filter">
-                <option value="all">Tous les plats</option>
-                <option value="vegetarian">Plats végétariens</option>
-                <option value="vegan">Plats véganes</option>
-                <option value="gluten-free">Plats sans gluten</option>
-                <option value="milk-free">Plats sans lactose</option>
-            </select>
-        </div>
-        <h2>Pizzas vegetarianes:</h2>
+    <main>
+        <section class="contact-form" style="max-width: 850px; margin-bottom: 60px;">
+            <div class="lined">
+                <div class="form-group" style="flex: 2;">
+                    <label for="search">Rechercher</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="search" placeholder="Rechercher un plat..." class="search-bar">
+                        <button class="search-button" style="width: auto; margin-top: 0;">Go</button>
+                    </div>
+                </div>
 
-<div class="menu-container">
-    <div class="card">
-        <a href="" style="text-decoration: none; color: inherit;">
-            <div class="card-content">
-                <h3>Pizza pour une journée entiere</h3>
-                <p>Délicieuse pizza végétarienne aux herbes.</p>
-            </div>
-            <img class="rounded-img" src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
-        </a>
-    </div>
+                <div class="form-group">
+                    <label for="sort">Trier par:</label>
+                    <select id="sort" name="sort" style="width: 100%; padding: 12px; border-radius: 8px; background-color: var(--base); color: white; border: 1px solid var(--overlay); font-family: inherit; cursor: pointer;">
+                        <option value="popularity">Popularité</option>
+                        <option value="price-asc">Prix: croissant</option>
+                        <option value="price-desc">Prix: décroissant</option>
+                        <option value="rating">Note</option>
+                    </select>
+                </div>
 
-    <div class="card">
-        <a href="" style="text-decoration: none; color: inherit;">
-            <div class="card-content">
-                <h3>Hehe, c'est la meme pizza que la premiere</h3>
-                <p>Toujours la même qualité et saveur.</p>
+                <div class="form-group">
+                    <label for="filter">Filtrer par:</label>
+                    <select id="filter" name="filter" style="width: 100%; padding: 12px; border-radius: 8px; background-color: var(--base); color: white; border: 1px solid var(--overlay); font-family: inherit; cursor: pointer;">
+                        <option value="all">Tous les plats</option>
+                        <option value="vegetarian">Végétariens</option>
+                        <option value="vegan">Véganes</option>
+                        <option value="gluten-free">Sans gluten</option>
+                        <option value="milk-free">Sans lactose</option>
+                    </select>
+                </div>
             </div>
-            <img class="rounded-img" src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
-        </a>
-    </div>
+        </section>
 
-    <div class="card">
-        <a href="" style="text-decoration: none; color: inherit;">
-            <div class="card-content">
-                <h3>omg, c'est la meme pizza que les deux premieres</h3>
-                <p>Le triple du plaisir végétarien.</p>
-            </div>
-            <img class="rounded-img" src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
-        </a>
-    </div>
+        <section class="dish-menu">
+            <h2 style="text-align: center; color: var(--mauve); margin-bottom: 40px; font-size: 36px;">Pizzas végétariennes :</h2>
 
-    <div class="card">
-        <a href="" style="text-decoration: none; color: inherit;">
-            <div class="card-content">
-                <h3>devinez quoi, c'est la meme pizza que les trois premieres</h3>
-                <p>Une répétition savoureuse.</p>
-            </div>
-            <img class="rounded-img" src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
-        </a>
-    </div>
+            <div class="menu-container">
+                <a href="#" class="card">
+                    <img class="rounded-img" src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="Pizza Végétarienne">
+                    <div class="card-content">
+                        <h3>Pizza pour une journée entière</h3>
+                        <p style="color: #bac2de; margin-top: 10px;">Délicieuse pizza végétarienne aux herbes.</p>
+                    </div>
+                </a>
 
-    <div class="card">
-        <a href="" style="text-decoration: none; color: inherit;">
-            <div class="card-content">
-                <h3>encore la meme pizza que les quatre premieres</h3>
-                <p>La boucle est bouclée !</p>
+                <a href="#" class="card">
+                    <img class="rounded-img" src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="Pizza Végétarienne">
+                    <div class="card-content">
+                        <h3>Hehe, c'est la même pizza</h3>
+                        <p style="color: #bac2de; margin-top: 10px;">Toujours la même qualité et saveur.</p>
+                    </div>
+                </a>
+
+                <a href="#" class="card">
+                    <img class="rounded-img" src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="Pizza Végétarienne">
+                    <div class="card-content">
+                        <h3>OMG, c'est la même pizza</h3>
+                        <p style="color: #bac2de; margin-top: 10px;">Le triple du plaisir végétarien.</p>
+                    </div>
+                </a>
+
+                <a href="#" class="card">
+                    <img class="rounded-img" src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="Pizza Végétarienne">
+                    <div class="card-content">
+                        <h3>Devinez quoi, c'est la même pizza</h3>
+                        <p style="color: #bac2de; margin-top: 10px;">Une répétition savoureuse.</p>
+                    </div>
+                </a>
+
+                <a href="#" class="card">
+                    <img class="rounded-img" src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="Pizza Végétarienne">
+                    <div class="card-content">
+                        <h3>Encore la même pizza</h3>
+                        <p style="color: #bac2de; margin-top: 10px;">La boucle est bouclée !</p>
+                    </div>
+                </a>
             </div>
-            <img class="rounded-img" src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
-        </a>
-    </div>
-</div>
+        </section>
+    </main>
     
-    <footer>
-        <ul class="footer">
-            <li>
-                <p>
-                    Notre Email: plsspeed@gmail.com
-                </p>
-            </li>
-            <li>
-                <p>Telephone: 123456789</p>
-            </li>
-        </ul>
+    <footer style="margin-top: 80px; padding-bottom: 30px;">
+        <div class="contact-form" style="max-width: 400px; padding: 20px;">
+            <h2 style="font-size: 20px; margin-bottom: 10px;">Informations</h2>
+            <p style="text-align: center; color: var(--text);">Email: plsspeed@gmail.com</p>
+            <p style="text-align: center; color: var(--text);">Téléphone: 123 456 789</p>
+        </div>
     </footer>
+
 </body>
 </html>
