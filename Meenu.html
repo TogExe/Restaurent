@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant</title>
+    <title>Menu</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
     <div class="logo">Restaurant</div>
         <ul class="nav-links">
              <a href="Accueil.html"> 
-                 <li class="selected">
+                 <li>
                     Accueil
                 </li>
             </a>
@@ -33,15 +33,36 @@
         </ul>
     </nav>
     <header>
-        <h1>le restaurant</h1> 
-        <p>Ici on a les meilleurs des meilleurs</p>
+        <h1>
+            Les meilleurs plats de cergy: 
+        </h1>
     </header>
+   
     <div class="dish-menu">
         <div>
             <input type="text" placeholder="rechercher un plat" class="search-bar">
             <button class="search-button">Rechercher</button>
-        </div> <br><br>
-        Plats du jour: <br><br>
+        </div> <br>
+        <div class="sort-menu">
+            <label for="sort">Trier par:</label>
+            <select id="sort" name="sort">
+                <option value="popularity">Popularité</option>
+                <option value="price-asc">Prix: du moins cher au plus cher</option>
+                <option value="price-desc">Prix: du plus cher au moins cher</option>
+                <option value="rating">Note</option>
+            </select>
+        </div>
+        <div class="filter-menu">
+            <label for="filter">Filtrer par:</label>
+            <select id="filter" name="filter">
+                <option value="all">Tous les plats</option>
+                <option value="vegetarian">Plats végétariens</option>
+                <option value="vegan">Plats véganes</option>
+                <option value="gluten-free">Plats sans gluten</option>
+                <option value="milk-free">Plats sans lactose</option>
+            </select>
+        </div>
+        Pizzas vegetarianes: <br><br>
         <nav class="dish-menu" style="display: flex; flex-direction: column; overflow-x: auto; padding: 20px;";>
             <ul>
                 <li style="float: left; min-width: 80px;">
@@ -96,83 +117,8 @@
                 </li>
             </ul>
         </nav>
-        <br><br><br>
-        Plats frequentement commandes: <br><br>
-        <nav class="dish-menu" style="display: flex; flex-direction: column; overflow-x: auto; padding: 20px;";>
-            <ul>
-                <li style="float: left; min-width: 80px;">
-                    <a href="">
-                        <span style="display:block;">
-                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
-                            <p>
-                                Pizza pour une journée entiere
-                            </p>
-                        </span>
-                    </a>
-                </li>
-                <li style="float: left; min-width: 80px;">
-                    <a href="">
-                       <span style="display:block;">
-                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
-                            <p>
-                                Hehe, c'est la meme pizza que la premiere
-                            </p>
-                        </span>
-                    </a>
-                </li>
-                <li style="float: left; min-width: 80px;">
-                    <a href="">
-                       <span style="display:block;">
-                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
-                            <p>
-                                omg, c'est la meme pizza que les deux premieres
-                            </p>
-                        </span>
-                    </a>
-                </li>
-                <li style="float: left;">
-                    <a href="">
-                       <span style="display:block;">
-                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
-                            <p>
-                                devinez quoi, c'est la meme pizza que les trois premieres
-                            </p>
-                        </span>
-                    </a>
-                </li>
-                <li style="float: left;">
-                    <a href="">
-                       <span style="display:block;">
-                            <img src="Images/italian-pizza-with-chicken-salami-zucchini-tomatoes-herbs.jpg" alt="La normalite">
-                            <p>
-                                encore la meme pizza que les quatre premieres
-                            </p>
-                        </span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        
     </div>
-
-
-    <h3>
-        Notre selection de cuisinieurs: 
-    </h3>
-    <div class="Cook">
-        <p>
-            Lorem Ipsum is simply dummy text of the printing 
-            and typesetting industry. Lorem Ipsum has been the 
-            industry's standard dummy text ever since the 1500s
-        </p>
-    </div>
-    <div class="Cook">
-        <p>
-        Lorem Ipsum is simply dummy text of the printing 
-        and typesetting industry. Lorem Ipsum has been the 
-        industry's standard dummy text ever since the 1500s
-        </p>
-    </div>
+    
     <footer>
         <ul class="footer">
             <li>
