@@ -28,7 +28,12 @@
     --card-hover: #45475a;
 }
 a {
-   text-decoration: none;
+    text-decoration: none;
+    color: #f5e0dc;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
 
 html {
