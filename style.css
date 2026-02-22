@@ -199,18 +199,6 @@ button:hover {
     filter: brightness(1.1);
 }
 
-.menu-container{
-    display: flex;
-    gap: 10px;
-    .card{
-        border: 1px;
-        border-radius: 10px;
-        padding:10px;
-        background-color: #5f6ccb;
-        display: flex;
-    }
-}
-
 .rounded-img {
   /* 1. The Rounding */
   border-radius: 12px;         /* Change to 50% for a perfect circle */
@@ -223,4 +211,28 @@ button:hover {
   /* 3. The Polish */
   display: block;              /* Removes the tiny gap at the bottom of images */
   border: 2px solid #eaeaea;   /* Optional: adds a thin frame */
+}
+
+.menu-container{
+    display: flex;
+    gap: 10px;
+    .card{
+        margin: 10px;
+        border: 1px;
+        border-radius: 10px;
+        padding:10px;
+        background-color: #5059a2;
+        display: flex;
+    }
+    .card:hover{
+        margin: 6px;
+        border: 1px;
+        border-radius: 20px;
+        padding:10px;
+        background-color: #604cc8;
+        display: flex;
+        transition: 100ms;
+    .rounded-img {
+        border-radius: 16px;
+    }
 }
