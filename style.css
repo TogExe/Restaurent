@@ -239,6 +239,7 @@ input:focus, textarea:focus {
 /* =========================================
    6. BUTTONS
    ========================================= */
+
 button {
     width: 100%;
     padding: 15px;
@@ -259,4 +260,17 @@ button:hover {
     background-color: var(--accent-btn-hover);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(137, 180, 250, 0.4); /* Glow effect */
+}
+
+.sub {
+    background-color: var(--card-bg);
+    border: 2px solid var(--overlay);
+    border-radius: 15px;
+    transition: all 0.1s ease;
+}
+.sub:hover {
+    background-color: var(--card-bg);
+    border: 3px solid var(--mauve);
+    border-radius: 10px;
+    transition: all 0.1s ease;
 }
