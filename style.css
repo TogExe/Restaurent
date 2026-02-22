@@ -1,7 +1,6 @@
 /* =========================================
    1. SETUP & FONTS (Restaurant Theme)
    ========================================= */
-/* Swapped monospace for an elegant Serif (Headers) & clean Sans-Serif (Body) */
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
 * {
@@ -11,7 +10,6 @@
 }
 
 :root {
-    /* Catppuccin Mocha Palette - Kept for a sleek, modern dark theme */
     --base: #1e1e2e;
     --surface-alt: #232542;
     --surface: #1e1f36;
@@ -22,18 +20,19 @@
     --softlime: #71b495;
     --accent-btn: #89b4fa;
     --accent-btn-hover: #b4befe;
-    
-    /* Card / Menu variables */
     --card-bg: #313244;
     --card-hover: #45475a;
 }
+
+/* Base links (Standard text links) */
 a {
+    color: var(--sapphire);
     text-decoration: none;
-    color: #f5e0dc;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 14px;
-    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--mauve);
 }
 
 html {
@@ -50,7 +49,6 @@ body {
     min-height: 100vh;
 }
 
-/* Headings use the elegant serif font */
 h1, h2, h3, h4 {
     font-family: 'Playfair Display', serif;
     font-weight: 600;
@@ -67,7 +65,7 @@ h1, h2, h3, h4 {
 header {
     text-align: center;
     padding: 40px 10px;
-    margin-bottom: 40px; /* Reduced from 500px to keep content connected */
+    margin-bottom: 40px;
 }
 
 header h1 {
@@ -78,13 +76,13 @@ header h1 {
 }
 
 header h1:hover {
-    color: #f5e0dc; /* Rosewater accent on hover for a warmer feel */
+    color: #f5e0dc;
 }
 
 header p {
     font-size: 20px;
     color: #bac2de;
-    font-style: italic; /* Adds a culinary touch */
+    font-style: italic;
     margin-top: 10px;
 }
 
@@ -102,20 +100,20 @@ header p {
 .nav-links li {
     background-color: var(--card-bg);
     padding: 10px 20px;
-    border-radius: 30px; /* Pill shape looks more modern for restaurants */
+    border-radius: 30px;
     transition: all 0.3s ease;
     border: 1px solid transparent;
 }
 
 .nav-links li:hover {
     background-color: var(--card-hover);
-    transform: translateY(-3px); /* Smooth lift, no jitter */
+    transform: translateY(-3px);
     border-color: var(--mauve);
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
+/* Specific styling for navigation links */
 .nav-links a {
-    text-decoration: none;
     color: #f5e0dc;
     font-weight: 700;
     text-transform: uppercase;
@@ -124,14 +122,14 @@ header p {
 }
 
 /* =========================================
-   4. MENU CARDS (The .Cook and .menu-container)
+   4. LAYOUT CONTAINERS & CARDS
    ========================================= */
 .menu-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
-    max-width: 2880px;
-    /*margin: 0 auto 50px auto;*/
+    max-width: 1200px;
+    margin: 0 auto 50px auto; /* Restored centering */
 }
 
 .card, .Cook {
@@ -147,7 +145,7 @@ header p {
 
 .card:hover, .Cook:hover {
     background-color: var(--card-hover);
-    transform: translateY(-5px); /* Replaced margin changes with transform */
+    transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
@@ -161,11 +159,29 @@ header p {
     color: #bac2de;
 }
 
+/* =========================================
+   5. NEW .SUB CLASS (Info Cards)
+   ========================================= */
+.sub {
+    background-color: var(--card-bg);
+    border: 2px solid var(--overlay);
+    border-radius: 15px;
+    padding: 30px;
+    transition: all 0.3s ease; /* Smoothed from 0.1s to 0.3s */
+    text-align: center;
+}
+
+.sub:hover {
+    border-color: var(--mauve); /* Changed color instead of thickness to prevent jitter */
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(203, 166, 247, 0.2); /* Soft mauve glow */
+}
+
 /* Standardized Image Styling */
 .rounded-img {
     width: 100%;
     height: 200px;
-    object-fit: cover; /* Ensures food photos aren't squished */
+    object-fit: cover;
     border-radius: 10px;
     display: block;
     border: 2px solid var(--overlay);
@@ -173,16 +189,16 @@ header p {
 }
 
 .card:hover .rounded-img {
-    border-radius: 12px; /* Subtle image change on card hover */
+    border-radius: 12px;
 }
 
 /* =========================================
-   5. RESERVATION / CONTACT FORM
+   6. RESERVATION / CONTACT FORM
    ========================================= */
 .contact-form {
     background-color: var(--card-bg);
     width: 100%;
-    max-width: 500px; /* Widened slightly for a better form layout */
+    max-width: 500px;
     margin: 0 auto;
     padding: 40px;
     border-radius: 20px;
@@ -207,7 +223,7 @@ header p {
 }
 
 .lined .form-group {
-    flex: 1; /* Makes side-by-side inputs equal width */
+    flex: 1;
 }
 
 label {
@@ -237,14 +253,13 @@ input:focus, textarea:focus {
 }
 
 /* =========================================
-   6. BUTTONS
+   7. BUTTONS
    ========================================= */
-
 button {
     width: 100%;
     padding: 15px;
     background-color: var(--accent-btn);
-    color: var(--base); /* High contrast text on button */
+    color: var(--base);
     border: none;
     border-radius: 8px;
     font-weight: 700;
@@ -259,18 +274,5 @@ button {
 button:hover {
     background-color: var(--accent-btn-hover);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(137, 180, 250, 0.4); /* Glow effect */
-}
-
-.sub {
-    background-color: var(--card-bg);
-    border: 2px solid var(--overlay);
-    border-radius: 15px;
-    transition: all 0.1s ease;
-}
-.sub:hover {
-    background-color: var(--card-bg);
-    border: 3px solid var(--mauve);
-    border-radius: 10px;
-    transition: all 0.1s ease;
+    box-shadow: 0 5px 15px rgba(137, 180, 250, 0.4);
 }
