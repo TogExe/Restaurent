@@ -340,7 +340,7 @@ button:hover {
 @media (max-width: 768px) {
     .lined {
         flex-direction: column; /* Empile les formulaires sur mobile */
-        gap: 0;
+        gap: 10;
     }
     
     header {
