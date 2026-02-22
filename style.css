@@ -1,238 +1,254 @@
-/* 1. SETUP & FONT */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
+/* =========================================
+   1. SETUP & FONTS (Restaurant Theme)
+   ========================================= */
+/* Swapped monospace for an elegant Serif (Headers) & clean Sans-Serif (Body) */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* Keeps padding from breaking your widths */
-}()
-
-:root {
-  /* Catppuccin Mocha Palette */
-  --base: #1e1e2e;    /* Deep background */
-  --surface-alt: #232542; /* Cell background */
-  --surface: #1e1f36; /* Cell background */
-  --overlay: #45475a; /* Border color */
-  --text: #cdd6f4;    /* Main text */
-  --mauve: #cba6f7;   /* Accent (Header text) */
-  --sapphire: #5fccff;/* Secondary accent */
-  --softlime: #71b495;
-  --other: #6275b0;
-  /*Additional hover palette*/
-  --h-base: #3f3f4e;    /* Deep background */
-  --h-surface-alt: #5c5f7f; /* Cell background */
-  --h-surface: #5d5e70; /* Cell background */
-  --h-overlay: #585a6b; /* Border color */
-  --h-text: #cdd6f4;    /* Main text */
-  --h-mauve: #c194f5;   /* Accent (Header texts) */
-  --h-sapphire: #8ad3f5;/* Secondary accent */
-  --h-softlime: #73eab2;
-  --h-other: #5f6ccb;
+    box-sizing: border-box;
 }
 
-body {
-    font-family: 'JetBrains Mono', monospace;
-    background-color: #1e1e2e; /*Catppuccin Base */
-    /*background-image: linear-gradient(var(--surface-alt),var(--surface));*/
-    color: #cdd6f4;           /* Main Text */
-    padding: 30px;
-    line-height: 1.6;
+:root {
+    /* Catppuccin Mocha Palette - Kept for a sleek, modern dark theme */
+    --base: #1e1e2e;
+    --surface-alt: #232542;
+    --surface: #1e1f36;
+    --overlay: #45475a;
+    --text: #cdd6f4;
+    --mauve: #cba6f7;
+    --sapphire: #5fccff;
+    --softlime: #71b495;
+    --accent-btn: #89b4fa;
+    --accent-btn-hover: #b4befe;
+    
+    /* Card / Menu variables */
+    --card-bg: #313244;
+    --card-hover: #45475a;
 }
 
 html {
-  /* Ensures the gradient has a coordinate system to fill */
-  height: 100%;
+    height: 100%;
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  background-image: linear-gradient(to bottom, var(--surface-alt), var(--surface));
-  background-attachment: fixed; /* Optional: keeps the gradient from scrolling */
+    font-family: 'Lato', sans-serif;
+    background-image: linear-gradient(to bottom, var(--surface-alt), var(--surface));
+    background-attachment: fixed;
+    color: var(--text);
+    padding: 30px;
+    line-height: 1.6;
+    min-height: 100vh;
 }
 
-.logo{
-    margin-bottom: 10px;
+/* Headings use the elegant serif font */
+h1, h2, h3, h4 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
 }
 
-/* 2. HEADER SECTION */
+.logo {
+    margin-bottom: 20px;
+    max-width: 150px;
+}
+
+/* =========================================
+   2. HEADER SECTION
+   ========================================= */
 header {
-    padding-left: 10px;
-    margin-top: 170px;
-    margin-bottom: 500px;
+    text-align: center;
+    padding: 40px 10px;
+    margin-bottom: 40px; /* Reduced from 500px to keep content connected */
 }
 
 header h1 {
     font-size: 60px;
-    font-weight: 500;
-    color: #cba6f7; /* Mauve Accent */
-    transition: 0.07s; /* Makes the font-weight change smooth */
+    color: var(--mauve);
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
 }
 
 header h1:hover {
-    font-weight: 510; /* Subtle weight change on hover */
-    transition: 0.07s; /* Makes the font-weight change smooth */
+    color: #f5e0dc; /* Rosewater accent on hover for a warmer feel */
 }
 
 header p {
-    font-size: 18px;
+    font-size: 20px;
     color: #bac2de;
+    font-style: italic; /* Adds a culinary touch */
+    margin-top: 10px;
 }
 
-/* 3. NAVIGATION (The Row) */
+/* =========================================
+   3. NAVIGATION
+   ========================================= */
 .nav-links {
-    display: flex;       /* Puts items in a row */
-    list-style: none;    /* Removes dots */
-    gap: 15px;           /* Space between the buttons */
-    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    gap: 20px;
+    margin-bottom: 40px;
 }
 
 .nav-links li {
-    background-color: #313244;
-    /* Use px here so the size NEVER changes based on the window */
-    padding: 5px 15px; 
-    border-radius: 5px;
-    
-    /* Set the speed to 0.2s or 0.3s. 
-       0.07s is so fast it looks like a glitch! */
-    transition: all 0.2s ease; 
+    background-color: var(--card-bg);
+    padding: 10px 20px;
+    border-radius: 30px; /* Pill shape looks more modern for restaurants */
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
 }
 
 .nav-links li:hover {
-    background-color: #45475a; 
-    transform: translateY(-3px); 
-    
-    /* Keep padding the SAME as above to stop the shaking */
-    padding: 5px 15px; 
-    
-    /* You can change border-radius slightly, 
-       but keeping it close helps it look smooth */
-    border-radius: 8px; 
+    background-color: var(--card-hover);
+    transform: translateY(-3px); /* Smooth lift, no jitter */
+    border-color: var(--mauve);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .nav-links a {
-    text-decoration: none; /* Removes underline */
-    color: #f5e0dc;        /* Rosewater color */
-    font-weight: bold;
+    text-decoration: none;
+    color: #f5e0dc;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
 
-/* 4. CONTACT FORM (The Centered Box) */
-.contact-form {
-    background-color: #313244;
+/* =========================================
+   4. MENU CARDS (The .Cook and .menu-container)
+   ========================================= */
+.menu-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto 50px auto;
+}
+
+.card, .Cook {
+    background-color: var(--card-bg);
+    border: 1px solid var(--overlay);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.card:hover, .Cook:hover {
+    background-color: var(--card-hover);
+    transform: translateY(-5px); /* Replaced margin changes with transform */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.Cook h4 {
+    font-size: 28px;
+    color: var(--sapphire);
+}
+
+.Cook .items {
+    font-size: 16px;
+    color: #bac2de;
+}
+
+/* Standardized Image Styling */
+.rounded-img {
     width: 100%;
-    max-width: 400px;    /* Prevents it from getting too wide */
-    margin: 0 auto;      /* This centers the whole box */
-    padding: 30px;
+    height: 200px;
+    object-fit: cover; /* Ensures food photos aren't squished */
+    border-radius: 10px;
+    display: block;
+    border: 2px solid var(--overlay);
+    transition: border-radius 0.3s ease;
+}
+
+.card:hover .rounded-img {
+    border-radius: 12px; /* Subtle image change on card hover */
+}
+
+/* =========================================
+   5. RESERVATION / CONTACT FORM
+   ========================================= */
+.contact-form {
+    background-color: var(--card-bg);
+    width: 100%;
+    max-width: 500px; /* Widened slightly for a better form layout */
+    margin: 0 auto;
+    padding: 40px;
     border-radius: 20px;
-    border: 1px solid #45475a;
+    border: 1px solid var(--overlay);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .contact-form h2 {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     text-align: center;
+    color: var(--mauve);
+    font-size: 32px;
 }
 
-/* Form Spacing */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .lined {
     display: flex;
-    gap: 10px;
+    gap: 15px;
 }
 
-.Cook {
-    border: 1px;
-    background-color: #5c5f7f;
-    max-width: 500px;
-    padding: 20px;
-    border-radius: 10px;
-    .items {
-        display: flex;
-        font-size: medium;
-        max-width: 100%;
-    }
-    margin-bottom: 10px;
-}
-.Cook>h4{
-    font-size: xx-large;
-}
-.Cook>image{
-    width: 10px;
-    height: 10px;
-    object-fit: cover;
-    aspect-ratio: 1/1;
+.lined .form-group {
+    flex: 1; /* Makes side-by-side inputs equal width */
 }
 
 label {
-    display: block;      /* Puts label on its own line */
-    margin-bottom: 5px;
+    display: block;
+    margin-bottom: 8px;
     font-size: 14px;
+    font-weight: 700;
+    color: #bac2de;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 input, textarea {
-    width: 100%;         /* Fills the container */
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #45475a;
-    background-color: #1e1e2e;
-    color: white;
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--overlay);
+    background-color: var(--base);
+    color: var(--text);
     font-family: inherit;
+    transition: border-color 0.3s ease;
 }
 
-/* 5. BUTTONS */
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--sapphire);
+}
+
+/* =========================================
+   6. BUTTONS
+   ========================================= */
 button {
     width: 100%;
-    padding: 12px;
-    background-color: #89b4fa; /* Blue accent */
+    padding: 15px;
+    background-color: var(--accent-btn);
+    color: var(--base); /* High contrast text on button */
     border: none;
     border-radius: 8px;
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.3s ease;
+    margin-top: 10px;
 }
-
 
 button:hover {
-    background-color: #b4befe;
-    filter: brightness(1.1);
-}
-
-.rounded-img {
-  /* 1. The Rounding */
-  border-radius: 12px;         /* Change to 50% for a perfect circle */
-  
-  /* 2. The Size Control */
-  max-width: 100%;             /* Ensures it never overflows its parent container */
-  width: 400px;                /* Sets a preferred maximum width */
-  height: auto;                /* Maintains the original aspect ratio (very important!) */
-  
-  /* 3. The Polish */
-  display: block;              /* Removes the tiny gap at the bottom of images */
-  border: 2px solid #eaeaea;   /* Optional: adds a thin frame */
-}
-
-.menu-container{
-    display: flex;
-    gap: 10px;
-    .card{
-        margin: 10px;
-        border: 1px;
-        border-radius: 10px;
-        padding:10px;
-        background-color: #5059a2;
-        display: flex;
-    }
-    .card:hover{
-        margin: 6px;
-        border: 1px;
-        border-radius: 20px;
-        padding:10px;
-        background-color: #604cc8;
-        display: flex;
-        transition: 100ms;
-    .rounded-img {
-        border-radius: 16px;
-    }
+    background-color: var(--accent-btn-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(137, 180, 250, 0.4); /* Glow effect */
 }
