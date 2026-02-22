@@ -27,6 +27,9 @@
     --card-bg: #313244;
     --card-hover: #45475a;
 }
+a {
+   text-decoration: none;
+}
 
 html {
     height: 100%;
