@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commandes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+    <div class="logo">Restaurant</div>
+        <ul class="nav-links">
+             <a href="Accueil.html"> 
+                 <li class="selected">
+                    Accueil
+                </li>
+            </a>
+            <a href="Menu.html">
+                <li>
+                    Menu
+                </li>
+            </a>
+            <a href="">
+                <li>
+                    Nous Contacter
+                </li>
+            </a>
+            <a href="CreerCompte.html">
+                <li class="Account">
+                   Se Connecter
+                </li>
+            </a>
+        </ul>
+    </nav>
+    <h1>Commandes</h1>
+    <div class="orders">
+        <div class="filter-menu">
+            <label for="filter">Filtrer par:</label>
+            <select id="filter" name="filter">
+                <option value="all">Toutes les commandes</option>
+                <option value="delivered">Commandes livrées</option>
+                <option value="in-progress">Commandes en cours de preparation</option>
+                <option value="in-delivery">Commandes en cours de livraison</option>
+            </select>
+        </div>
+        <ul>
+            <li>
+                <div>
+                    <p> #151269</p>
+                    <p> en cours de preparation</p>
+                    <img src="Images/collapse_13726.png" alt="Cacher les details de la commande">
+                </div>
+                <div>
+                     <p>22/02/2026</p>
+                     <p>cout: 52.90€</p>
+                    <ul>
+                        <li>Pizza pour une journée entiere x1</li>
+                        <li>Salade verte x2</li>
+                        <li>Boisson gazeuse x3</li>
+                    </ul> 
+                </div>
+                <div>
+                    <input type="submit" value="Definir en cours de livraison">
+                </div>
+                
+            </li>
+            <li>
+               <div>
+                    <p> #182436</p>
+                    <p>Commande livrée</p>
+                    <img src="Images/expand_13722.png" alt="afficher les details de la commande">
+                </div>
+                <div>
+                    <p>18/02/2026</p>
+                    <p>cout: 52.90€</p>
+                    <ul>
+                        <li>Pizza pour une journée entiere x1</li>
+                        <li>Salade verte x2</li>
+                        <li>Boisson gazeuse x3</li>
+                    </ul> 
+                </div>
+            </li>
+        </ul>
+    </div>
+    <footer>
+        <ul class="footer">
+            <li>
+                <p>
+                    Notre Email: plsspeed@gmail.com
+                </p>
+            </li>
+            <li>
+                <p>Telephone: 123456789</p>
+            </li>
+        </ul>
+    </footer>
+</body>
+</html>
