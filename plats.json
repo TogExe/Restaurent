@@ -1,0 +1,48 @@
+{
+    "pizza_margherita": {
+        "name": "Pizza Margherita",
+        "image_url": "https:\/\/images.unsplash.com\/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop",
+        "text_description": "La classique italienne par excellence avec sauce tomate, mozzarella et basilic frais.",
+        "price": 15,
+        "is_vegetarian": true,
+        "likes": [
+            "a2ed9c3e5ffb8e5fd411122f41882d4a88a81f05632d85cce0f8cc96155fbbda",
+            "87924606b4131a8aceeeae8868531fbb9712aaa07a5d3a756b26ce0f5d6ca674",
+            "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac"
+        ],
+        "dislikes": [],
+        "comments": {
+            "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac": "j'aime pas",
+            "a2ed9c3e5ffb8e5fd411122f41882d4a88a81f05632d85cce0f8cc96155fbbda": "ils ont mis une chaussure dans mon plat",
+            "87924606b4131a8aceeeae8868531fbb9712aaa07a5d3a756b26ce0f5d6ca674": "qui l'eut crut que l'on puisse mourir pour des salades"
+        }
+    },
+    "salade_cesar": {
+        "name": "Salade César",
+        "image_url": "https:\/\/images.unsplash.com\/photo-1550304943-4f24f54ddde9?q=80&w=600&auto=format&fit=crop",
+        "text_description": "Laitue romaine, poulet grillé, croûtons, parmesan et sauce maison.",
+        "price": 12.5,
+        "is_vegetarian": false,
+        "likes": [
+            "87924606b4131a8aceeeae8868531fbb9712aaa07a5d3a756b26ce0f5d6ca674"
+        ],
+        "dislikes": [
+            "un_autre_hash_d_email_ici",
+            "a2ed9c3e5ffb8e5fd411122f41882d4a88a81f05632d85cce0f8cc96155fbbda",
+            "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac"
+        ],
+        "comments": []
+    },
+    "idk": {
+        "name": "Je sais pas",
+        "image_url": "https:\/\/i.pinimg.com\/736x\/c1\/88\/6f\/c1886fb8a5e1c4bce50b5660b0c46ec2.jpg",
+        "text_description": "Je sais pas qu'est ce que le cuisinier a voulu faire mais c'est interressant",
+        "price": 12.5,
+        "is_vegetarian": false,
+        "likes": [],
+        "dislikes": [],
+        "comments": {
+            "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac": "wtf"
+        }
+    }
+}
