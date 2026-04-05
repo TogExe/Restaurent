@@ -18,11 +18,7 @@ $userRole = $_SESSION['user_role'] ?? 'client';
             <?php endif; ?>
 
             <?php if ($userRole === 'cuisiner'): ?>
-<<<<<<< HEAD
-                <li><a href="cuisinier.php" class="<?= $currentPage == 'cuisinier.php' ? 'active' : '' ?>" style="color:var(--softlime);">🍳 Cuisine</a></li>
-=======
                 <li><a href="cuisinieur.php" class="<?= $currentPage == 'cuisinieur.php' ? 'active' : '' ?>" style="color:var(--softlime);">🍳 Cuisine</a></li>
->>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
             <?php endif; ?>
 
             <?php if ($userRole === 'livreur'): ?>

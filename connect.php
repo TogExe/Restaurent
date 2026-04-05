@@ -14,11 +14,7 @@ if (isset($_GET['logout'])) { session_destroy(); header("Location: connect.php")
 function redirectByRole($role) {
     switch ($role) {
         case 'admin':    header("Location: admin.php");      break;
-<<<<<<< HEAD
-        case 'cuisiner': header("Location: cuisinier.php"); break;
-=======
         case 'cuisiner': header("Location: cuisinieur.php"); break;
->>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
         case 'livreur':  header("Location: livreur.php");    break;
         default:         header("Location: profil.php");     break;
     }
