@@ -16,7 +16,7 @@ $paid = 0; $inProgress = 1; $prepared = 2;
 
 if (isset($_POST['change_status'])) {
     updateOrderStatus($_POST['order_id']);
-    header("Location: cuisinieur.php?filter=" . $selectedFilter); exit;
+    header("Location: cuisinier.php?filter=" . $selectedFilter); exit;
 }
 
 $preparedOrders   = array_filter($allorders, fn($o) => $o['ready'] == $prepared);
@@ -44,7 +44,7 @@ function orderToCard($order, $id) {
     if ($destHour == $commandHour) $destHour = 'Immédiate';
     $itemsString = htmlspecialchars(implode(', ', $order['commands']));
     $button = $nextStatus
-        ? "<form method='POST' action='cuisinieur.php?filter=$filter'><input type='hidden' name='order_id' value='$id'><button type='submit' name='change_status' class='btn'>Définir comme $nextStatus</button></form>"
+        ? "<form method='POST' action='cuisinier.php?filter=$filter'><input type='hidden' name='order_id' value='$id'><button type='submit' name='change_status' class='btn'>Définir comme $nextStatus</button></form>"
         : "<div class='btn' style='background:linear-gradient(135deg,var(--softlime),#5aab85);color:#0a0a1a;'>✓ Commande Prête</div>";
 
     $statusColor = match($order['ready']) { 0 => 'var(--text-muted)', 1 => 'var(--accent-btn)', 2 => 'var(--softlime)', default => 'var(--text-muted)' };
@@ -83,7 +83,7 @@ function getOrders($orders) {
     </div>
 
     <section class="search" style="max-width:850px;margin-bottom:40px;width:100%;">
-        <form method="GET" action="cuisinieur.php" class="lined">
+        <form method="GET" action="cuisinier.php" class="lined">
             <div class="form-group">
                 <label>Filtrer par statut</label>
                 <select name="filter" style="width:100%;padding:12px;border-radius:8px;background-color:var(--base);color:white;border:1px solid var(--overlay);font-family:inherit;cursor:pointer;">
