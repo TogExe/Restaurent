@@ -1,6 +1,10 @@
 <?php
 session_start();
+<<<<<<< HEAD
+if (!isset($_SESSION['logged_in']) || !in_array($_SESSION['user_role'], ['admin', 'restaurateur'])) {
+=======
 if (!isset($_SESSION['logged_in']) || $_SESSION['user_role'] !== 'admin') {
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
     header("Location: connect.php"); exit();
 }
 
@@ -77,11 +81,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_dish'])) {
     }
 }
 
+<<<<<<< HEAD
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_order_adm'])) {
+    $orderId = $_POST['order_id'];
+    if (isset($allOrders[$orderId])) {
+        if (isset($_POST['new_status'])) {
+            $allOrders[$orderId]['ready'] = intval($_POST['new_status']);
+        }
+        if (isset($_POST['assign_livreur'])) {
+            $allOrders[$orderId]['livreur_id'] = $_POST['assign_livreur'];
+        }
+        
+        file_put_contents($commandsFile, json_encode($allOrders, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        $message = "<div class='msg-success'>Commande mise à jour avec succès.</div>";
+        $allOrders = json_decode(file_get_contents($commandsFile), true);
+    }
+}
+
+// Stats
+$totalRevenue  = array_sum(array_column($allOrders, 'price'));
+$statusLabels  = [0=>'Payée',1=>'En préparation',2=>'Prête',3=>'En livraison',4=>'Livrée'];
+$roleBadge = ['admin'=>'var(--mauve)','restaurateur'=>'#ff9f43','cuisiner'=>'var(--softlime)','livreur'=>'var(--sapphire)','client'=>'var(--text-muted)'];
+$roleIcon  = ['admin'=>'⚙','restaurateur'=>'🏪','cuisiner'=>'🍳','livreur'=>'🛵','client'=>'👤'];
+
+
+=======
 // Stats
 $totalRevenue  = array_sum(array_column($allOrders, 'price'));
 $statusLabels  = [0=>'Payée',1=>'En préparation',2=>'Prête',3=>'En livraison',4=>'Livrée'];
 $roleBadge     = ['admin'=>'var(--mauve)','cuisiner'=>'var(--softlime)','livreur'=>'var(--sapphire)','client'=>'var(--text-muted)'];
 $roleIcon      = ['admin'=>'⚙','cuisiner'=>'🍳','livreur'=>'🛵','client'=>'👤'];
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 $isLoggedIn  = true;
@@ -137,6 +167,10 @@ $isLoggedIn  = true;
             <button class="tab-btn active" onclick="switchTab('users',this)">👥 Utilisateurs</button>
             <button class="tab-btn" onclick="switchTab('orders',this)">📋 Commandes</button>
             <button class="tab-btn" onclick="switchTab('dishes',this)">🍽 Menu</button>
+<<<<<<< HEAD
+            <button class="tab-btn" onclick="switchTab('restaurant',this)">🏪 Restaurant</button>
+=======
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
         </div>
 
         <!-- TAB: USERS -->
@@ -242,6 +276,72 @@ $isLoggedIn  = true;
                 <button type="submit" name="add_dish">Ajouter au menu</button>
             </form>
         </div>
+<<<<<<< HEAD
+
+        <div class="tab-panel" id="tab-restaurant">
+            <div class="page-header" style="margin-bottom:20px;">
+                <h3 style="color:var(--accent-btn);">Gestion du flux de commandes</h3>
+            </div>
+    
+            <table>
+                <thead>
+                    <tr>
+                        <th>Commande</th>
+                        <th>Détails & Plats</th>
+                        <th>Statut Actuel</th>
+                        <th>Action Restaurateur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($allOrders as $oid => $o): 
+                        $currentStatus = $o['ready'] ?? 0;
+                    ?>
+                    <tr>
+                        <td>
+                            <strong style="color:var(--mauve);">#<?= substr($oid,0,6) ?></strong><br>
+                            <small style="color:var(--text-muted);"><?= htmlspecialchars($o['adress'] ?? 'Emporter') ?></small>
+                        </td>
+                        <td>
+                            <div style="font-size:.85rem; margin-bottom:5px;">
+                                <?= htmlspecialchars(implode(', ', $o['commands'] ?? [])) ?>
+                            </div>
+                            <div style="font-size:.75rem; color:var(--softlime);">Total : <?= number_format($o['price'],2) ?> €</div>
+                        </td>
+                        <td>
+                            <span class="role-pill" style="border:1px solid <?= $statusColors[$currentStatus] ?>; color:<?= $statusColors[$currentStatus] ?>;">
+                                <?= $statusLabels[$currentStatus] ?>
+                            </span>
+                        </td>
+                        <td>
+                            <form method="POST" style="display:flex; flex-direction:column; gap:8px;">
+                                <input type="hidden" name="order_id" value="<?= $oid ?>">
+                                
+                                <select name="new_status" class="inline" style="width:100%;">
+                                    <?php foreach($statusLabels as $val => $lbl): ?>
+                                        <option value="<?= $val ?>" <?= $currentStatus == $val ? 'selected' : '' ?>>➡️ <?= $lbl ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+
+                                <select name="assign_livreur" class="inline" style="width:100%; border-color:var(--sapphire);">
+                                    <option value="">-- Assigner Livreur --</option>
+                                    <?php foreach($allUsers as $l_id => $l_u): 
+                                        if(($l_u['role'] ?? '') === 'livreur'): ?>
+                                        <option value="<?= $l_id ?>" <?= ($o['livreur_id'] ?? '') == $l_id ? 'selected' : '' ?>>
+                                            🛵 <?= htmlspecialchars($l_u['plain_name'] ?? substr($l_id,0,8)) ?>
+                                        </option>
+                                    <?php endif; endforeach; ?>
+                                </select>
+
+                                <button type="submit" name="update_order_adm" class="btn btn-sm" style="background:var(--accent-btn);">Mettre à jour</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+=======
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
     </div>
 </main>
 <script>

@@ -39,6 +39,8 @@
         "plain_email": "admin@restaurant.fr",
         "plain_name": "Administrateur",
         "role": "admin"
+<<<<<<< HEAD
+=======
     },
     "55bca10a0928ad4356d90ad5e6f4a8d603e167f5a2c8601f42a57ff52572607d": {
         "password_auth": "$2y$12$OnSFkybq2NJg0yySbOkSPeDgD2QINdPQfT1Gph1dEImv9okX2Rw5q",
@@ -47,5 +49,6 @@
         "phone_enc": "7gaA\/tOSlJXIk0LJwjkIqkhrNElYNndPbGswSFVRbjJtd3N1ZWc9PQ==",
         "role": "client",
         "address_enc": "i+szW8zB7PkKrlhJpeEBPzlSYXgyc0NyYlprZEp4VlRwQy85VGNHL3RKZ09oL1h4dFJUaGpZVFgyRFE9"
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
     }
 }
