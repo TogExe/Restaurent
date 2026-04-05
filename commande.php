@@ -31,20 +31,17 @@ if (isset($allUsers[$uid]['address_enc'])) {
 }
 
 $message = "";
-$orderSuccess = false;
 
-// --- PASSER LA COMMANDE ---
+// --- PREPARER LA COMMANDE ET REDIRIGER VERS CY BANK ---
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
     $items   = json_decode($_POST['cart_items'] ?? '[]', true);
     $address = trim($_POST['delivery_address'] ?? '');
-    $payRef  = 'PAY_DEMO_' . strtoupper(bin2hex(random_bytes(6)));
 
     if (empty($items)) {
         $message = "<div class='msg-error'>Votre panier est vide.</div>";
     } elseif (empty($address)) {
         $message = "<div class='msg-error'>Veuillez entrer une adresse de livraison.</div>";
     } else {
-        // Calculer prix total
         $total = 0;
         $names = [];
         foreach ($items as $pid => $qty) {
@@ -53,28 +50,53 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
                 for ($i = 0; $i < $qty; $i++) $names[] = $plats[$pid]['name'];
             }
         }
-        $orderId = rand(10000000000, 99999999999);
+        
+        // Paramètres requis par CY Bank
+        $orderId = 'CMD' . rand(100000000, 999999999); // Doit être alphanumérique, 10-24 chars [cite: 148, 149]
+        $montant = number_format($total, 2, '.', ''); // Format décimal avec séparateur '.' [cite: 150, 151]
+        
+        // --- ⚠️ ATTENTION : MODIFIEZ CE CODE VENDEUR AVEC VOTRE GROUPE (ex: MI-1_A) ---
+        $vendeur = 'TEST'; // [cite: 167, 206]
+        
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        $retour   = $protocol . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . '/retour_paiement.php'; // [cite: 168, 169]
+
+        // Générer le hash de contrôle
+        require_once 'getapikey.php'; // [cite: 225]
+        $api_key = getAPIKey($vendeur); // [cite: 228]
+        $control = md5($api_key . "#" . $orderId . "#" . $montant . "#" . $vendeur . "#" . $retour . "#"); // [cite: 154, 155, 156, 157, 158, 159]
+
         $now     = date("j/m/Y-H:i:s");
         $delTime = date("j/m/Y-H:i", strtotime('+30 minutes'));
 
+        // Sauvegarder la commande en attente de paiement
         $allOrders[(string)$orderId] = [
             "adress"   => $address,
             "commands" => $names,
             "price"    => round($total, 2),
             "comm_t"   => $now,
             "des_t"    => $delTime,
-            "paid_id"  => $payRef,
             "ready"    => 0,
+            "status"   => "en_attente", // Nouveau statut
             "client_id"=> $uid,
         ];
         file_put_contents($orderFile, json_encode($allOrders, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-        $orderSuccess = true;
-        $message = "<div class='msg-success'>🎉 Commande #{$orderId} passée avec succès !<br>Référence paiement : <code>{$payRef}</code><br>Livraison estimée : {$delTime}</div>";
+
+        // Redirection automatique vers CY Bank via un formulaire caché
+        echo "<!DOCTYPE html><html><body style='background:#111; color:#fff; text-align:center; padding-top:50px; font-family:sans-serif;'>
+                <h2>Redirection vers le portail sécurisé CY Bank...</h2>
+                <form id='cybank_form' action='https://www.plateforme-smc.fr/cybank/index.php' method='POST'>
+                    <input type='hidden' name='transaction' value='$orderId'>
+                    <input type='hidden' name='montant' value='$montant'>
+                    <input type='hidden' name='vendeur' value='$vendeur'>
+                    <input type='hidden' name='retour' value='$retour'>
+                    <input type='hidden' name='control' value='$control'>
+                </form>
+                <script>document.getElementById('cybank_form').submit();</script>
+              </body></html>";
+        exit();
     }
 }
-
-$currentPage = basename($_SERVER['PHP_SELF']);
-$isLoggedIn  = true;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -94,60 +116,23 @@ $isLoggedIn  = true;
         .qty-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--overlay);background:rgba(255,255,255,.05);color:var(--text);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition-fast);padding:0;margin:0;}
         .qty-btn:hover{background:rgba(138,180,255,.15);border-color:var(--accent-btn);}
         .qty-val{font-weight:700;min-width:20px;text-align:center;color:var(--text);}
-        /* Cart sidebar */
         .order-layout{display:grid;grid-template-columns:1fr 320px;gap:30px;align-items:start;max-width:1100px;width:100%;}
         @media(max-width:800px){.order-layout{grid-template-columns:1fr;}}
         .cart-panel{position:sticky;top:88px;background:var(--card-bg);border:1px solid var(--glass-border);border-radius:20px;padding:28px;backdrop-filter:blur(20px);}
         .cart-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.9rem;}
         .cart-item:last-child{border:none;}
         .cart-total{display:flex;justify-content:space-between;font-weight:700;font-size:1.1rem;padding-top:14px;border-top:1px solid var(--overlay);color:var(--softlime);}
-        /* Payment modal */
-        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:999;align-items:center;justify-content:center;}
-        .modal-overlay.open{display:flex;}
-        .modal-box{background:var(--surface);border:1px solid var(--glass-border);border-radius:20px;padding:36px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:fadeSlideUp .35s both;}
-        .card-input{display:flex;gap:10px;}
-        .pay-badge{background:rgba(126,203,163,.1);border:1px solid rgba(126,203,163,.3);border-radius:8px;padding:10px 14px;color:var(--softlime);font-size:.82rem;text-align:center;margin-bottom:16px;}
     </style>
 </head>
 <body>
 <?php include '_nav.php'; ?>
-
-<!-- PAYMENT MODAL (placeholder) -->
-<div class="modal-overlay" id="payModal">
-    <div class="modal-box">
-        <h2 style="color:var(--mauve);font-family:'Playfair Display',serif;margin-bottom:6px;">Paiement</h2>
-        <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:20px;">Simulation de paiement sécurisé</p>
-
-        <div class="pay-badge">🔒 Ceci est un paiement de démonstration — aucune donnée réelle n'est traitée.</div>
-
-        <div class="form-group">
-            <label>Titulaire de la carte</label>
-            <input type="text" id="cardName" placeholder="Jean Dupont">
-        </div>
-        <div class="form-group">
-            <label>Numéro de carte</label>
-            <input type="text" id="cardNum" placeholder="4242 4242 4242 4242" maxlength="19" oninput="fmtCard(this)">
-        </div>
-        <div class="card-input">
-            <div class="form-group" style="flex:1"><label>Expiration</label><input type="text" id="cardExp" placeholder="MM/AA" maxlength="5" oninput="fmtExp(this)"></div>
-            <div class="form-group" style="flex:1"><label>CVV</label><input type="password" id="cardCvv" placeholder="•••" maxlength="3"></div>
-        </div>
-
-        <div style="display:flex;gap:12px;margin-top:10px;">
-            <button onclick="submitPayment()" id="payBtn" style="flex:1;">💳 Payer <span id="payAmt"></span></button>
-            <button onclick="closeModal()" style="flex:0 0 auto;width:auto;background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--overlay);box-shadow:none;">Annuler</button>
-        </div>
-    </div>
-</div>
 
 <main class="main-container">
     <div class="page-header"><h1>Commander</h1><p>Choisissez vos plats et passez votre commande</p></div>
 
     <?= $message ?>
 
-    <?php if (!$orderSuccess): ?>
     <div class="order-layout">
-        <!-- Grille des plats -->
         <div>
             <div class="menu-grid">
             <?php foreach ($plats as $pid => $p): ?>
@@ -170,7 +155,6 @@ $isLoggedIn  = true;
             </div>
         </div>
 
-        <!-- Panier -->
         <div class="cart-panel">
             <h2 style="color:var(--sapphire);margin-bottom:18px;">🛒 Mon Panier</h2>
             <div id="cartItems"><p style="color:var(--text-muted);font-style:italic;font-size:.88rem;">Aucun article pour l'instant.</p></div>
@@ -183,9 +167,8 @@ $isLoggedIn  = true;
                 <input type="text" id="deliveryAddr" value="<?= htmlspecialchars($savedAddress) ?>" placeholder="5 rue de la Paix…">
             </div>
 
-            <button id="orderBtn" onclick="openPayment()" disabled style="opacity:.4;">Procéder au paiement</button>
+            <button id="orderBtn" onclick="submitOrder()" disabled style="opacity:.4;">Payer via CY Bank</button>
 
-            <!-- Formulaire caché soumis après "paiement" -->
             <form id="orderForm" method="POST" style="display:none;">
                 <input type="hidden" name="place_order" value="1">
                 <input type="hidden" name="cart_items" id="cartData">
@@ -193,12 +176,6 @@ $isLoggedIn  = true;
             </form>
         </div>
     </div>
-
-    <?php else: ?>
-        <div style="text-align:center;margin-top:20px;">
-            <a href="menu.php" class="btn" style="max-width:260px;display:inline-block;">← Retour au menu</a>
-        </div>
-    <?php endif; ?>
 </main>
 
 <script>
@@ -225,7 +202,7 @@ function renderCart() {
         html += `<div class="cart-item"><span>${names[id]} ×${q}</span><span style="color:var(--softlime);">${(prices[id]*q).toFixed(2).replace('.',',')} €</span></div>`;
         document.getElementById('qty-'+id).textContent = q;
     }
-    // reset non-cart
+
     document.querySelectorAll('.qty-val').forEach(el => {
         const pid = el.id.replace('qty-','');
         if (!cart[pid]) el.textContent = '0';
@@ -236,46 +213,19 @@ function renderCart() {
     totalVal.textContent = total.toFixed(2).replace('.',',') + ' €';
     orderBtn.disabled = count === 0;
     orderBtn.style.opacity = count ? '1' : '.4';
-    document.getElementById('payAmt').textContent = total.toFixed(2).replace('.',',') + ' €';
 }
 
-function openPayment() {
+function submitOrder() {
     const addr = document.getElementById('deliveryAddr').value.trim();
     if (!addr) { alert('Veuillez entrer une adresse de livraison.'); return; }
-    document.getElementById('payModal').classList.add('open');
-}
-function closeModal() { document.getElementById('payModal').classList.remove('open'); }
-
-function submitPayment() {
-    const name = document.getElementById('cardName').value.trim();
-    const num  = document.getElementById('cardNum').value.replace(/\s/g,'');
-    const exp  = document.getElementById('cardExp').value;
-    const cvv  = document.getElementById('cardCvv').value;
-
-    if (!name || num.length < 16 || exp.length < 5 || cvv.length < 3) {
-        alert('Veuillez remplir tous les champs de paiement.'); return;
-    }
-
-    const btn = document.getElementById('payBtn');
-    btn.textContent = '⏳ Traitement…'; btn.disabled = true;
-
-    // Simuler délai bancaire
-    setTimeout(() => {
-        document.getElementById('cartData').value  = JSON.stringify(cart);
-        document.getElementById('addrData').value  = document.getElementById('deliveryAddr').value;
-        closeModal();
-        document.getElementById('orderForm').submit();
-    }, 1800);
-}
-
-function fmtCard(el) {
-    let v = el.value.replace(/\D/g,'').substring(0,16);
-    el.value = v.match(/.{1,4}/g)?.join(' ') || v;
-}
-function fmtExp(el) {
-    let v = el.value.replace(/\D/g,'');
-    if (v.length >= 2) v = v.substring(0,2)+'/'+v.substring(2,4);
-    el.value = v;
+    
+    document.getElementById('cartData').value = JSON.stringify(cart);
+    document.getElementById('addrData').value = addr;
+    
+    const btn = document.getElementById('orderBtn');
+    btn.textContent = 'Redirection...'; btn.disabled = true;
+    
+    document.getElementById('orderForm').submit();
 }
 </script>
 </body>
