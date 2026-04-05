@@ -17,6 +17,13 @@ if (isset($_POST['change_status'])) {
     updateOrderStatus($_POST['order_id']);
     header("Location: livreur.php?filter=" . $selectedFilter); exit;
 }
+<<<<<<< HEAD
+=======
+
+$ordersToPickUp  = array_filter($allorders, fn($o) => $o['ready'] == $statusPrepared);
+$ordersInTransit = array_filter($allorders, fn($o) => $o['ready'] == $statusDelivery);
+$ordersFinished  = array_filter($allorders, fn($o) => $o['ready'] == $statusDone);
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
 
 if (isset($_POST['cancel_delivery'])) {
     updateOrderStatus($_POST['order_id'], -1);
@@ -30,7 +37,11 @@ $ordersFinished  = array_filter($allorders, fn($o) => $o['ready'] == $statusDone
 function updateOrderStatus($orderId, $status = 1) {
     $data = json_decode(file_get_contents('commandes.json'), true);
     if (isset($data[$orderId]) && $data[$orderId]['ready'] < 4) {
+<<<<<<< HEAD
         $data[$orderId]['ready'] += $status;
+=======
+        $data[$orderId]['ready'] += 1;
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
         file_put_contents('commandes.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     }
 }
@@ -56,12 +67,15 @@ function orderToCard($order, $id) {
                        <input type='hidden' name='order_id' value='$id'>
                        <button type='submit' name='change_status' class='btn' style='background:$btnColor;color:#0a0a1a;'>$nextAction</button>
                    </form>";
+<<<<<<< HEAD
         if ($nextAction == 'Marquer comme Livrée') {
             $secondButton = "<br><form method='POST' action='livreur.php?filter=$currentFilter'>
                             <input type='hidden' name='order_id' value='$id'>
                             <button type='submit' name='cancel_delivery' class='btn' style='background:#e50000;color:#0a0a1a;'>Abandonner la livraison</button>
                         </form>";
         }
+=======
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
     } elseif ($order['ready'] == 4) {
         $button = "<div class='btn' style='background:linear-gradient(135deg,var(--softlime),#5aab85);color:#0a0a1a;border:none;'>Livraison Terminée ✅</div>";
     }
@@ -75,7 +89,11 @@ function orderToCard($order, $id) {
         <p><strong>Statut :</strong> <span style='color:$statusColor;'>$statusText</span></p>
         <p><strong>Livraison prévue :</strong> $destHour</p>
         <p style='margin-top:8px;'><strong>Plats :</strong> $items</p>
+<<<<<<< HEAD
         <br>$button $secondButton
+=======
+        <br>$button
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
     </div>";
 }
 

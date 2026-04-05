@@ -5,15 +5,25 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 $userId      = $isLoggedIn ? $_SESSION['user_id'] : null;
 
 $filePlats = 'plats.json';
+<<<<<<< HEAD
 $allPlats  = file_exists($filePlats) ? json_decode(file_get_contents($filePlats), true) : [];
+=======
+$plats     = file_exists($filePlats) ? json_decode(file_get_contents($filePlats), true) : [];
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
 
 if (isset($_GET['action']) && isset($_GET['id'])) {
     if (!$isLoggedIn) { header("Location: connect.php"); exit(); }
     $action = $_GET['action'];
     $platId = $_GET['id'];
+<<<<<<< HEAD
     if (isset($allPlats[$platId])) {
         $likes    = $allPlats[$platId]['likes']    ?? [];
         $dislikes = $allPlats[$platId]['dislikes'] ?? [];
+=======
+    if (isset($plats[$platId])) {
+        $likes    = $plats[$platId]['likes']    ?? [];
+        $dislikes = $plats[$platId]['dislikes'] ?? [];
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
         if ($action === 'like') {
             $dislikes = array_diff($dislikes, [$userId]);
             $likes    = in_array($userId, $likes) ? array_diff($likes, [$userId]) : [...$likes, $userId];
@@ -21,12 +31,21 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             $likes    = array_diff($likes, [$userId]);
             $dislikes = in_array($userId, $dislikes) ? array_diff($dislikes, [$userId]) : [...$dislikes, $userId];
         }
+<<<<<<< HEAD
         $allPlats[$platId]['likes']    = array_values($likes);
         $allPlats[$platId]['dislikes'] = array_values($dislikes);
         file_put_contents($filePlats, json_encode($allPlats, JSON_PRETTY_PRINT));
         if (isset($_GET['ajax'])) {
             header('Content-Type: application/json');
             echo json_encode(['likes' => count($allPlats[$platId]['likes']), 'dislikes' => count($allPlats[$platId]['dislikes'])]);
+=======
+        $plats[$platId]['likes']    = array_values($likes);
+        $plats[$platId]['dislikes'] = array_values($dislikes);
+        file_put_contents($filePlats, json_encode($plats, JSON_PRETTY_PRINT));
+        if (isset($_GET['ajax'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['likes' => count($plats[$platId]['likes']), 'dislikes' => count($plats[$platId]['dislikes'])]);
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
             exit();
         }
         header("Location: menu.php"); exit();
@@ -77,6 +96,7 @@ uasort($plats, function($a, $b) use ($sort) {
 <?php include '_nav.php'; ?>
 <main class="main-container">
     <div class="page-header"><h1>Notre Carte</h1><p>Découvrez nos spécialités</p></div>
+<<<<<<< HEAD
     <section class="search-box" style="margin-bottom: 30px;">
         <form method="GET" action="menu.php" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
             
@@ -113,6 +133,8 @@ uasort($plats, function($a, $b) use ($sort) {
             <?php endif; ?>
         </form>
     </section>
+=======
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
     <section class="glass-panel large">
         <ul class="item-list">
         <?php if (empty($plats)): ?>

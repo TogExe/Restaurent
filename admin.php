@@ -1,6 +1,10 @@
 <?php
 session_start();
+<<<<<<< HEAD
 if (!isset($_SESSION['logged_in']) || !in_array($_SESSION['user_role'], ['admin', 'restaurateur'])) {
+=======
+if (!isset($_SESSION['logged_in']) || $_SESSION['user_role'] !== 'admin') {
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
     header("Location: connect.php"); exit();
 }
 
@@ -77,6 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_dish'])) {
     }
 }
 
+<<<<<<< HEAD
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_order_adm'])) {
     $orderId = $_POST['order_id'];
     if (isset($allOrders[$orderId])) {
@@ -100,6 +105,13 @@ $roleBadge = ['admin'=>'var(--mauve)','restaurateur'=>'#ff9f43','cuisiner'=>'var
 $roleIcon  = ['admin'=>'⚙','restaurateur'=>'🏪','cuisiner'=>'🍳','livreur'=>'🛵','client'=>'👤'];
 
 
+=======
+// Stats
+$totalRevenue  = array_sum(array_column($allOrders, 'price'));
+$statusLabels  = [0=>'Payée',1=>'En préparation',2=>'Prête',3=>'En livraison',4=>'Livrée'];
+$roleBadge     = ['admin'=>'var(--mauve)','cuisiner'=>'var(--softlime)','livreur'=>'var(--sapphire)','client'=>'var(--text-muted)'];
+$roleIcon      = ['admin'=>'⚙','cuisiner'=>'🍳','livreur'=>'🛵','client'=>'👤'];
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 $isLoggedIn  = true;
@@ -155,7 +167,10 @@ $isLoggedIn  = true;
             <button class="tab-btn active" onclick="switchTab('users',this)">👥 Utilisateurs</button>
             <button class="tab-btn" onclick="switchTab('orders',this)">📋 Commandes</button>
             <button class="tab-btn" onclick="switchTab('dishes',this)">🍽 Menu</button>
+<<<<<<< HEAD
             <button class="tab-btn" onclick="switchTab('restaurant',this)">🏪 Restaurant</button>
+=======
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
         </div>
 
         <!-- TAB: USERS -->
@@ -261,6 +276,7 @@ $isLoggedIn  = true;
                 <button type="submit" name="add_dish">Ajouter au menu</button>
             </form>
         </div>
+<<<<<<< HEAD
 
         <div class="tab-panel" id="tab-restaurant">
             <div class="page-header" style="margin-bottom:20px;">
@@ -324,6 +340,8 @@ $isLoggedIn  = true;
                 </tbody>
             </table>
         </div>
+=======
+>>>>>>> 682ecc1cda4c68bc54577199c3618dd536b65a6d
     </div>
 </main>
 <script>
