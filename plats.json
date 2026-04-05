@@ -1,7 +1,7 @@
 {
     "pizza_margherita": {
         "name": "Pizza Margherita",
-        "image_url": "https:\/\/images.unsplash.com\/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop",
+        "image_url": "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop",
         "text_description": "La classique italienne par excellence avec sauce tomate, mozzarella et basilic frais.",
         "price": 15,
         "is_vegetarian": true,
@@ -20,7 +20,7 @@
     },
     "salade_cesar": {
         "name": "Salade César",
-        "image_url": "https:\/\/images.unsplash.com\/photo-1550304943-4f24f54ddde9?q=80&w=600&auto=format&fit=crop",
+        "image_url": "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?q=80&w=600&auto=format&fit=crop",
         "text_description": "Laitue romaine, poulet grillé, croûtons, parmesan et sauce maison.",
         "price": 12.5,
         "is_vegetarian": false,
@@ -36,7 +36,7 @@
     },
     "idk": {
         "name": "Je sais pas",
-        "image_url": "https:\/\/i.pinimg.com\/736x\/c1\/88\/6f\/c1886fb8a5e1c4bce50b5660b0c46ec2.jpg",
+        "image_url": "https://i.pinimg.com/736x/c1/88/6f/c1886fb8a5e1c4bce50b5660b0c46ec2.jpg",
         "text_description": "Je sais pas qu'est ce que le cuisinier a voulu faire mais c'est interressant",
         "price": 12.5,
         "is_vegetarian": false,
@@ -45,5 +45,37 @@
         "comments": {
             "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac": "wtf"
         }
+    },
+    "crales_au_jus_dorange": {
+        "name": "Céréales au jus d'orange",
+        "image_url": "https://i.redd.it/wog2lnsizje41.jpg",
+        "text_description": "un plat d'excelence melangeant une orange faite maison avec des céréales tout droit sortis du jardin.",
+        "price": 34.5,
+        "is_vegetarian": false,
+        "likes": [],
+        "dislikes": [],
+        "comments": []
+    },
+    "burger_de_riz_souffl": {
+        "name": "Burger de riz soufflé",
+        "image_url": "https://i.redd.it/0q22pjulavng1.jpeg",
+        "text_description": "Un délicieux burger de riz soufflé préparé avec les mains de nos meilleurs cuisiniers",
+        "price": 18.5,
+        "is_vegetarian": false,
+        "likes": [
+            "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac"
+        ],
+        "dislikes": [],
+        "comments": []
+    },
+    "schenefedsgt": {
+        "name": "Schenefedsgt",
+        "image_url": "https://img.buzzfeed.com/buzzfeed-static/static/2022-12/5/18/asset/153eef5dca44/sub-buzz-7626-1670264161-4.png?downsize=700%3A%2A&output-quality=auto&output-format=auto",
+        "text_description": "Un plat allemand au a l'apparence questionable et au gout incertain.",
+        "price": 13.5,
+        "is_vegetarian": false,
+        "likes": [],
+        "dislikes": [],
+        "comments": []
     }
 }

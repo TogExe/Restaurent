@@ -4,27 +4,40 @@
         "email_enc": "GtqCrKrp+Y6XWl9X8uR\/qVI4NFNieCtidjNkZ0ZGYTVEYUZ0SWlaU3VhUE1ES3h0Ukx4SVBkdVp5N1E9",
         "fullname_enc": "2cch25uj81qjscz6INnEdko1b21WNjJ4RnhzeE0yakNpRHp1Q1E9PQ==",
         "phone_enc": "m2eSJkZBJ\/19AvikrsW8X1BDa0ZteFEwZ2JtVlJ5NnpNWVNLTFE9PQ==",
-        "address_enc": "YXlcwQx5Byx24BSfQju8\/kZhVEY0bEI1NWlLL0pEOEZjNWNhNnJrenJHRWZPZ1lLc2NoUTErOHgwbkE9"
+        "address_enc": "YXlcwQx5Byx24BSfQju8\/kZhVEY0bEI1NWlLL0pEOEZjNWNhNnJrenJHRWZPZ1lLc2NoUTErOHgwbkE9",
+        "role": "admin"
     },
     "a2ed9c3e5ffb8e5fd411122f41882d4a88a81f05632d85cce0f8cc96155fbbda": {
         "password_auth": "$2y$12$2vXz2E7BDhKJlKuG8SN7Tu8p7lYoC1FCfwVc.bR9LsqfgFLuyVGS.",
         "email_enc": "NCQoh4Kt0whiBdWhcCw1aUM1bnFSNDJiV2tPWC93QXlTQS96YnVzTjFqL0JRTTdrTnVnUjRDMWJNak09",
         "fullname_enc": "F9nybW78\/rJiz6RElS42CmJXK3h6SUdydURhMi85bHRBOTFiNmc9PQ==",
         "phone_enc": "gQM\/UDi5PqO6db\/v2PeboDNpQlVKa0QwYi9FTUpsd0RQbWpiNlE9PQ==",
-        "address_enc": "8FBSxGDQEQHTJStv\/YhTVjFwNS9vdmU5YUlyUjIzSG9Wb1NIODVsenhxU1huUVRaa0RTeHJYYk4vYms9"
+        "address_enc": "8FBSxGDQEQHTJStv\/YhTVjFwNS9vdmU5YUlyUjIzSG9Wb1NIODVsenhxU1huUVRaa0RTeHJYYk4vYms9",
+        "role": "cuisiner"
     },
     "87924606b4131a8aceeeae8868531fbb9712aaa07a5d3a756b26ce0f5d6ca674": {
         "password_auth": "$2y$12$obQzEehVl3JusSjcDdTUyuwewNRENYUiLYjq6n.u0tD.P9vzuQF4K",
         "email_enc": "A3bsaQsCgqnTJiuczaTIjVVGOSsvTFB2VzYxdnhEbUd4LzRZakE9PQ==",
         "fullname_enc": "Ptaw\/tKcBnT9WTjciNweYDI3dlA1MlVFZlhmU2xhY1lLeW5tK3c9PQ==",
         "phone_enc": "6A4IU+27FylbUlAMleKY3Stzc3krUzZlTkhYQ0FRKzVlc3VGMUE9PQ==",
-        "address_enc": "QUc\/Mx5ZAiK\/8HYl6xFTTFVLK1F0bE5RWUlTSk5wKzJJMkZiNnQxcWlRa29lQnNxamdQd1lNZDdrb3c9"
+        "address_enc": "QUc\/Mx5ZAiK\/8HYl6xFTTFVLK1F0bE5RWUlTSk5wKzJJMkZiNnQxcWlRa29lQnNxamdQd1lNZDdrb3c9",
+        "role": "livreur"
     },
     "5517e17e79ea15cfdf6337dd07147183561baece32984821a20a6fa836886675": {
         "password_auth": "$2y$10$0T6LXWZQszQd\/N9.Lqp5D.x9.tw5jepfvxnGnNecwRKpHH.OlfpnC",
         "email_enc": "6LP0r+BdS07s55gfHvIvi3daMmo3L3RnY1hrNDlGeWwvbWU2YzF6dDFHaHh3UVFDNGVsMWpjYks4MWc9",
         "fullname_enc": "QtmBOPdsC2+MD9y+AjRewjJpWDJCRi95MjBzYTNNallRUkxGUUE9PQ==",
         "phone_enc": "svId17b6VCP0dXKZF9jtzGRDNjlqc2VSeGt3WGtnZG5jRUZaMUE9PQ==",
-        "address_enc": "Gv7Irssa23LcxYCU6\/geCDhkVnhHaEVrSFR2V0R2YkQ1SitkVkE9PQ=="
+        "address_enc": "Gv7Irssa23LcxYCU6\/geCDhkVnhHaEVrSFR2V0R2YkQ1SitkVkE9PQ==",
+        "role": "client"
+    },
+    "__admin__": {
+        "password_auth": "$2y$12$d.a0dYvSDNznmZ4ZRxhvu.loOW0QVf3j2ezvGW8VbTTDGoVbniYKS",
+        "email_enc": "",
+        "fullname_enc": "",
+        "phone_enc": "",
+        "plain_email": "admin@restaurant.fr",
+        "plain_name": "Administrateur",
+        "role": "admin"
     }
 }
