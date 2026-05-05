@@ -78,6 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_dish'])) {
 }
 
 // Stats
+//$totalRevenue  = array_sum(array_column($allOrders, 'price'));
 $totalRevenue  = array_sum(array_column($allOrders, 'price'));
 $statusLabels  = [0=>'Payée',1=>'En préparation',2=>'Prête',3=>'En livraison',4=>'Livrée'];
 $roleBadge     = ['admin'=>'var(--mauve)','cuisiner'=>'var(--softlime)','livreur'=>'var(--sapphire)','client'=>'var(--text-muted)'];
@@ -92,30 +93,11 @@ $isLoggedIn  = true;
     <meta charset="UTF-8">
     <title>Administration</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .admin-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px;}
-        .tab-btn{padding:10px 22px;border-radius:8px;border:1px solid var(--overlay);background:rgba(255,255,255,.04);color:var(--text-muted);cursor:pointer;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;transition:all .2s;width:auto;}
-        .tab-btn.active,.tab-btn:hover{background:rgba(138,180,255,.1);border-color:var(--accent-btn);color:var(--accent-btn);}
-        .tab-panel{display:none;} .tab-panel.active{display:block;}
-        table{width:100%;border-collapse:collapse;font-size:.88rem;}
-        th{color:var(--text-muted);text-align:left;padding:10px 12px;border-bottom:1px solid var(--overlay);font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:.78rem;}
-        td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
-        tr:last-child td{border-bottom:none;}
-        .role-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
-        .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:30px;}
-        .stat-card{background:rgba(255,255,255,.04);border:1px solid var(--overlay);border-radius:12px;padding:20px;text-align:center;}
-        .stat-card .val{font-size:2rem;font-weight:700;color:var(--mauve);}
-        .stat-card .lbl{color:var(--text-muted);font-size:.82rem;margin-top:4px;}
-        select.inline{width:auto;padding:6px 10px;font-size:.82rem;border-radius:6px;}
-        .btn-sm{display:inline-block;width:auto;padding:6px 14px;font-size:.78rem;margin-top:0;border-radius:6px;letter-spacing:.05em;}
-        .btn-danger-sm{background:linear-gradient(135deg,var(--rose),#ff4a6e);color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.78rem;font-family:'Outfit',sans-serif;font-weight:700;}
-        .btn-danger-sm:hover{opacity:.85;transform:translateY(-1px);}
-    </style>
+    
 </head>
 <body>
 <?php include '_nav.php'; ?>
 <main class="main-container">
-
     <div class="page-header">
         <h1>⚙ Administration</h1>
         <p>Gestion complète du restaurant</p>

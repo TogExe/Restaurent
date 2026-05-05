@@ -82,32 +82,7 @@ $isLoggedIn  = true;
     <meta charset="UTF-8">
     <title>Commander — Le Restaurant</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
-        .dish-card{background:var(--card-bg);border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:var(--transition-smooth);}
-        .dish-card:hover{border-color:var(--glass-border-hover);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.35);}
-        .dish-card img{width:100%;height:140px;object-fit:cover;}
-        .dish-body{padding:14px;flex:1;display:flex;flex-direction:column;gap:8px;}
-        .dish-name{font-weight:700;color:var(--sapphire);font-size:1rem;}
-        .dish-price{color:var(--softlime);font-weight:700;}
-        .qty-ctrl{display:flex;align-items:center;gap:10px;margin-top:auto;}
-        .qty-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--overlay);background:rgba(255,255,255,.05);color:var(--text);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition-fast);padding:0;margin:0;}
-        .qty-btn:hover{background:rgba(138,180,255,.15);border-color:var(--accent-btn);}
-        .qty-val{font-weight:700;min-width:20px;text-align:center;color:var(--text);}
-        /* Cart sidebar */
-        .order-layout{display:grid;grid-template-columns:1fr 320px;gap:30px;align-items:start;max-width:1100px;width:100%;}
-        @media(max-width:800px){.order-layout{grid-template-columns:1fr;}}
-        .cart-panel{position:sticky;top:88px;background:var(--card-bg);border:1px solid var(--glass-border);border-radius:20px;padding:28px;backdrop-filter:blur(20px);}
-        .cart-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.9rem;}
-        .cart-item:last-child{border:none;}
-        .cart-total{display:flex;justify-content:space-between;font-weight:700;font-size:1.1rem;padding-top:14px;border-top:1px solid var(--overlay);color:var(--softlime);}
-        /* Payment modal */
-        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:999;align-items:center;justify-content:center;}
-        .modal-overlay.open{display:flex;}
-        .modal-box{background:var(--surface);border:1px solid var(--glass-border);border-radius:20px;padding:36px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:fadeSlideUp .35s both;}
-        .card-input{display:flex;gap:10px;}
-        .pay-badge{background:rgba(126,203,163,.1);border:1px solid rgba(126,203,163,.3);border-radius:8px;padding:10px 14px;color:var(--softlime);font-size:.82rem;text-align:center;margin-bottom:16px;}
-    </style>
+    
 </head>
 <body>
 <?php include '_nav.php'; ?>

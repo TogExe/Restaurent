@@ -7,5 +7,13 @@
         "plain_email": "admin@restaurant.fr",
         "plain_name": "Administrateur",
         "role": "admin"
+    },
+    "55bca10a0928ad4356d90ad5e6f4a8d603e167f5a2c8601f42a57ff52572607d": {
+        "password_auth": "$2y$12$2WjEmkmT8Em2\/G0qdZUAY.PWQ2JglG.n7KPYxvFbXTuF5kgCUxZp.",
+        "email_enc": "CvMWqBiVKytdkcmug\/RXaDl6K2llcGlGb0pxZ3Q3RXZLd0RiZ0E9PQ==",
+        "fullname_enc": "DMajiS\/YI3rdL8CfshBNjjZGeW9OMktPOGNBQ1oxdkIyem5OMHc9PQ==",
+        "phone_enc": "mvbaKIWusNv5JEYGeuw61ytsVDdyOGNDQytJWFRCRTI0UVBDM2c9PQ==",
+        "role": "livreur",
+        "address_enc": "rCCA6SCuq2n5xM3H1Bm1lkN6NHF4L2M5dURCMitDSjFHNmtQdm5nY211VkhpbTJ0RDUxcTFpWnJOczg9"
     }
 }

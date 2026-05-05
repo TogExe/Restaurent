@@ -77,5 +77,15 @@
         "likes": [],
         "dislikes": [],
         "comments": []
+    },
+    "sneakers_pro_bar": {
+        "name": "sneakers pro bar",
+        "image_url": "https://dogemuchwow.com/wp-content/uploads/2021/08/cursed-food-snickle.jpg",
+        "text_description": "miam",
+        "price": 100.5,
+        "is_vegetarian": true,
+        "likes": [],
+        "dislikes": [],
+        "comments": []
     }
 }
