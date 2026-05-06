@@ -32,12 +32,33 @@ function updateOrderStatus($orderId) {
 
 function orderToCard($order, $id) {
     $currentFilter = $_GET['filter'] ?? 'all';
-    $statusText = match($order['ready']) {
-        2 => 'Prête (Attente ramassage)', 3 => 'En livraison', 4 => 'Livrée ✅', default => 'En préparation…'
-    };
-    $nextAction = match($order['ready']) {
-        2 => 'Prendre en livraison', 3 => 'Marquer comme Livrée', default => null
-    };
+    $statusText = NULL;
+    switch ($order['ready']) {
+        case 2:
+            $statusText = 'Prête (Attente ramassage)';
+            break;
+        case 3:
+            $statusText = 'En livraison';
+            break;
+        case 4:
+             $statusText = 'Livrée ✅';
+            break;
+        default:
+         $statusText = 'En préparation…';
+    }
+    $nextAction = NULL;
+
+    switch ($order['ready']){
+        case 2:
+            $nextAction = 'Prendre en livraison';
+            break;
+        case 3:
+            $nextAction =  'Marquer comme Livrée';
+            break;
+        default:
+            $nextAction = null;
+
+    }
     $address  = htmlspecialchars($order['adress'] ?? '');
     $destHour = substr($order['des_t'], strpos($order['des_t'], '-') + 1, 5);
     $items    = htmlspecialchars(implode(', ', $order['commands']));
@@ -53,8 +74,20 @@ function orderToCard($order, $id) {
     } elseif ($order['ready'] == 4) {
         $button = "<div class='btn' style='background:linear-gradient(135deg,var(--softlime),#5aab85);color:#0a0a1a;border:none;'>Livraison Terminée ✅</div>";
     }
-
-    $statusColor = match($order['ready']) { 2=>'var(--softlime)', 3=>'var(--sapphire)', 4=>'var(--mauve)', default=>'var(--text-muted)' };
+    $statusColor = NULL;
+    switch ($order['ready']){
+        case 2:
+            $statusColor = 'var(--softlime)';
+            break;
+        case 3:
+            $statusColor = 'var(--sapphire)';
+            break;
+        case 4:
+            $statusColor = 'var(--mauve)';
+            break;
+        default:
+            $statusColor = 'var(--text-muted)';
+    }
 
     return "<div class='order-card'>
         <h3 style='color:var(--sapphire);margin-bottom:10px;'>Commande #$id</h3>
@@ -107,12 +140,20 @@ function getOrders($orders) {
 
     <div class="orders">
         <?php
-        $rendered = match($selectedFilter) {
-            'to-pickup'  => getOrders($ordersToPickUp),
-            'in-transit' => getOrders($ordersInTransit),
-            'delivered'  => getOrders($ordersFinished),
-            default      => getOrders($allorders),
-        };
+        $rendered = NULL;
+        switch ($selectedFilter){
+            case 'to-pickup':
+                $rendered = getOrders($ordersToPickUp);
+                break;
+            case 'in-transit':
+                $rendered = getOrders($ordersInTransit);
+                break;
+            case 'delivered':
+                $rendered = getOrders($ordersFinished);
+                break;
+            default:
+                $rendered = getOrders($allorders);
+        }
         echo $rendered ?: "<p style='color:var(--text-muted);'>Aucune commande disponible.</p>";
         ?>
     </div>
