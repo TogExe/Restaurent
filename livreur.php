@@ -1,13 +1,9 @@
 <?php
-session_start();
+require_once __DIR__ . '/inc/common.php';
 
-$isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-$userRole   = $_SESSION['user_role'] ?? 'client';
-if (!$isLoggedIn || !in_array($userRole, ['livreur', 'admin'])) {
-    header("Location: connect.php"); exit();
-}
+require_login(['livreur','admin']);
 
-$allorders      = json_decode(file_get_contents('commandes.json'), true);
+$allorders      = load_json('commandes.json');
 $currentPage    = basename($_SERVER['PHP_SELF']);
 $selectedFilter = $_GET['filter'] ?? 'all';
 
@@ -23,10 +19,10 @@ $ordersInTransit = array_filter($allorders, fn($o) => $o['ready'] == $statusDeli
 $ordersFinished  = array_filter($allorders, fn($o) => $o['ready'] == $statusDone);
 
 function updateOrderStatus($orderId) {
-    $data = json_decode(file_get_contents('commandes.json'), true);
+    $data = load_json('commandes.json');
     if (isset($data[$orderId]) && $data[$orderId]['ready'] < 4) {
         $data[$orderId]['ready'] += 1;
-        file_put_contents('commandes.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        save_json('commandes.json', $data);
     }
 }
 
@@ -107,6 +103,9 @@ function getOrders($orders) {
     }
     return $html;
 }
+
+$currentPage = basename($_SERVER['PHP_SELF']);
+$isLoggedIn  = true;
 ?>
 <!DOCTYPE html>
 <html lang="fr">

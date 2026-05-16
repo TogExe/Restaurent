@@ -17,8 +17,8 @@ $userRole = $_SESSION['user_role'] ?? 'client';
                 <li><a href="admin.php" class="<?= $currentPage == 'admin.php' ? 'active' : '' ?>" style="color:var(--mauve);">⚙ Admin</a></li>
             <?php endif; ?>
 
-            <?php if ($userRole === 'cuisiner'): ?>
-                <li><a href="cuisinier.php" class="<?= $currentPage == 'cuisinieur.php' ? 'active' : '' ?>" style="color:var(--softlime);">🍳 Cuisine</a></li>
+            <?php if ($userRole === 'cuisinier'): ?>
+                <li><a href="cuisinier.php" class="<?= $currentPage == 'cuisinier.php' ? 'active' : '' ?>" style="color:var(--softlime);">🍳 Cuisine</a></li>
             <?php endif; ?>
 
             <?php if ($userRole === 'livreur'): ?>

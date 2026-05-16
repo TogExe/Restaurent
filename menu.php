@@ -1,11 +1,11 @@
 <?php
-session_start();
+require_once __DIR__ . '/inc/common.php';
 $currentPage = basename($_SERVER['PHP_SELF']);
 $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 $userId      = $isLoggedIn ? $_SESSION['user_id'] : null;
 
 $filePlats = 'plats.json';
-$plats     = file_exists($filePlats) ? json_decode(file_get_contents($filePlats), true) : [];
+$plats     = load_json($filePlats);
 
 if (isset($_GET['action']) && isset($_GET['id'])) {
     if (!$isLoggedIn) { header("Location: connect.php"); exit(); }
@@ -23,7 +23,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         }
         $plats[$platId]['likes']    = array_values($likes);
         $plats[$platId]['dislikes'] = array_values($dislikes);
-        file_put_contents($filePlats, json_encode($plats, JSON_PRETTY_PRINT));
+        save_json($filePlats, $plats);
         if (isset($_GET['ajax'])) {
             header('Content-Type: application/json');
             echo json_encode(['likes' => count($plats[$platId]['likes']), 'dislikes' => count($plats[$platId]['dislikes'])]);

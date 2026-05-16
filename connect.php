@@ -1,25 +1,8 @@
 <?php
-session_start();
+require_once __DIR__ . '/inc/common.php';
 
-function decryptData($payload, $password) {
-    if (!$payload) return "";
-    $decoded   = base64_decode($payload);
-    $iv        = substr($decoded, 0, 16);
-    $encrypted = substr($decoded, 16);
-    return openssl_decrypt($encrypted, 'aes-256-cbc', $password, 0, $iv);
-}
 
 if (isset($_GET['logout'])) { session_destroy(); header("Location: connect.php"); exit(); }
-
-function redirectByRole($role) {
-    switch ($role) {
-        case 'admin':    header("Location: admin.php");      break;
-        case 'cuisiner': header("Location: cuisinieur.php"); break;
-        case 'livreur':  header("Location: livreur.php");    break;
-        default:         header("Location: profil.php");     break;
-    }
-    exit();
-}
 
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) redirectByRole($_SESSION['user_role'] ?? 'client');
 
@@ -28,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email    = strtolower(trim($_POST['email'] ?? ''));
     $password = $_POST['password'] ?? '';
     $file     = 'users.json';
-    $allUsers = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+    $allUsers = load_json($file);
 
     // Admin special login (plaintext email stored)
     $foundAdmin = false;
@@ -92,7 +75,7 @@ $isLoggedIn  = false;
             <summary style="color:var(--text-muted);font-size:0.82rem;cursor:pointer;letter-spacing:.05em;">Comptes de démonstration ▾</summary>
             <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:0.82rem;">
                 <div class="demo-badge" style="--c:var(--mauve)"><strong>⚙ Admin</strong> — admin@restaurant.fr / admin1234</div>
-                <div class="demo-badge" style="--c:var(--softlime)"><strong>🍳 Cuisiner</strong> — définissez <code>role:"cuisiner"</code> dans users.json</div>
+                <div class="demo-badge" style="--c:var(--softlime)"><strong>🍳 Cuisinier</strong> — définissez <code>role:"cuisinier"</code> dans users.json</div>
                 <div class="demo-badge" style="--c:var(--sapphire)"><strong>🛵 Livreur</strong> — définissez <code>role:"livreur"</code> dans users.json</div>
                 <div class="demo-badge" style="--c:var(--accent-btn)"><strong>👤 Client</strong> — créez un compte via le formulaire</div>
             </div>

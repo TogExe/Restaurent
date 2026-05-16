@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/inc/common.php';
 $currentPage = basename($_SERVER['PHP_SELF']);
 $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 ?>

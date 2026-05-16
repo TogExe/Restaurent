@@ -1,28 +1,12 @@
 <?php
-session_start();
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: connect.php"); exit();
-}
-
-function encryptData($data, $password) {
-    $iv = openssl_random_pseudo_bytes(16);
-    $encrypted = openssl_encrypt($data, 'aes-256-cbc', $password, 0, $iv);
-    return base64_encode($iv . $encrypted);
-}
-function decryptData($payload, $password) {
-    if (!$payload) return "";
-    $decoded   = base64_decode($payload);
-    $iv        = substr($decoded, 0, 16);
-    $encrypted = substr($decoded, 16);
-    return openssl_decrypt($encrypted, 'aes-256-cbc', $password, 0, $iv);
-}
-
-$userId    = $_SESSION['user_id'];
+require_once __DIR__ . '/inc/common.php';
+require_login();
+$userId    = current_user_id();
 $secretKey = $_SESSION['secret_key'];
 $userRole  = $_SESSION['user_role'] ?? 'client';
 
 $file     = 'users.json';
-$allUsers = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+$allUsers = load_json($file);
 
 if (!isset($allUsers[$userId]) || !is_array($allUsers[$userId])) {
     session_destroy(); header("Location: connect.php"); exit();
@@ -32,7 +16,7 @@ $currentUserData = $allUsers[$userId];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_address'])) {
     $allUsers[$userId]['address_enc'] = encryptData(trim($_POST['new_address']), $secretKey);
-    file_put_contents($file, json_encode($allUsers, JSON_PRETTY_PRINT));
+    save_json($file, $allUsers);
     $currentUserData = $allUsers[$userId];
 }
 
@@ -46,7 +30,7 @@ $address   = isset($currentUserData['address_enc']) ? decryptData($currentUserDa
 // Orders for clients
 $myOrders = [];
 if ($userRole === 'client') {
-    $allOrders = file_exists('commandes.json') ? json_decode(file_get_contents('commandes.json'), true) : [];
+    $allOrders = load_json('commandes.json');
     foreach ($allOrders as $oid => $o) {
         if (($o['client_id'] ?? '') === $userId) $myOrders[$oid] = $o;
     }

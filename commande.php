@@ -1,32 +1,18 @@
 <?php
-session_start();
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: connect.php"); exit();
-}
-if (($_SESSION['user_role'] ?? 'client') !== 'client') {
-    header("Location: index.php"); exit();
-}
+require_once __DIR__ . '/inc/common.php';
 
 $platsFile  = 'plats.json';
 $orderFile  = 'commandes.json';
-$plats      = file_exists($platsFile) ? json_decode(file_get_contents($platsFile), true) : [];
-$allOrders  = file_exists($orderFile) ? json_decode(file_get_contents($orderFile), true) : [];
-
-function decryptData($payload, $password) {
-    if (!$payload) return "";
-    $decoded   = base64_decode($payload);
-    $iv        = substr($decoded, 0, 16);
-    $encrypted = substr($decoded, 16);
-    return openssl_decrypt($encrypted, 'aes-256-cbc', $password, 0, $iv);
-}
+$plats      = load_json($platsFile);
+$allOrders  = load_json($orderFile);
 
 // Récupérer adresse depuis profil
 $usersFile = 'users.json';
-$allUsers  = file_exists($usersFile) ? json_decode(file_get_contents($usersFile), true) : [];
-$uid       = $_SESSION['user_id'];
-$secretKey = $_SESSION['secret_key'];
+$allUsers  = load_json($usersFile);
+$uid       = current_user_id();
+$secretKey = current_secret_key();
 $savedAddress = '';
-if (isset($allUsers[$uid]['address_enc'])) {
+if ($uid && isset($allUsers[$uid]['address_enc'])) {
     $savedAddress = decryptData($allUsers[$uid]['address_enc'], $secretKey);
 }
 
@@ -37,7 +23,7 @@ $orderSuccess = false;
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
     $items   = json_decode($_POST['cart_items'] ?? '[]', true);
     $address = trim($_POST['delivery_address'] ?? '');
-    $payRef  = 'PAY_DEMO_' . strtoupper(bin2hex(random_bytes(6)));
+    $payRef  = gen_pay_ref();
 
     if (empty($items)) {
         $message = "<div class='msg-error'>Votre panier est vide.</div>";
@@ -53,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
                 for ($i = 0; $i < $qty; $i++) $names[] = $plats[$pid]['name'];
             }
         }
-        $orderId = rand(10000000000, 99999999999);
+        $orderId = gen_order_id();
         $now     = date("j/m/Y-H:i:s");
         $delTime = date("j/m/Y-H:i", strtotime('+30 minutes'));
 
@@ -67,14 +53,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
             "ready"    => 0,
             "client_id"=> $uid,
         ];
-        file_put_contents($orderFile, json_encode($allOrders, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        save_json($orderFile, $allOrders);
         $orderSuccess = true;
         $message = "<div class='msg-success'>🎉 Commande #{$orderId} passée avec succès !<br>Référence paiement : <code>{$payRef}</code><br>Livraison estimée : {$delTime}</div>";
     }
 }
 
 $currentPage = basename($_SERVER['PHP_SELF']);
-$isLoggedIn  = true;
+$isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 ?>
 <!DOCTYPE html>
 <html lang="fr">

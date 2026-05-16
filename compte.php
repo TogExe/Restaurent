@@ -1,11 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/inc/common.php';
 
-function encryptData($data, $password) {
-    $iv        = openssl_random_pseudo_bytes(16);
-    $encrypted = openssl_encrypt($data, 'aes-256-cbc', $password, 0, $iv);
-    return base64_encode($iv . $encrypted);
-}
 
 $message = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -23,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $message = "<div class='msg-error'>Le mot de passe doit faire au moins 6 caractères.</div>";
     } else {
         $file     = 'users.json';
-        $allUsers = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+        $allUsers = load_json($file);
         $keyId    = hash('sha256', $email);
 
         if (isset($allUsers[$keyId])) {
@@ -36,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 "phone_enc"     => encryptData($phone,    $password),
                 "role"          => $role,
             ];
-            if (file_put_contents($file, json_encode($allUsers, JSON_PRETTY_PRINT))) {
+            if (save_json($file, $allUsers)) {
                 $message = "<div class='msg-success'>Compte créé ! <a href='connect.php' class='btn' style='max-width:200px;display:inline-block;margin-top:10px;'>Se connecter</a></div>";
             } else {
                 $message = "<div class='msg-error'>Erreur lors de la sauvegarde.</div>";

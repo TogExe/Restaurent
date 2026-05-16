@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/inc/common.php';
 $currentPage = basename($_SERVER['PHP_SELF']);
 $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 $userId      = $isLoggedIn ? $_SESSION['user_id'] : null;
@@ -7,7 +7,7 @@ $userId      = $isLoggedIn ? $_SESSION['user_id'] : null;
 if (!isset($_GET['id'])) { header("Location: menu.php"); exit(); }
 $platId    = $_GET['id'];
 $filePlats = 'plats.json';
-$plats     = file_exists($filePlats) ? json_decode(file_get_contents($filePlats), true) : [];
+$plats     = load_json($filePlats);
 if (!isset($plats[$platId])) { header("Location: menu.php"); exit(); }
 
 function generateAbsurdName($hash) {
@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_comment']) && $isL
     if (!empty($newComment)) {
         $plats[$platId]['comments'] = $plats[$platId]['comments'] ?? [];
         $plats[$platId]['comments'][$userId] = $newComment;
-        file_put_contents($filePlats, json_encode($plats, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        save_json($filePlats, $plats);
         header("Location: view.php?id=" . urlencode($platId)); exit();
     }
 }

@@ -9,8 +9,10 @@ $adminPassword = 'admin1234';
 $adminEmail    = 'admin@restaurant.fr';
 $adminName     = 'Administrateur';
 
+require_once __DIR__ . '/inc/common.php';
+
 $file     = 'users.json';
-$allUsers = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+$allUsers = load_json($file);
 
 // Remove any existing admin
 foreach ($allUsers as $key => $u) {
@@ -27,6 +29,6 @@ $allUsers['__admin__'] = [
     "role"          => "admin",
 ];
 
-file_put_contents($file, json_encode($allUsers, JSON_PRETTY_PRINT));
+save_json($file, $allUsers);
 echo "Admin account created. Email: $adminEmail / Password: $adminPassword\n";
 echo "Delete this file (init_admin.php) for security.\n";

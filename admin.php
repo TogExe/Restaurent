@@ -1,24 +1,15 @@
 <?php
-session_start();
-if (!isset($_SESSION['logged_in']) || $_SESSION['user_role'] !== 'admin') {
-    header("Location: connect.php"); exit();
-}
-
-function decryptData($payload, $password) {
-    if (!$payload) return "";
-    $decoded   = base64_decode($payload);
-    $iv        = substr($decoded, 0, 16);
-    $encrypted = substr($decoded, 16);
-    return openssl_decrypt($encrypted, 'aes-256-cbc', $password, 0, $iv);
-}
+require_once __DIR__ . '/inc/common.php';
+require_login('admin');
 
 $usersFile    = 'users.json';
 $commandsFile = 'commandes.json';
 $platsFile    = 'plats.json';
 
-$allUsers    = file_exists($usersFile)    ? json_decode(file_get_contents($usersFile),    true) : [];
-$allOrders   = file_exists($commandsFile) ? json_decode(file_get_contents($commandsFile), true) : [];
-$allPlats    = file_exists($platsFile)    ? json_decode(file_get_contents($platsFile),    true) : [];
+$allUsers    = load_json($usersFile);
+$allOrders   = load_json($commandsFile);
+$allPlats    = load_json($platsFile);
+
 
 $message = "";
 
@@ -28,9 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['change_role'])) {
     $newRole   = in_array($_POST['new_role'], ['client','cuisiner','livreur','admin']) ? $_POST['new_role'] : 'client';
     if (isset($allUsers[$targetId])) {
         $allUsers[$targetId]['role'] = $newRole;
-        file_put_contents($usersFile, json_encode($allUsers, JSON_PRETTY_PRINT));
+        save_json($usersFile, $allUsers);
         $message = "<div class='msg-success'>Rôle mis à jour.</div>";
-        $allUsers = json_decode(file_get_contents($usersFile), true);
+        $allUsers = load_json($usersFile);
     }
 }
 
@@ -39,9 +30,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_user'])) {
     $targetId = $_POST['user_id'];
     if (isset($allUsers[$targetId]) && ($allUsers[$targetId]['role'] ?? '') !== 'admin') {
         unset($allUsers[$targetId]);
-        file_put_contents($usersFile, json_encode($allUsers, JSON_PRETTY_PRINT));
+        save_json($usersFile, $allUsers);
         $message = "<div class='msg-success'>Utilisateur supprimé.</div>";
-        $allUsers = json_decode(file_get_contents($usersFile), true);
+        $allUsers = load_json($usersFile);
     }
 }
 
@@ -58,9 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_dish'])) {
             "is_vegetarian"    => isset($_POST['dish_veg']),
             "likes"            => [], "dislikes" => [], "comments" => []
         ];
-        file_put_contents($platsFile, json_encode($allPlats, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        save_json($platsFile, $allPlats);
         $message = "<div class='msg-success'>Plat ajouté.</div>";
-        $allPlats = json_decode(file_get_contents($platsFile), true);
+        $allPlats = load_json($platsFile);
     } else {
         $message = "<div class='msg-error'>ID de plat déjà existant ou invalide.</div>";
     }
@@ -71,9 +62,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_dish'])) {
     $dishId = $_POST['dish_id'];
     if (isset($allPlats[$dishId])) {
         unset($allPlats[$dishId]);
-        file_put_contents($platsFile, json_encode($allPlats, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        save_json($platsFile, $allPlats);
         $message = "<div class='msg-success'>Plat supprimé.</div>";
-        $allPlats = json_decode(file_get_contents($platsFile), true);
+        $allPlats = load_json($platsFile);
     }
 }
 
