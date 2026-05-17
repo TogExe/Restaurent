@@ -623,8 +623,13 @@ button:active, .btn:active {
     text-shadow: 0 0 15px var(--softlime-glow);
 }
 
-.item-details { color: var(--text-muted); line-height: 1.5; }
+.item-title-large { font-size: 1.4rem; }
+
+.item-details { color: var(--text-muted); margin-bottom: 15px; line-height: 1.5; }
 .item-details ul { margin-left: 20px; margin-top: 10px; }
+
+.empty-message { text-align: center; color: var(--text-muted); }
+.item-card-header.no-border { border-bottom: none; padding-bottom: 5px; }
 
 /* Like / Dislike buttons — override global button styles */
 .like-btn {
@@ -648,7 +653,17 @@ button:active, .btn:active {
 .like-btn:active {
     transform: scale(0.9) !important;
 }
+.like-btn.popping {
+    animation: likePop .4s cubic-bezier(.34,1.56,.64,1) both !important;
+}
 .like-btn::before { display: none !important; }
+
+@keyframes likePop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.55); }
+    70% { transform: scale(.88); }
+    100% { transform: scale(1); }
+}
 
 /* =========================================
    6. GRILLES & INFOS
@@ -853,6 +868,19 @@ button:active, .btn:active {
         td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
         tr:last-child td{border-bottom:none;}
         .role-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+.user-code{color:var(--text-muted);font-size:.78rem;}
+.inline-form{display:inline-flex;gap:8px;align-items:center;}
+.inline-form-small{display:inline;}
+.system-note{color:var(--text-muted);font-size:.8rem;}
+.item-card-row{flex-direction:row;align-items:flex-start;gap:20px;}
+.item-card-img{width:140px;height:140px;object-fit:cover;flex-shrink:0;}
+.item-card-content{flex:1;display:flex;flex-direction:column;justify-content:space-between;min-height:140px;}
+.item-title-large{font-size:1.4rem;}
+.item-price-large{font-size:1.4rem;}
+.item-details{color:var(--text-muted);margin-bottom:15px;line-height:1.5;}
+.item-actions{display:flex;gap:20px;font-weight:bold;font-size:.9em;border-top:1px solid var(--overlay);padding-top:10px;align-items:center;}
+.link-sapphire{color:var(--sapphire);text-decoration:none;}
+.menu-order-link{margin-left:auto;color:var(--accent-btn);text-decoration:none;font-size:.85rem;}
         .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:30px;}
         .stat-card{background:rgba(255,255,255,.04);border:1px solid var(--overlay);border-radius:12px;padding:20px;text-align:center;}
         .stat-card .val{font-size:2rem;font-weight:700;color:var(--mauve);}

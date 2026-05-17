@@ -16,6 +16,8 @@ if (!isset($allUsers[$userId]) || !is_array($allUsers[$userId])) {
     exit();
 }
 
+ensure_ban();
+
 $currentUserData = $allUsers[$userId];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_address'])) {

@@ -75,6 +75,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     <meta charset="UTF-8">
     <title>Menu — Le Restaurant</title>
     <link rel="stylesheet" href="style.css">
+<<<<<<< HEAD
     <style>
         /* ── Cart Sidebar ───────────────────────────────────── */
         #cart-sidebar {
@@ -457,6 +458,10 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             #cart-sidebar { width: 100vw; right: -100vw; }
         }
     </style>
+=======
+    <script src="scripts.js" defer></script>
+
+>>>>>>> 2d2bba251205532fcdf067575e3b129dee32b17f
 </head>
 
 <body>

@@ -3,6 +3,13 @@ require_once __DIR__ . '/inc/common.php';
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 
+ensure_ban();
+
+if (!isset($_GET['id'])) { header("Location: menu.php"); exit(); }
+$platId    = $_GET['id'];
+$filePlats = 'plats.json';
+$plats     = load_json($filePlats);
+if (!isset($plats[$platId])) { header("Location: menu.php"); exit(); }
 $isLoggedIn = isset($_SESSION['logged_in'])
     && $_SESSION['logged_in'] === true;
 

@@ -14,15 +14,15 @@ $userRole = $_SESSION['user_role'] ?? 'client';
         <?php if ($isLoggedIn): ?>
 
             <?php if ($userRole === 'admin'): ?>
-                <li><a href="admin.php" class="<?= $currentPage == 'admin.php' ? 'active' : '' ?>" style="color:var(--mauve);">⚙ Admin</a></li>
+                <li><a href="admin.php" class="<?= ($currentPage == 'admin.php' ? 'active ' : '') ?>nav-link-admin">⚙ Admin</a></li>
             <?php endif; ?>
 
             <?php if ($userRole === 'cuisinier'): ?>
-                <li><a href="cuisinier.php" class="<?= $currentPage == 'cuisinier.php' ? 'active' : '' ?>" style="color:var(--softlime);">🍳 Cuisine</a></li>
+                <li><a href="cuisinier.php" class="<?= ($currentPage == 'cuisinier.php' ? 'active ' : '') ?>nav-link-cuisinier">🍳 Cuisine</a></li>
             <?php endif; ?>
 
             <?php if ($userRole === 'livreur'): ?>
-                <li><a href="livreur.php" class="<?= $currentPage == 'livreur.php' ? 'active' : '' ?>" style="color:var(--sapphire);">🛵 Livraisons</a></li>
+                <li><a href="livreur.php" class="<?= ($currentPage == 'livreur.php' ? 'active ' : '') ?>nav-link-livreur">🛵 Livraisons</a></li>
             <?php endif; ?>
 
             <?php if ($userRole === 'client'): ?>

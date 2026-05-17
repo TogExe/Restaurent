@@ -62,6 +62,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_dish'])) {
     }
 }
 
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ban_user'])) {
+    $targetId = $_POST['user_id'];
+    if (isset($allUsers[$targetId]) && ($allUsers[$targetId]['role'] ?? '') !== 'admin') {
+        $allUsers[$targetId]['is_banned'] = true;
+        save_json($usersFile, $allUsers);
+        $message = "<div class='msg-success'>Utilisateur banni.</div>";
+        $allUsers = load_json($usersFile);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['unban_user'])) {
+    $targetId = $_POST['user_id'];
+    if (isset($allUsers[$targetId]) && ($allUsers[$targetId]['role'] ?? '') !== 'admin') {
+        unset($allUsers[$targetId]['is_banned']);
+        save_json($usersFile, $allUsers);
+        $message = "<div class='msg-success'>Utilisateur débanni.</div>";
+        $allUsers = load_json($usersFile);
+    }
+}
+
 // --- DELETE DISH ---
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_dish'])) {
     $dishId = $_POST['dish_id'];
@@ -85,9 +105,16 @@ $statusLabels = [
     4 => 'Livrée'
 ];
 
+$roleBadge = [
+    'admin'    => 'var(--mauve)',
+    'cuisinier' => 'var(--softlime)',
+    'livreur'  => 'var(--sapphire)',
+    'client'   => 'var(--text-muted)'
+];
+
 $roleIcon = [
     'admin'    => '⚙',
-    'cuisiner' => '🍳',
+    'cuisinier' => '🍳',
     'livreur'  => '🛵',
     'client'   => '👤'
 ];
@@ -144,9 +171,9 @@ $isLoggedIn  = true;
     <div class="glass-panel large admin-panel">
 
         <div class="admin-tabs">
-            <button class="tab-btn active" onclick="switchTab('users', this)">👥 Utilisateurs</button>
-            <button class="tab-btn" onclick="switchTab('orders', this)">📋 Commandes</button>
-            <button class="tab-btn" onclick="switchTab('dishes', this)">🍽 Menu</button>
+            <button class="tab-btn active" data-tab-target="users">👥 Utilisateurs</button>
+            <button class="tab-btn" data-tab-target="orders">📋 Commandes</button>
+            <button class="tab-btn" data-tab-target="dishes">🍽 Menu</button>
         </div>
 
         <!-- TAB: USERS -->
@@ -157,7 +184,7 @@ $isLoggedIn  = true;
                         <th>ID 8c</th>
                         <th>Rôle</th>
                         <th>Modifier</th>
-                        <th>Supprimer</th>
+                        <th>Supprimer / Bannir </th>
                     </tr>
                 </thead>
 
@@ -165,49 +192,46 @@ $isLoggedIn  = true;
                 <?php foreach ($allUsers as $uid => $u):
                     $role = $u['role'] ?? 'client';
                     $name = $u['plain_name'] ?? substr($uid, 0, 8) . '…';
+                    $color = $roleBadge[$role] ?? 'var(--text-muted)';
                     $icon = $roleIcon[$role] ?? '👤';
                 ?>
-                    <tr>
-                        <td>
-                            <code class="admin-code-muted">
-                                <?= htmlspecialchars($name) ?>
-                            </code>
-                        </td>
-
-                        <td>
-                            <span class="role-pill role-<?= htmlspecialchars($role) ?>">
-                                <?= $icon ?> <?= htmlspecialchars($role) ?>
-                            </span>
-                        </td>
-
-                        <td>
-                            <?php if ($role !== 'admin'): ?>
-                                <form method="POST" class="admin-form-inline">
-                                    <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
-
-                                    <select name="new_role" class="inline">
-                                        <option value="client" <?= $role === 'client' ? 'selected' : '' ?>>👤 Client</option>
-                                        <option value="cuisiner" <?= $role === 'cuisiner' ? 'selected' : '' ?>>🍳 Cuisiner</option>
-                                        <option value="livreur" <?= $role === 'livreur' ? 'selected' : '' ?>>🛵 Livreur</option>
-                                        <option value="admin" <?= $role === 'admin' ? 'selected' : '' ?>>⚙ Admin</option>
-                                    </select>
-
-                                    <button type="submit" name="change_role" class="btn btn-sm">OK</button>
-                                </form>
-                            <?php else: ?>
-                                <span class="admin-muted">Compte système</span>
-                            <?php endif; ?>
-                        </td>
-
-                        <td>
-                            <?php if ($role !== 'admin'): ?>
-                                <form method="POST" class="admin-form-delete" onsubmit="return confirm('Supprimer cet utilisateur ?');">
-                                    <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
-                                    <button type="submit" name="delete_user" class="btn-danger-sm">🗑</button>
-                                </form>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
+                <tr>
+                    <td><code class="user-code"><?= htmlspecialchars($name) ?></code></td>
+                    <td><span class="role-pill" style="background:rgba(255,255,255,.06);color:<?= $color ?>;border:1px solid <?= $color ?>;"><?= $icon ?> <?= $role ?></span></td>
+                    <td>
+                        <?php if ($role !== 'admin'): ?>
+                        <form method="POST" class="inline-form">
+                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
+                            <select name="new_role" class="inline">
+                                <option value="client"   <?= $role==='client'   ?'selected':'' ?>>👤 Client</option>
+                                <option value="cuisiner" <?= $role==='cuisiner' ?'selected':'' ?>>🍳 Cuisiner</option>
+                                <option value="livreur"  <?= $role==='livreur'  ?'selected':'' ?>>🛵 Livreur</option>
+                                <option value="admin"    <?= $role==='admin'    ?'selected':'' ?>>⚙ Admin</option>
+                            </select>
+                            <button type="submit" name="change_role" class="btn btn-sm">OK</button>
+                        </form>
+                        <?php else: echo '<span class="system-note">Compte système</span>'; endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($role !== 'admin'): ?>
+                        <form method="POST" data-confirm="Supprimer cet utilisateur ?" class="inline-form-small">
+                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
+                            <button type="submit" name="delete_user" class="btn-danger-sm">🗑</button>
+                        </form>
+                        <?php if (!isset($u['is_banned']) || $u['is_banned'] !== true): ?>
+                        <form method="POST" data-confirm="Bannir cet utilisateur ?" class="inline-form-small">
+                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
+                            <button type="submit" name="ban_user" class="btn-danger-sm">🚫</button>
+                        </form>
+                        <?php else: ?>
+                        <form method="POST" data-confirm="Débannir cet utilisateur ?" class="inline-form-small">
+                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
+                            <button type="submit" name="unban_user" class="btn-success-sm">✅</button>
+                        </form>
+                        <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
@@ -298,7 +322,7 @@ $isLoggedIn  = true;
                         </td>
 
                         <td>
-                            <form method="POST" class="admin-form-delete" onsubmit="return confirm('Supprimer ce plat ?');">
+                            <form method="POST" class="admin-form-delete" data-confirm="Supprimer ce plat ?">
                                 <input type="hidden" name="dish_id" value="<?= htmlspecialchars($pid) ?>">
                                 <button type="submit" name="delete_dish" class="btn-danger-sm">🗑</button>
                             </form>
@@ -346,21 +370,6 @@ $isLoggedIn  = true;
 
     </div>
 </main>
-
-<script>
-function switchTab(id, el) {
-    document.querySelectorAll('.tab-panel').forEach(panel => {
-        panel.classList.remove('active');
-    });
-
-    document.querySelectorAll('.tab-btn').forEach(button => {
-        button.classList.remove('active');
-    });
-
-    document.getElementById('tab-' + id).classList.add('active');
-    el.classList.add('active');
-}
-</script>
-
+<script src="scripts.js"></script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/inc/common.php';
 
+ensure_ban();
+// Require cuisinier or admin
 require_login(['cuisinier','admin']);
 
 $allorders      = load_json('commandes.json');

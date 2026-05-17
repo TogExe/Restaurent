@@ -1,15 +1,10 @@
 <?php
 require_once __DIR__ . '/inc/common.php';
 
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header("Location: connect.php");
-    exit();
-}
+ensure_ban();
+if (isset($_GET['logout'])) { session_destroy(); header("Location: connect.php"); exit(); }
 
-if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-    redirectByRole($_SESSION['user_role'] ?? 'client');
-}
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) redirectByRole($_SESSION['user_role'] ?? 'client');
 
 $message = "";
 
@@ -47,12 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!$foundAdmin) {
 
         $userKeyId = hash('sha256', $email);
-
-        if (
-            isset($allUsers[$userKeyId]) &&
-            password_verify($password, $allUsers[$userKeyId]['password_auth'])
-        ) {
-
+        if (isset($allUsers[$userKeyId]) && password_verify($password, $allUsers[$userKeyId]['password_auth'])) {
+            if (!isset($allUsers[$userKeyId]['is_banned']) || $allUsers[$userKeyId]['is_banned'] !== true) {
             $role = $allUsers[$userKeyId]['role'] ?? 'client';
 
             $_SESSION['logged_in']     = true;
@@ -63,7 +54,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_fullname'] = decryptData($allUsers[$userKeyId]['fullname_enc'], $password);
 
             redirectByRole($role);
-
+            }
+            else { $message = "<div class='msg-error'>Votre compte a été banni. Contactez le support.</div>"; }
         } else {
             $message = "<div class='msg-error'>Identifiants incorrects.</div>";
         }

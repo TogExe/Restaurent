@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/inc/common.php';
-
+ensure_ban();
 $currentPage = basename($_SERVER['PHP_SELF']);
 
 $isLoggedIn = isset($_SESSION['logged_in']) 

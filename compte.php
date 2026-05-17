@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/inc/common.php';
 
+ensure_ban();
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
