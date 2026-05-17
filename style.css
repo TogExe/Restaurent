@@ -956,3 +956,61 @@ button:active, .btn:active {
 .demo-client strong {
     color: var(--accent-btn);
 }
+
+
+
+/* =========================================
+   CUISINIER — CLASSES PROPRES
+   ========================================= */
+
+.search-panel {
+    max-width: 850px;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: var(--base);
+    color: white;
+    border: 1px solid var(--overlay);
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.order-title {
+    color: var(--sapphire);
+    margin-bottom: 10px;
+}
+
+.order-items {
+    margin-top: 8px;
+}
+
+.order-ready-badge {
+    background: linear-gradient(
+        135deg,
+        var(--softlime),
+        #5aab85
+    );
+
+    color: #0a0a1a;
+}
+
+.status-paid {
+    color: var(--text-muted);
+}
+
+.status-progress {
+    color: var(--accent-btn);
+}
+
+.status-ready {
+    color: var(--softlime);
+}
+
+.empty-orders {
+    color: var(--text-muted);
+}
