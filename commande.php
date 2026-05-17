@@ -142,52 +142,6 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 
 <?php include '_nav.php'; ?>
 
-<<<<<<< HEAD
-=======
-<div class="modal-overlay" id="payModal">
-    <div class="modal-box">
-        <h2 class="modal-title">Paiement</h2>
-        <p class="modal-subtitle">Simulation de paiement sécurisé</p>
-
-        <div class="pay-badge">
-            🔒 Ceci est un paiement de démonstration — aucune donnée réelle n'est traitée.
-        </div>
-
-        <div class="form-group">
-            <label>Titulaire de la carte</label>
-            <input type="text" id="cardName" placeholder="Jean Dupont">
-        </div>
-
-        <div class="form-group">
-            <label>Numéro de carte</label>
-            <input type="text" id="cardNum" placeholder="4242 4242 4242 4242" maxlength="19">
-        </div>
-
-        <div class="card-input">
-            <div class="form-group card-field">
-                <label>Expiration</label>
-                <input type="text" id="cardExp" placeholder="MM/AA" maxlength="5">
-            </div>
-
-            <div class="form-group card-field">
-                <label>CVV</label>
-                <input type="password" id="cardCvv" placeholder="•••" maxlength="3">
-            </div>
-        </div>
-
-        <div class="modal-actions">
-            <button type="button" id="payBtn" class="modal-pay-btn">
-                💳 Payer <span id="payAmt"></span>
-            </button>
-
-            <button type="button" id="payCancel" class="modal-cancel-btn">
-                Annuler
-            </button>
-        </div>
-    </div>
-</div>
-
->>>>>>> 2d2bba251205532fcdf067575e3b129dee32b17f
 <main class="main-container">
     <div class="page-header">
         <h1>Commander</h1>
@@ -221,7 +175,6 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
                                 <?= htmlspecialchars(mb_strimwidth($p['text_description'], 0, 70, '…')) ?>
                             </p>
 
-<<<<<<< HEAD
                             <div class="qty-ctrl">
                                 <button class="qty-btn" onclick="changeQty('<?= $pid ?>', <?= $p['price'] ?>, '<?= addslashes($p['name']) ?>', -1)">−</button>
                                 <span class="qty-val" id="qty-<?= $pid ?>">0</span>
@@ -230,74 +183,6 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
                         </div>
                     </div>
                 <?php endforeach; ?>
-=======
-                                <div class="dish-price">
-                                    <?= number_format($p['price'], 2, ',', ' ') ?> €
-                                </div>
-
-                                <p class="dish-description">
-                                    <?= htmlspecialchars(mb_strimwidth($p['text_description'], 0, 70, '…')) ?>
-                                </p>
-
-                                <div class="qty-ctrl">
-                                    <button type="button" class="qty-btn" data-id="<?= htmlspecialchars($pid) ?>" data-price="<?= htmlspecialchars($p['price']) ?>" data-name="<?= htmlspecialchars($p['name'], ENT_QUOTES) ?>" data-delta="-1">−</button>
-                                    <span class="qty-val" id="qty-<?= $pid ?>">0</span>
-                                    <button type="button" class="qty-btn" data-id="<?= htmlspecialchars($pid) ?>" data-price="<?= htmlspecialchars($p['price']) ?>" data-name="<?= htmlspecialchars($p['name'], ENT_QUOTES) ?>" data-delta="1">+</button>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-
-            <div class="cart-panel">
-                <h2 class="cart-title">🛒 Mon Panier</h2>
-
-                <div id="cartItems">
-                    <p class="cart-empty">Aucun article pour l'instant.</p>
-                </div>
-
-                <div class="cart-total is-hidden" id="cartTotal">
-                    <span>Total</span>
-                    <span id="totalVal">0,00 €</span>
-                </div>
-
-                <form id="orderForm" method="POST" class="hidden-form">
-                    <div class="cart-address-fields" style="margin-top: 20px;">
-                        <label class="info-display-label">Adresse de livraison</label>
-                        
-                        <div class="form-group">
-                            <input type="text" id="addr_street" name="addr_street" value="<?= htmlspecialchars($postedAddressParts['street']) ?>" placeholder="Rue / Avenue">
-                        </div>
-                        
-                        <div class="lined">
-                            <div class="form-group">
-                                <input type="text" id="addr_number" name="addr_number" value="<?= htmlspecialchars($postedAddressParts['number']) ?>" placeholder="N°">
-                            </div>
-                            <div class="form-group">
-                                <input type="text" id="addr_comp" name="addr_comp" value="<?= htmlspecialchars($postedAddressParts['complement']) ?>" placeholder="Complément (Bât, Appt)">
-                            </div>
-                        </div>
-                        
-                        <div class="lined">
-                            <div class="form-group">
-                                <input type="text" id="addr_postal" name="addr_postal" value="<?= htmlspecialchars($postedAddressParts['postal']) ?>" placeholder="Code Postal">
-                            </div>
-                            <div class="form-group">
-                                <input type="text" id="addr_city" name="addr_city" value="<?= htmlspecialchars($postedAddressParts['city']) ?>" placeholder="Ville">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="button" id="orderBtn" disabled class="order-btn-disabled">
-                        Procéder au paiement
-                    </button>
-
-                    <input type="hidden" name="place_order" value="1">
-                    <input type="hidden" name="cart_items" id="cartData">
-                    <input type="hidden" name="delivery_address" id="addrData">
-                </form>
->>>>>>> 2d2bba251205532fcdf067575e3b129dee32b17f
             </div>
         </div>
 
@@ -330,7 +215,6 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
         </div>
     </div>
 </main>
-<<<<<<< HEAD
 
 <script>
 const cart   = {};
@@ -424,7 +308,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-=======
->>>>>>> 2d2bba251205532fcdf067575e3b129dee32b17f
 </body>
 </html>
