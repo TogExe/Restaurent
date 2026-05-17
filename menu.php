@@ -47,36 +47,35 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     <section class="glass-panel large">
         <ul class="item-list">
         <?php if (empty($plats)): ?>
-            <p style="text-align:center;color:var(--text-muted);">Aucun plat disponible.</p>
+            <p class="empty-message">Aucun plat disponible.</p>
         <?php else: foreach ($plats as $id => $plat): ?>
-            <li class="item-card" style="flex-direction:row;align-items:flex-start;gap:20px;">
+            <li class="item-card item-card-row">
                 <?php if (!empty($plat['image_url'])): ?>
                     <a href="view.php?id=<?= urlencode($id) ?>">
-                        <img src="<?= htmlspecialchars($plat['image_url']) ?>" alt="<?= htmlspecialchars($plat['name']) ?>"
-                             style="width:140px;height:140px;object-fit:cover;border-radius:10px;border:1px solid var(--overlay);flex-shrink:0;">
+                        <img class="item-card-img" src="<?= htmlspecialchars($plat['image_url']) ?>" alt="<?= htmlspecialchars($plat['name']) ?>">
                     </a>
                 <?php endif; ?>
-                <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;min-height:140px;">
+                <div class="item-card-content">
                     <div>
-                        <div class="item-card-header" style="border-bottom:none;padding-bottom:5px;">
-                            <span class="item-title" style="font-size:1.4rem;">
-                                <a href="view.php?id=<?= urlencode($id) ?>" style="color:inherit;text-decoration:none;"><?= htmlspecialchars($plat['name']) ?></a>
-                                <?php if ($plat['is_vegetarian'] ?? false): ?><span style="font-size:.7em;color:var(--softlime);margin-left:10px;">🌱 Végétarien</span><?php endif; ?>
+                        <div class="item-card-header no-border">
+                            <span class="item-title item-title-large">
+                                <a href="view.php?id=<?= urlencode($id) ?>"><?= htmlspecialchars($plat['name']) ?></a>
+                                <?php if ($plat['is_vegetarian'] ?? false): ?><span class="badge-vegetarian">🌱 Végétarien</span><?php endif; ?>
                             </span>
-                            <span class="item-price" style="font-size:1.4rem;"><?= number_format($plat['price'],2,',',' ') ?> €</span>
+                            <span class="item-price item-price-large"><?= number_format($plat['price'],2,',',' ') ?> €</span>
                         </div>
-                        <p style="color:var(--text-muted);margin-bottom:15px;line-height:1.5;"><?= htmlspecialchars($plat['text_description']) ?></p>
+                        <p class="item-details"><?= htmlspecialchars($plat['text_description']) ?></p>
                     </div>
-                    <div style="display:flex;gap:20px;font-weight:bold;font-size:.9em;border-top:1px solid var(--overlay);padding-top:10px;align-items:center;">
-                        <button class="like-btn" data-id="<?= urlencode($id) ?>" data-action="like" style="background:none;border:none;cursor:pointer;color:var(--softlime);font-weight:bold;font-size:.9em;padding:0;margin:0;width:auto;">
+                    <div class="item-actions">
+                        <button class="like-btn" data-id="<?= urlencode($id) ?>" data-action="like">
                             👍 <span class="like-count"><?= count($plat['likes'] ?? []) ?></span>
                         </button>
-                        <button class="like-btn" data-id="<?= urlencode($id) ?>" data-action="dislike" style="background:none;border:none;cursor:pointer;color:#f38ba8;font-weight:bold;font-size:.9em;padding:0;margin:0;width:auto;">
+                        <button class="like-btn" data-id="<?= urlencode($id) ?>" data-action="dislike">
                             👎 <span class="dislike-count"><?= count($plat['dislikes'] ?? []) ?></span>
                         </button>
-                        <a href="view.php?id=<?= urlencode($id) ?>" style="color:var(--sapphire);text-decoration:none;">💬 <?= count($plat['comments'] ?? []) ?> avis</a>
+                        <a href="view.php?id=<?= urlencode($id) ?>" class="link-sapphire">💬 <?= count($plat['comments'] ?? []) ?> avis</a>
                         <?php if ($isLoggedIn && ($_SESSION['user_role']??'') === 'client'): ?>
-                            <a href="commande.php" style="margin-left:auto;color:var(--accent-btn);text-decoration:none;font-size:.85rem;">Commander →</a>
+                            <a href="commande.php" class="menu-order-link">Commander →</a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -85,27 +84,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         </ul>
     </section>
 </main>
-<style>
-@keyframes likePop{0%{transform:scale(1)}40%{transform:scale(1.55)}70%{transform:scale(.88)}100%{transform:scale(1)}}
-.like-btn.popping{animation:likePop .4s cubic-bezier(.34,1.56,.64,1) both}
-.like-btn:disabled{opacity:.5;cursor:not-allowed}
-</style>
-<script>
-document.querySelectorAll('.like-btn').forEach(btn => {
-    btn.addEventListener('click', async function() {
-        const id = this.dataset.id, action = this.dataset.action, card = this.closest('li');
-        card.querySelectorAll('.like-btn').forEach(b => b.disabled = true);
-        this.classList.remove('popping'); void this.offsetWidth; this.classList.add('popping');
-        this.addEventListener('animationend', () => this.classList.remove('popping'), {once:true});
-        try {
-            const res = await fetch(`menu.php?action=${action}&id=${encodeURIComponent(id)}&ajax=1`);
-            const data = await res.json();
-            card.querySelector('.like-count').textContent    = data.likes;
-            card.querySelector('.dislike-count').textContent = data.dislikes;
-        } catch(e){ console.error(e); }
-        finally { card.querySelectorAll('.like-btn').forEach(b => b.disabled = false); }
-    });
-});
-</script>
+<script src="scripts.js"></script>
 </body>
 </html>

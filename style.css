@@ -380,8 +380,13 @@ button:active, .btn:active {
     text-shadow: 0 0 15px var(--softlime-glow);
 }
 
-.item-details { color: var(--text-muted); line-height: 1.5; }
+.item-title-large { font-size: 1.4rem; }
+
+.item-details { color: var(--text-muted); margin-bottom: 15px; line-height: 1.5; }
 .item-details ul { margin-left: 20px; margin-top: 10px; }
+
+.empty-message { text-align: center; color: var(--text-muted); }
+.item-card-header.no-border { border-bottom: none; padding-bottom: 5px; }
 
 /* Like / Dislike buttons — override global button styles */
 .like-btn {
@@ -405,7 +410,17 @@ button:active, .btn:active {
 .like-btn:active {
     transform: scale(0.9) !important;
 }
+.like-btn.popping {
+    animation: likePop .4s cubic-bezier(.34,1.56,.64,1) both !important;
+}
 .like-btn::before { display: none !important; }
+
+@keyframes likePop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.55); }
+    70% { transform: scale(.88); }
+    100% { transform: scale(1); }
+}
 
 /* =========================================
    6. GRILLES & INFOS
@@ -610,6 +625,19 @@ button:active, .btn:active {
         td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
         tr:last-child td{border-bottom:none;}
         .role-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+.user-code{color:var(--text-muted);font-size:.78rem;}
+.inline-form{display:inline-flex;gap:8px;align-items:center;}
+.inline-form-small{display:inline;}
+.system-note{color:var(--text-muted);font-size:.8rem;}
+.item-card-row{flex-direction:row;align-items:flex-start;gap:20px;}
+.item-card-img{width:140px;height:140px;object-fit:cover;flex-shrink:0;}
+.item-card-content{flex:1;display:flex;flex-direction:column;justify-content:space-between;min-height:140px;}
+.item-title-large{font-size:1.4rem;}
+.item-price-large{font-size:1.4rem;}
+.item-details{color:var(--text-muted);margin-bottom:15px;line-height:1.5;}
+.item-actions{display:flex;gap:20px;font-weight:bold;font-size:.9em;border-top:1px solid var(--overlay);padding-top:10px;align-items:center;}
+.link-sapphire{color:var(--sapphire);text-decoration:none;}
+.menu-order-link{margin-left:auto;color:var(--accent-btn);text-decoration:none;font-size:.85rem;}
         .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:30px;}
         .stat-card{background:rgba(255,255,255,.04);border:1px solid var(--overlay);border-radius:12px;padding:20px;text-align:center;}
         .stat-card .val{font-size:2rem;font-weight:700;color:var(--mauve);}
@@ -618,3 +646,432 @@ button:active, .btn:active {
         .btn-sm{display:inline-block;width:auto;padding:6px 14px;font-size:.78rem;margin-top:0;border-radius:6px;letter-spacing:.05em;}
         .btn-danger-sm{background:linear-gradient(135deg,var(--rose),#ff4a6e);color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.78rem;font-family:'Outfit',sans-serif;font-weight:700;}
         .btn-danger-sm:hover{opacity:.85;transform:translateY(-1px);}
+
+
+
+/* =========================================
+   ADMIN — CLASSES PROPRES
+   ========================================= */
+
+.admin-stat-grid {
+    max-width: 850px;
+    width: 100%;
+}
+
+.admin-panel {
+    max-width: 950px;
+}
+
+.revenue-value {
+    color: var(--softlime) !important;
+}
+
+.admin-form-inline {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.admin-form-delete {
+    display: inline;
+}
+
+.admin-code-muted,
+.admin-code-small {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+.admin-code-small {
+    font-size: 0.75rem;
+}
+
+.admin-muted {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.admin-muted-small {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+.admin-address {
+    font-size: 0.82rem;
+}
+
+.admin-price {
+    color: var(--softlime);
+    font-weight: 700;
+}
+
+.admin-dish-name {
+    font-weight: 600;
+    color: var(--sapphire);
+}
+
+.admin-table-spaced {
+    margin-bottom: 30px;
+}
+
+.admin-separator {
+    border: none;
+    border-top: 1px solid var(--overlay);
+    margin: 20px 0;
+}
+
+.admin-subtitle {
+    color: var(--sapphire);
+    margin-bottom: 16px;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-row input {
+    width: auto;
+    padding: 0;
+}
+
+.checkbox-row label {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+/* Rôles */
+.role-admin {
+    background: rgba(255,255,255,.06);
+    color: var(--mauve);
+    border: 1px solid var(--mauve);
+}
+
+.role-cuisiner {
+    background: rgba(255,255,255,.06);
+    color: var(--softlime);
+    border: 1px solid var(--softlime);
+}
+
+.role-livreur {
+    background: rgba(255,255,255,.06);
+    color: var(--sapphire);
+    border: 1px solid var(--sapphire);
+}
+
+.role-client {
+    background: rgba(255,255,255,.06);
+    color: var(--text-muted);
+    border: 1px solid var(--text-muted);
+}
+
+/* Statuts commandes */
+.status-0 {
+    background: rgba(255,255,255,.05);
+    color: var(--text-muted);
+    border: 1px solid var(--text-muted);
+}
+
+.status-1 {
+    background: rgba(255,255,255,.05);
+    color: var(--accent-btn);
+    border: 1px solid var(--accent-btn);
+}
+
+.status-2 {
+    background: rgba(255,255,255,.05);
+    color: var(--softlime);
+    border: 1px solid var(--softlime);
+}
+
+.status-3 {
+    background: rgba(255,255,255,.05);
+    color: var(--sapphire);
+    border: 1px solid var(--sapphire);
+}
+
+.status-4 {
+    background: rgba(255,255,255,.05);
+    color: var(--mauve);
+    border: 1px solid var(--mauve);
+}
+
+
+
+/* =========================================
+   COMMANDE — CLASSES PROPRES
+   ========================================= */
+
+.modal-title {
+    color: var(--mauve);
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 6px;
+}
+
+.modal-subtitle {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin-bottom: 20px;
+}
+
+.card-field {
+    flex: 1;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.modal-pay-btn {
+    flex: 1;
+}
+
+.modal-cancel-btn {
+    flex: 0 0 auto;
+    width: auto;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    border: 1px solid var(--overlay);
+    box-shadow: none;
+}
+
+.modal-cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+}
+
+.dish-veg-icon {
+    color: var(--softlime);
+    font-size: 0.75em;
+}
+
+.dish-description {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+
+.cart-title {
+    color: var(--sapphire);
+    margin-bottom: 18px;
+}
+
+.cart-empty {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.88rem;
+}
+
+.cart-item-price {
+    color: var(--softlime);
+}
+
+.is-hidden {
+    display: none !important;
+}
+
+.cart-address {
+    margin-top: 20px;
+}
+
+.order-btn-disabled {
+    opacity: 0.4;
+}
+
+.hidden-form {
+    display: none;
+}
+
+.order-success-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.return-menu-btn {
+    max-width: 260px;
+    display: inline-block;
+}
+
+
+/* =========================================
+   INSCRIPTION — CLASSES PROPRES
+   ========================================= */
+
+.signup-login-btn {
+    max-width: 200px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+
+
+/* =========================================
+   CONNEXION — CLASSES PROPRES
+   ========================================= */
+
+.login-panel {
+    max-width: 460px;
+}
+
+.demo-details {
+    margin-top: 25px;
+    border-top: 1px solid var(--overlay);
+    padding-top: 15px;
+}
+
+.demo-summary {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+}
+
+.demo-list {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.82rem;
+}
+
+.demo-badge {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--overlay);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text-muted);
+}
+
+.demo-badge strong {
+    font-weight: 700;
+}
+
+/* Variantes */
+
+.demo-admin {
+    border-left: 3px solid var(--mauve);
+}
+
+.demo-admin strong {
+    color: var(--mauve);
+}
+
+.demo-cook {
+    border-left: 3px solid var(--softlime);
+}
+
+.demo-cook strong {
+    color: var(--softlime);
+}
+
+.demo-delivery {
+    border-left: 3px solid var(--sapphire);
+}
+
+.demo-delivery strong {
+    color: var(--sapphire);
+}
+
+.demo-client {
+    border-left: 3px solid var(--accent-btn);
+}
+
+.demo-client strong {
+    color: var(--accent-btn);
+}
+
+
+
+/* =========================================
+   CUISINIER — CLASSES PROPRES
+   ========================================= */
+
+.search-panel {
+    max-width: 850px;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: var(--base);
+    color: white;
+    border: 1px solid var(--overlay);
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.order-title {
+    color: var(--sapphire);
+    margin-bottom: 10px;
+}
+
+.order-items {
+    margin-top: 8px;
+}
+
+.order-ready-badge {
+    background: linear-gradient(
+        135deg,
+        var(--softlime),
+        #5aab85
+    );
+
+    color: #0a0a1a;
+}
+
+.status-paid {
+    color: var(--text-muted);
+}
+
+.status-progress {
+    color: var(--accent-btn);
+}
+
+.status-ready {
+    color: var(--softlime);
+}
+
+.empty-orders {
+    color: var(--text-muted);
+}
+
+
+/* =========================================
+   HOME — CLASSES PROPRES
+   ========================================= */
+
+.home-actions {
+    justify-content: center;
+    max-width: 400px;
+    margin: 30px auto 0;
+}
+
+.home-order-btn {
+    background: linear-gradient(
+        135deg,
+        var(--softlime),
+        #5aab85
+    );
+
+    color: #0a0a1a;
+}
+
+.info-title-blue {
+    color: var(--sapphire);
+}
+
+.info-title-green {
+    color: var(--softlime);
+}
+
+.hours-list {
+    list-style: none;
+}
