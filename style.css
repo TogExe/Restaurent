@@ -78,6 +78,182 @@ nav .logo h2 {
     letter-spacing: 0.02em;
 }
 
+
+
+/* =========================================
+   VIEW — CLASSES PROPRES
+   ========================================= */
+
+.view-back-link {
+    color: var(--sapphire);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.view-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--overlay);
+    margin-bottom: 20px;
+}
+
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.view-title {
+    color: var(--mauve);
+    font-family: 'Playfair Display', serif;
+}
+
+.view-price {
+    font-size: 1.8rem;
+}
+
+.view-veg-badge {
+    color: var(--base);
+    background: var(--softlime);
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+}
+
+.view-description {
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.view-stats {
+    display: flex;
+    gap: 30px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-top: 1px solid var(--overlay);
+    padding-top: 20px;
+    justify-content: center;
+}
+
+.view-like-count {
+    color: var(--softlime);
+}
+
+.view-dislike-count {
+    color: #f38ba8;
+}
+
+.view-order-btn {
+    margin-top: 20px;
+}
+
+.view-comments-title {
+    color: var(--sapphire);
+    margin-bottom: 20px;
+}
+
+.view-empty-comments {
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+.view-comments-list {
+    margin-bottom: 30px;
+}
+
+.view-comment-card {
+    background: var(--surface);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--overlay);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.view-comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.view-comment-author {
+    color: var(--mauve);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.view-comment-self {
+    color: var(--sapphire);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.view-comment-text {
+    line-height: 1.5;
+}
+
+.view-comment-id {
+    color: var(--overlay);
+    font-size: 0.7rem;
+    font-family: monospace;
+    text-align: right;
+}
+
+.view-comment-form-wrapper {
+    border-top: 1px solid var(--overlay);
+    padding-top: 20px;
+}
+
+.view-comment-form-title {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.view-anonymous-note {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.view-comment-textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--overlay);
+    background: var(--surface);
+    color: var(--text);
+}
+
+.view-login-prompt {
+    text-align: center;
+    border-top: 1px solid var(--overlay);
+    padding-top: 20px;
+}
+
+.view-login-text {
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.view-login-btn {
+    max-width: 200px;
+    display: inline-block;
+}
+
 nav ul.nav-links {
     display: flex;
     list-style: none;
@@ -1074,4 +1250,328 @@ button:active, .btn:active {
 
 .hours-list {
     list-style: none;
+}
+
+
+
+/* =========================================
+   LIVREUR — CLASSES PROPRES
+   ========================================= */
+
+.delivery-order-title {
+    color: var(--sapphire);
+    margin-bottom: 10px;
+}
+
+.delivery-order-items {
+    margin-top: 8px;
+}
+
+.maps-link {
+    display: inline-block;
+    margin: 8px 0;
+    color: var(--sapphire);
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+
+.maps-link:hover {
+    text-decoration: underline;
+}
+
+/* Statuts */
+
+.delivery-status-ready {
+    color: var(--softlime);
+}
+
+.delivery-status-transit {
+    color: var(--sapphire);
+}
+
+.delivery-status-done {
+    color: var(--mauve);
+}
+
+.delivery-status-default {
+    color: var(--text-muted);
+}
+
+/* Boutons */
+
+.delivery-btn-pickup {
+    background: #f59e0b;
+    color: #0a0a1a;
+}
+
+.delivery-btn-finished {
+    background: var(--softlime);
+    color: #0a0a1a;
+}
+
+.delivery-complete-badge {
+    background: linear-gradient(
+        135deg,
+        var(--softlime),
+        #5aab85
+    );
+
+    color: #0a0a1a;
+    border: none;
+}
+
+
+/* =========================================
+   MENU — CLASSES PROPRES
+   ========================================= */
+
+.empty-menu {
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.menu-item-card {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.menu-item-image {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--overlay);
+    flex-shrink: 0;
+}
+
+.menu-item-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+}
+
+.menu-item-header {
+    border-bottom: none;
+    padding-bottom: 5px;
+}
+
+.menu-item-title {
+    font-size: 1.4rem;
+}
+
+.menu-item-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.menu-item-price {
+    font-size: 1.4rem;
+}
+
+.menu-veg-badge {
+    font-size: 0.7em;
+    color: var(--softlime);
+    margin-left: 10px;
+}
+
+.menu-item-description {
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.menu-item-footer {
+    display: flex;
+    gap: 20px;
+    font-weight: bold;
+    font-size: 0.9em;
+    border-top: 1px solid var(--overlay);
+    padding-top: 10px;
+    align-items: center;
+}
+
+.like-positive {
+    color: var(--softlime);
+}
+
+.like-negative {
+    color: #f38ba8;
+}
+
+.menu-comments-link {
+    color: var(--sapphire);
+    text-decoration: none;
+}
+
+.menu-order-link {
+    margin-left: auto;
+    color: var(--accent-btn);
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+/* Like animation */
+
+@keyframes likePop {
+
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.55);
+    }
+
+    70% {
+        transform: scale(.88);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.like-btn.popping {
+    animation: likePop .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+.like-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+
+    .menu-item-card {
+        flex-direction: column;
+    }
+
+    .menu-item-image {
+        width: 100%;
+        height: 220px;
+    }
+
+    .menu-item-footer {
+        flex-wrap: wrap;
+    }
+
+    .menu-order-link {
+        margin-left: 0;
+    }
+}
+
+
+
+/* =========================================
+   PROFIL — CLASSES PROPRES
+   ========================================= */
+
+.info-display-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.profile-role-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid var(--overlay);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.profile-logout-btn {
+    margin-top: 20px;
+}
+
+.profile-section-title {
+    color: var(--sapphire);
+    margin-bottom: 16px;
+}
+
+.profile-orders-title {
+    margin-bottom: 20px;
+}
+
+.profile-empty-orders {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.profile-order-link {
+    color: var(--sapphire);
+    text-decoration: none;
+}
+
+.profile-order-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--overlay);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.profile-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.profile-order-id {
+    color: var(--sapphire);
+}
+
+.profile-order-status {
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.profile-order-items {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.profile-order-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.85rem;
+}
+
+.profile-order-date {
+    color: var(--text-muted);
+}
+
+.profile-order-price {
+    color: var(--softlime);
+}
+
+.profile-admin-panel {
+    text-align: center;
+}
+
+.profile-admin-title {
+    color: var(--mauve);
+    margin-bottom: 16px;
+}
+
+.profile-admin-btn {
+    max-width: 240px;
+    display: inline-block;
 }

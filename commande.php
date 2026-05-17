@@ -74,6 +74,7 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
     <meta charset="UTF-8">
     <title>Commander — Le Restaurant</title>
     <link rel="stylesheet" href="style.css">
+    <script src="scripts.js" defer></script>
 </head>
 <body>
 
@@ -206,108 +207,5 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 
     <?php endif; ?>
 </main>
-<script src="scripts.js"></script>
-
-<script src="scripts.js"></script>
-    const container = document.getElementById('cartItems');
-    const totalDiv  = document.getElementById('cartTotal');
-    const totalVal  = document.getElementById('totalVal');
-    const orderBtn  = document.getElementById('orderBtn');
-
-    let html = '';
-    let total = 0;
-    let count = 0;
-
-    for (const id in cart) {
-        const q = cart[id];
-        total += prices[id] * q;
-        count += q;
-
-        html += `
-            <div class="cart-item">
-                <span>${names[id]} ×${q}</span>
-                <span class="cart-item-price">${(prices[id] * q).toFixed(2).replace('.', ',')} €</span>
-            </div>
-        `;
-
-        document.getElementById('qty-' + id).textContent = q;
-    }
-
-    document.querySelectorAll('.qty-val').forEach(el => {
-        const pid = el.id.replace('qty-', '');
-        if (!cart[pid]) {
-            el.textContent = '0';
-        }
-    });
-
-    container.innerHTML = count ? html : '<p class="cart-empty">Aucun article pour l\\'instant.</p>';
-
-    totalDiv.classList.toggle('is-hidden', count === 0);
-
-    totalVal.textContent = total.toFixed(2).replace('.', ',') + ' €';
-
-    orderBtn.disabled = count === 0;
-    orderBtn.classList.toggle('order-btn-disabled', count === 0);
-
-    document.getElementById('payAmt').textContent = total.toFixed(2).replace('.', ',') + ' €';
-}
-
-function openPayment() {
-    const addr = document.getElementById('deliveryAddr').value.trim();
-
-    if (!addr) {
-        alert('Veuillez entrer une adresse de livraison.');
-        return;
-    }
-
-    document.getElementById('payModal').classList.add('open');
-}
-
-function closeModal() {
-    document.getElementById('payModal').classList.remove('open');
-}
-
-function submitPayment() {
-    const name = document.getElementById('cardName').value.trim();
-    const num  = document.getElementById('cardNum').value.replace(/\s/g, '');
-    const exp  = document.getElementById('cardExp').value;
-    const cvv  = document.getElementById('cardCvv').value;
-
-    if (!name || num.length < 16 || exp.length < 5 || cvv.length < 3) {
-        alert('Veuillez remplir tous les champs de paiement.');
-        return;
-    }
-
-    const btn = document.getElementById('payBtn');
-    btn.textContent = '⏳ Traitement…';
-    btn.disabled = true;
-
-    setTimeout(() => {
-        document.getElementById('cartData').value = JSON.stringify(cart);
-        document.getElementById('addrData').value = document.getElementById('deliveryAddr').value;
-
-        closeModal();
-
-        document.getElementById('orderForm').submit();
-    }, 1800);
-}
-
-function fmtCard(el) {
-    let v = el.value.replace(/\D/g, '').substring(0, 16);
-    el.value = v.match(/.{1,4}/g)?.join(' ') || v;
-}
-
-function fmtExp(el) {
-    let v = el.value.replace(/\D/g, '');
-
-    if (v.length >= 2) {
-        v = v.substring(0, 2) + '/' + v.substring(2, 4);
-    }
-
-    el.value = v;
-}
-</script>
-
-<script src="scripts.js"></script>
 </body>
 </html>
