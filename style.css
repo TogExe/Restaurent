@@ -1047,3 +1047,71 @@ button:active, .btn:active {
 .hours-list {
     list-style: none;
 }
+
+
+
+/* =========================================
+   LIVREUR — CLASSES PROPRES
+   ========================================= */
+
+.delivery-order-title {
+    color: var(--sapphire);
+    margin-bottom: 10px;
+}
+
+.delivery-order-items {
+    margin-top: 8px;
+}
+
+.maps-link {
+    display: inline-block;
+    margin: 8px 0;
+    color: var(--sapphire);
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+
+.maps-link:hover {
+    text-decoration: underline;
+}
+
+/* Statuts */
+
+.delivery-status-ready {
+    color: var(--softlime);
+}
+
+.delivery-status-transit {
+    color: var(--sapphire);
+}
+
+.delivery-status-done {
+    color: var(--mauve);
+}
+
+.delivery-status-default {
+    color: var(--text-muted);
+}
+
+/* Boutons */
+
+.delivery-btn-pickup {
+    background: #f59e0b;
+    color: #0a0a1a;
+}
+
+.delivery-btn-finished {
+    background: var(--softlime);
+    color: #0a0a1a;
+}
+
+.delivery-complete-badge {
+    background: linear-gradient(
+        135deg,
+        var(--softlime),
+        #5aab85
+    );
+
+    color: #0a0a1a;
+    border: none;
+}
