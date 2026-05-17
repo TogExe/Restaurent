@@ -1014,3 +1014,36 @@ button:active, .btn:active {
 .empty-orders {
     color: var(--text-muted);
 }
+
+
+/* =========================================
+   HOME — CLASSES PROPRES
+   ========================================= */
+
+.home-actions {
+    justify-content: center;
+    max-width: 400px;
+    margin: 30px auto 0;
+}
+
+.home-order-btn {
+    background: linear-gradient(
+        135deg,
+        var(--softlime),
+        #5aab85
+    );
+
+    color: #0a0a1a;
+}
+
+.info-title-blue {
+    color: var(--sapphire);
+}
+
+.info-title-green {
+    color: var(--softlime);
+}
+
+.hours-list {
+    list-style: none;
+}
