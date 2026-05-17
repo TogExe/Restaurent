@@ -20,16 +20,92 @@ ensure_ban();
 
 $currentUserData = $allUsers[$userId];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_address'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $allUsers[$userId]['address_enc'] = encryptData(
-        trim($_POST['new_address']),
-        $secretKey
-    );
+    $isAjax = (isset($_POST['ajax']) && $_POST['ajax']) || (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
 
-    save_json($file, $allUsers);
+    // Update profile (name, email, phone, address)
+    if (isset($_POST['update_profile'])) {
+        $name = trim($_POST['fullname'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
 
-    $currentUserData = $allUsers[$userId];
+        // Load existing address parts to merge updates
+        $existingAddr = ['street'=>'','number'=>'','complement'=>'','postal'=>'','city'=>''];
+        if (!empty($currentUserData['address_enc'])) {
+            $raw = decryptData($currentUserData['address_enc'], $secretKey);
+            $dec = json_decode($raw, true);
+            if (is_array($dec)) {
+                $existingAddr = array_merge($existingAddr, $dec);
+            }
+        }
+
+        // Collect address subfields if provided and merge
+        $fields = ['addr_street'=>'street','addr_number'=>'number','addr_comp'=>'complement','addr_postal'=>'postal','addr_city'=>'city'];
+        $updatedAddr = $existingAddr;
+        foreach ($fields as $postKey => $partKey) {
+            if (array_key_exists($postKey, $_POST)) {
+                $updatedAddr[$partKey] = trim($_POST[$postKey]);
+            }
+        }
+
+        // Apply scalar updates
+        if ($name !== '') {
+            $allUsers[$userId]['plain_name'] = $name;
+            $allUsers[$userId]['fullname_enc'] = encryptData($name, $secretKey);
+        }
+        if ($email !== '') {
+            $allUsers[$userId]['plain_email'] = $email;
+            $allUsers[$userId]['email_enc'] = encryptData($email, $secretKey);
+        }
+        if ($phone !== '') {
+            $allUsers[$userId]['phone_enc'] = encryptData($phone, $secretKey);
+        }
+
+        // Save merged address if any part exists
+        $anyAddr = false;
+        foreach ($updatedAddr as $val) { if ($val !== '') { $anyAddr = true; break; } }
+        if ($anyAddr) {
+            $allUsers[$userId]['address_enc'] = encryptData(json_encode($updatedAddr), $secretKey);
+        }
+
+        save_json($file, $allUsers);
+        $currentUserData = $allUsers[$userId];
+
+        if ($isAjax) {
+            // Recompute addressParts to return current values
+            $retAddr = ['street'=>'','number'=>'','complement'=>'','postal'=>'','city'=>''];
+            if (!empty($currentUserData['address_enc'])) {
+                $raw2 = decryptData($currentUserData['address_enc'], $secretKey);
+                $dec2 = json_decode($raw2, true);
+                if (is_array($dec2)) { $retAddr = array_merge($retAddr, $dec2); }
+            }
+
+            $resp = [
+                'success' => true,
+                'message' => 'Profil mis à jour.',
+                'address_parts' => $retAddr,
+                'fullname' => $currentUserData['plain_name'] ?? '',
+                'email' => $currentUserData['plain_email'] ?? ''
+            ];
+            header('Content-Type: application/json');
+            echo json_encode($resp);
+            exit();
+        }
+    }
+
+    // Backwards-compatible: existing single-address form
+    if (isset($_POST['new_address'])) {
+        $allUsers[$userId]['address_enc'] = encryptData(trim($_POST['new_address']), $secretKey);
+        save_json($file, $allUsers);
+        $currentUserData = $allUsers[$userId];
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true]);
+            exit();
+        }
+    }
+
 }
 
 /* Decrypt */
@@ -48,9 +124,29 @@ $phone = $isAdmin
     ? 'N/A'
     : decryptData($currentUserData['phone_enc'] ?? '', $secretKey);
 
-$address = isset($currentUserData['address_enc'])
+$address_raw = isset($currentUserData['address_enc'])
     ? decryptData($currentUserData['address_enc'], $secretKey)
-    : "Aucune adresse renseignée";
+    : '';
+
+$addressParts = [
+    'street' => '',
+    'number' => '',
+    'complement' => '',
+    'postal' => '',
+    'city' => ''
+];
+
+if ($address_raw !== '') {
+    $decoded = json_decode($address_raw, true);
+    if (is_array($decoded)) {
+        $addressParts = array_merge($addressParts, $decoded);
+    } else {
+        $addressParts['street'] = $address_raw;
+    }
+}
+
+$address = trim(($addressParts['street'] ?? '') . ' ' . ($addressParts['number'] ?? '') . ' ' . ($addressParts['complement'] ?? '') . ' ' . ($addressParts['postal'] ?? '') . ' ' . ($addressParts['city'] ?? ''));
+if ($address === '') { $address = "Aucune adresse renseignée"; }
 
 /* Orders */
 
@@ -140,96 +236,80 @@ $isLoggedIn  = true;
 
         </div>
 
-        <div>
-            <label class="info-display-label">
-                Nom Complet
-            </label>
+        <form id="profileForm" action="" method="POST" class="profile-inline-form">
+            <input type="hidden" name="update_profile" value="1">
 
-            <div class="info-display">
-                <?= htmlspecialchars($fullname) ?>
-            </div>
-        </div>
+            <div class="form-row">
+                <label class="info-display-label">Nom Complet</label>
+                <div class="inline-edit">
+                    <input type="text" id="fullname" name="fullname" value="<?= htmlspecialchars($fullname) ?>" readonly>
+                    <button type="button" class="field-edit-btn" data-target="fullname">✏️</button>
+                </div>
+            </div> <br>
 
-        <div>
-            <label class="info-display-label">
-                Email
-            </label>
+            <div class="form-row">
+                <label class="info-display-label">Email</label>
+                <div class="inline-edit">
+                    <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" readonly>
+                    <button type="button" class="field-edit-btn" data-target="email">✏️</button>
+                </div>
+            </div> <br>
 
-            <div class="info-display">
-                <?= htmlspecialchars($email) ?>
-            </div>
-        </div>
+            <?php if (!$isAdmin): ?>
 
-        <?php if (!$isAdmin): ?>
+                <div class="form-row">
+                    <label class="info-display-label">Téléphone</label>
+                    <div class="inline-edit">
+                        <input type="tel" id="phone" name="phone" value="<?= htmlspecialchars($phone) ?>" readonly>
+                        <button type="button" class="field-edit-btn" data-target="phone">✏️</button>
+                    </div>
+                </div> <br>
 
-            <div>
+                <div class="form-row">
+                    <div class="address-inline">
+                        <label class="info-display-label">Rue</label>
+                        <div class="inline-edit">
+                            <input type="text" id="addr_street" name="addr_street" value="<?= htmlspecialchars($addressParts['street'] ?? '') ?>" readonly>
+                            <button type="button" class="field-edit-btn" data-target="addr_street">✏️</button>
+                        </div> <br>
+                        <label class="info-display-label">N°</label>
+                        <div class="inline-edit">
+                            <input type="text" id="addr_number" name="addr_number" value="<?= htmlspecialchars($addressParts['number'] ?? '') ?>" readonly>
+                            <button type="button" class="field-edit-btn" data-target="addr_number">✏️</button>
+                        </div> <br>
+                        <label class="info-display-label">Code Postal</label>
+                        <div class="inline-edit">
+                            <input type="text" id="addr_postal" name="addr_postal" value="<?= htmlspecialchars($addressParts['postal'] ?? '') ?>" readonly>
+                            <button type="button" class="field-edit-btn" data-target="addr_postal">✏️</button>
+                        </div> <br>
+                        <label class="info-display-label">Ville</label>
+                        <div class="inline-edit">
+                            <input type="text" id="addr_city" name="addr_city" value="<?= htmlspecialchars($addressParts['city'] ?? '') ?>" readonly>
+                            <button type="button" class="field-edit-btn" data-target="addr_city">✏️</button>
+                        </div> <br>
+                        <label class="info-display-label">Complement</label>
+                        <div class="inline-edit">
+                            <input type="text" id="addr_comp" name="addr_comp" value="<?= htmlspecialchars($addressParts['complement'] ?? '') ?>" readonly>
+                            <button type="button" class="field-edit-btn" data-target="addr_comp">✏️</button>
+                        </div> <br>
+                    </div>
 
-                <label class="info-display-label">
-                    Téléphone
-                </label>
-
-                <div class="info-display">
-                    <?= htmlspecialchars($phone) ?>
                 </div>
 
+            <?php endif; ?>
+
+            <div class="profile-actions">
+                <a href="connect.php?logout=1" class="btn danger profile-logout-btn">Se Déconnecter</a>
             </div>
 
-            <div>
-
-                <label class="info-display-label">
-                    Adresse de livraison
-                </label>
-
-                <div class="info-display">
-                    <?= htmlspecialchars($address) ?>
-                </div>
-
-            </div>
-
-        <?php endif; ?>
-
-        <a href="connect.php?logout=1"
-           class="btn danger profile-logout-btn">
-
-            Se Déconnecter
-
-        </a>
+        </form>
 
     </section>
+
 
     <?php if ($userRole === 'client'): ?>
 
         <section class="glass-panel medium">
-
-            <h2 class="profile-section-title">
-                Modifier l'adresse
-            </h2>
-
-            <form action="" method="POST">
-
-                <div class="form-group">
-
-                    <label>
-                        Nouvelle adresse (chiffrée)
-                    </label>
-
-                    <input type="text"
-                           name="new_address"
-                           placeholder="123 rue de la Paix"
-                           required>
-
-                </div>
-
-                <button type="submit">
-                    Enregistrer
-                </button>
-
-            </form>
-
-        </section>
-
-        <section class="glass-panel medium">
-
             <h2 class="profile-section-title profile-orders-title">
                 Mes commandes (<?= count($myOrders) ?>)
             </h2>
@@ -329,6 +409,8 @@ $isLoggedIn  = true;
     <?php endif; ?>
 
 </main>
+
+<script src="scripts.js" defer></script>
 
 </body>
 </html>

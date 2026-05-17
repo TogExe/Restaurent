@@ -4,12 +4,19 @@ require_once __DIR__ . '/inc/common.php';
 ensure_ban();
 $message = "";
 
+$postedFullname = '';
+$postedEmail    = '';
+$postedPhone    = '';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $fullname = trim($_POST['fullname'] ?? '');
-    $email    = strtolower(trim($_POST['email'] ?? ''));
-    $phone    = trim($_POST['phone'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confirm  = $_POST['confirm_password'] ?? '';
+    $postedFullname = trim($_POST['fullname'] ?? '');
+    $postedEmail    = strtolower(trim($_POST['email'] ?? ''));
+    $postedPhone    = trim($_POST['phone'] ?? '');
+    $fullname       = $postedFullname;
+    $email          = $postedEmail;
+    $phone          = $postedPhone;
+    $password       = $_POST['password'] ?? '';
+    $confirm        = $_POST['confirm_password'] ?? '';
 
     $role = 'client';
 
@@ -73,17 +80,17 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
         <form action="" method="POST">
             <div class="form-group">
                 <label>Nom Complet</label>
-                <input type="text" name="fullname" required>
+                <input type="text" name="fullname" required value="<?= htmlspecialchars($postedFullname, ENT_QUOTES) ?>">
             </div>
 
             <div class="form-group">
                 <label>Téléphone</label>
-                <input type="tel" name="phone" placeholder="06 12 34 56 78" required>
+                <input type="tel" name="phone" placeholder="06 12 34 56 78" required value="<?= htmlspecialchars($postedPhone, ENT_QUOTES) ?>">
             </div>
 
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" name="email" required>
+                <input type="email" name="email" required value="<?= htmlspecialchars($postedEmail, ENT_QUOTES) ?>">
             </div>
 
             <div class="lined">

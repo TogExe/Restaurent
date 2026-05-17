@@ -118,7 +118,11 @@ let App = (function() {
         let totalVal = qs('#totalVal');
         let orderBtn = qs('#orderBtn');
         let payAmt = qs('#payAmt');
-        let deliveryAddr = qs('#deliveryAddr');
+        let addrStreet = qs('#addr_street');
+        let addrNumber = qs('#addr_number');
+        let addrComp = qs('#addr_comp');
+        let addrPostal = qs('#addr_postal');
+        let addrCity = qs('#addr_city');
         let payModal = qs('#payModal');
         let payBtn = qs('#payBtn');
         let payCancel = qs('#payCancel');
@@ -200,12 +204,11 @@ let App = (function() {
         }
 
         function openPayment() {
-            if (!deliveryAddr) {
+            if (!addrStreet || !addrPostal || !addrCity) {
                 return;
             }
-            let address = deliveryAddr.value.trim();
-            if (!address) {
-                window.alert('Veuillez entrer une adresse de livraison.');
+            if (!addrStreet.value.trim() || !addrPostal.value.trim() || !addrCity.value.trim()) {
+                window.alert('Veuillez renseigner au moins la rue, le code postal et la ville.');
                 return;
             }
             payModal.classList.add('open');
@@ -254,7 +257,12 @@ let App = (function() {
 
             setTimeout(function() {
                 cartData.value = JSON.stringify(cart);
-                addrData.value = deliveryAddr.value;
+                
+                // Reconstituer l'adresse pour le stockage dans commandes.json
+                let fullAddr = [addrNumber.value, addrStreet.value, addrComp.value, addrPostal.value, addrCity.value]
+                    .map(s => s.trim()).filter(s => s !== '').join(' ');
+                addrData.value = fullAddr;
+                
                 closeModal();
                 orderForm.submit();
             }, 1800);
@@ -286,12 +294,83 @@ let App = (function() {
         renderCart();
     }
 
+    function initProfileEditButtons() {
+        var buttons = qsa('.field-edit-btn');
+        for (var i = 0; i < buttons.length; i++) {
+            (function(btn) {
+                btn.addEventListener('click', function() {
+                    var targetId = btn.dataset.target;
+                    if (!targetId) { return; }
+                    var input = qs('#' + targetId);
+                    if (!input) { return; }
+                    if (input.readOnly) {
+                        input.readOnly = false;
+                        input.focus();
+                        btn.textContent = '💾';
+                    } else {
+                        // Save via AJAX without reloading
+                        input.readOnly = true;
+                        btn.textContent = '✏️';
+                        saveProfileField(input, btn);
+                    }
+                });
+            })(buttons[i]);
+        }
+    }
+
+    function saveProfileField(input, btn) {
+        var fd = new FormData();
+        fd.append('update_profile', '1');
+        fd.append('ajax', '1');
+        fd.append(input.name, input.value);
+
+        fetch('profil.php', {
+            method: 'POST',
+            body: fd,
+            credentials: 'same-origin'
+        }).then(function(resp) {
+            return resp.json();
+        }).then(function(data) {
+            if (data && data.success) {
+                // show saved indicator
+                var tip = document.createElement('span');
+                tip.className = 'saved-tip';
+                tip.textContent = 'Enregistré';
+                btn.parentNode.appendChild(tip);
+                setTimeout(function() { tip.remove(); }, 1500);
+
+                // update front-row address display if provided
+                if (data.address_parts) {
+                    var a = data.address_parts;
+                    var el = qs('.front-row-address');
+                    if (el) {
+                        var line1 = (a.street || '') + ' ' + (a.number || '');
+                        var line2 = a.complement || '';
+                        var line3 = (a.postal || '') + ' ' + (a.city || '');
+                        el.innerHTML = '';
+                        if (line1.trim()) el.appendChild(document.createElement('div')).textContent = '📍 ' + line1.trim();
+                        if (line2.trim()) el.appendChild(document.createElement('div')).textContent = '🧾 ' + line2.trim();
+                        if (line3.trim()) { var d = document.createElement('div'); d.className='addr-line small'; d.textContent = '🏙 ' + line3.trim(); el.appendChild(d); }
+                    }
+                }
+            }
+        }).catch(function(err) {
+            console.error('Erreur sauvegarde profil', err);
+            var tip = document.createElement('span');
+            tip.className = 'saved-tip error';
+            tip.textContent = 'Erreur';
+            btn.parentNode.appendChild(tip);
+            setTimeout(function() { tip.remove(); }, 2000);
+        });
+    }
+
     return {
         init: function() {
             initConfirmForms();
             initTabs();
             initLikeButtons();
             initCommandePage();
+            initProfileEditButtons();
         }
     };
 })();

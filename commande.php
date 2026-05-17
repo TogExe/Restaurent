@@ -11,10 +11,21 @@ $allUsers  = load_json($usersFile);
 $uid       = current_user_id();
 $secretKey = current_secret_key();
 
-$savedAddress = '';
+$addressParts = ['street' => '', 'number' => '', 'complement' => '', 'postal' => '', 'city' => ''];
 if ($uid && isset($allUsers[$uid]['address_enc'])) {
-    $savedAddress = decryptData($allUsers[$uid]['address_enc'], $secretKey);
+    $address_raw = decryptData($allUsers[$uid]['address_enc'], $secretKey);
+    if ($address_raw !== '') {
+        $decoded = json_decode($address_raw, true);
+        if (is_array($decoded)) {
+            $addressParts = array_merge($addressParts, $decoded);
+        } else {
+            // Rétrocompatibilité si l'adresse était une simple chaîne
+            $addressParts['street'] = $address_raw;
+        }
+    }
 }
+
+$postedAddressParts = $addressParts;
 
 ensure_ban();
 
@@ -25,6 +36,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
     $items   = json_decode($_POST['cart_items'] ?? '[]', true);
     $address = trim($_POST['delivery_address'] ?? '');
     $payRef  = gen_pay_ref();
+
+    // Preserve address fields when the page reloads after validation errors
+    $postedAddressParts['street'] = trim($_POST['addr_street'] ?? $postedAddressParts['street']);
+    $postedAddressParts['number'] = trim($_POST['addr_number'] ?? $postedAddressParts['number']);
+    $postedAddressParts['complement'] = trim($_POST['addr_comp'] ?? $postedAddressParts['complement']);
+    $postedAddressParts['postal'] = trim($_POST['addr_postal'] ?? $postedAddressParts['postal']);
+    $postedAddressParts['city'] = trim($_POST['addr_city'] ?? $postedAddressParts['city']);
 
     if (empty($items)) {
         $message = "<div class='msg-error'>Votre panier est vide.</div>";
@@ -182,16 +200,37 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
                     <span id="totalVal">0,00 €</span>
                 </div>
 
-                <div class="form-group cart-address">
-                    <label>Adresse de livraison</label>
-                    <input type="text" id="deliveryAddr" value="<?= htmlspecialchars($savedAddress) ?>" placeholder="5 rue de la Paix…">
-                </div>
-
-                <button type="button" id="orderBtn" disabled class="order-btn-disabled">
-                    Procéder au paiement
-                </button>
-
                 <form id="orderForm" method="POST" class="hidden-form">
+                    <div class="cart-address-fields" style="margin-top: 20px;">
+                        <label class="info-display-label">Adresse de livraison</label>
+                        
+                        <div class="form-group">
+                            <input type="text" id="addr_street" name="addr_street" value="<?= htmlspecialchars($postedAddressParts['street']) ?>" placeholder="Rue / Avenue">
+                        </div>
+                        
+                        <div class="lined">
+                            <div class="form-group">
+                                <input type="text" id="addr_number" name="addr_number" value="<?= htmlspecialchars($postedAddressParts['number']) ?>" placeholder="N°">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="addr_comp" name="addr_comp" value="<?= htmlspecialchars($postedAddressParts['complement']) ?>" placeholder="Complément (Bât, Appt)">
+                            </div>
+                        </div>
+                        
+                        <div class="lined">
+                            <div class="form-group">
+                                <input type="text" id="addr_postal" name="addr_postal" value="<?= htmlspecialchars($postedAddressParts['postal']) ?>" placeholder="Code Postal">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="addr_city" name="addr_city" value="<?= htmlspecialchars($postedAddressParts['city']) ?>" placeholder="Ville">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="orderBtn" disabled class="order-btn-disabled">
+                        Procéder au paiement
+                    </button>
+
                     <input type="hidden" name="place_order" value="1">
                     <input type="hidden" name="cart_items" id="cartData">
                     <input type="hidden" name="delivery_address" id="addrData">

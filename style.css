@@ -78,6 +78,8 @@ nav .logo h2 {
     letter-spacing: 0.02em;
 }
 
+.saved-tip { margin-left:8px; color:var(--softlime); font-weight:600; font-size:0.9rem; }
+.saved-tip.error { color:var(--rose); }
 
 
 /* =========================================
@@ -1053,6 +1055,11 @@ button:active, .btn:active {
 
 .cart-address {
     margin-top: 20px;
+}
+
+.cart-address-fields .lined {
+    gap: 10px;
+    margin-bottom: 0;
 }
 
 .order-btn-disabled {
