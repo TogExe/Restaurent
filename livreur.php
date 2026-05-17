@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/inc/common.php';
 
+ensure_ban();
 require_login(['livreur','admin']);
 
 $allorders      = load_json('commandes.json');

@@ -16,6 +16,8 @@ if ($uid && isset($allUsers[$uid]['address_enc'])) {
     $savedAddress = decryptData($allUsers[$uid]['address_enc'], $secretKey);
 }
 
+ensure_ban();
+
 $message = "";
 $orderSuccess = false;
 

@@ -57,6 +57,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_dish'])) {
     }
 }
 
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ban_user'])) {
+    $targetId = $_POST['user_id'];
+    if (isset($allUsers[$targetId]) && ($allUsers[$targetId]['role'] ?? '') !== 'admin') {
+        $allUsers[$targetId]['is_banned'] = true;
+        save_json($usersFile, $allUsers);
+        $message = "<div class='msg-success'>Utilisateur banni.</div>";
+        $allUsers = load_json($usersFile);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['unban_user'])) {
+    $targetId = $_POST['user_id'];
+    if (isset($allUsers[$targetId]) && ($allUsers[$targetId]['role'] ?? '') !== 'admin') {
+        unset($allUsers[$targetId]['is_banned']);
+        save_json($usersFile, $allUsers);
+        $message = "<div class='msg-success'>Utilisateur débanni.</div>";
+        $allUsers = load_json($usersFile);
+    }
+}
+
 // --- DELETE DISH ---
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_dish'])) {
     $dishId = $_POST['dish_id'];
@@ -146,6 +166,17 @@ $isLoggedIn  = true;
                             <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
                             <button type="submit" name="delete_user" class="btn-danger-sm">🗑</button>
                         </form>
+                        <?php if (!isset($u['is_banned']) || $u['is_banned'] !== true): ?>
+                        <form method="POST" onsubmit="return confirm('Bannir cet utilisateur ?');" style="display:inline;">
+                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
+                            <button type="submit" name="ban_user" class="btn-danger-sm">🚫</button>
+                        </form>
+                        <?php else: ?>
+                        <form method="POST" onsubmit="return confirm('Débannir cet utilisateur ?');" style="display:inline;">
+                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
+                            <button type="submit" name="unban_user" class="btn-success-sm">✅</button>
+                        </form>
+                        <?php endif; ?>
                         <?php endif; ?>
                     </td>
                 </tr>

@@ -4,6 +4,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 $userId      = $isLoggedIn ? $_SESSION['user_id'] : null;
 
+ensure_ban();
+
 if (!isset($_GET['id'])) { header("Location: menu.php"); exit(); }
 $platId    = $_GET['id'];
 $filePlats = 'plats.json';

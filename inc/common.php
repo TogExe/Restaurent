@@ -71,4 +71,20 @@ function format_price(float $p): string {
     return number_format($p, 2, ',', ' ') . ' €';
 }
 
+function ensure_ban() {
+    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) 
+        return;
+    if (!isset($allUsers)) {
+        $allUsers = load_json('users.json');
+    }
+    if (!isset($userId)) {
+        $userId = current_user_id();
+    }
+   if (isset($allUsers[$userId]['is_banned']) && $allUsers[$userId]['is_banned'] === true) {
+        session_destroy();
+        header("Location: connect.php?banned=1");
+        exit();
+    }
+}
+
 ?>
