@@ -868,3 +868,14 @@ button:active, .btn:active {
     max-width: 260px;
     display: inline-block;
 }
+
+
+/* =========================================
+   INSCRIPTION — CLASSES PROPRES
+   ========================================= */
+
+.signup-login-btn {
+    max-width: 200px;
+    display: inline-block;
+    margin-top: 10px;
+}
