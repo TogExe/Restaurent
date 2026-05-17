@@ -35,6 +35,73 @@
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+[alt-theme="dark"]{
+    --base: #1a1a2e;
+    --surface-alt: #22223d;
+    --surface: #1e1e38;
+    --overlay: #3a3a5c;
+    --overlay-light: #4e4e78;
+    --text: #edf0ff;
+    --text-muted: #9aa0c8;
+
+    --mauve: #d4a8ff;
+    --mauve-glow: rgba(212, 168, 255, 0.35);
+    --sapphire: #7dd3ff;
+    --sapphire-glow: rgba(125, 211, 255, 0.35);
+    --softlime: #7ecba3;
+    --softlime-glow: rgba(126, 203, 163, 0.3);
+    --rose: #ff6b8a;
+    --rose-glow: rgba(255, 107, 138, 0.3);
+    --accent-btn: #8ab4ff;
+    --accent-btn-hover: #b8caff;
+    --accent-btn-glow: rgba(138, 180, 255, 0.5);
+
+    --card-bg: rgba(34, 34, 65, 0.80);
+    --card-bg-hover: rgba(42, 42, 80, 0.90);
+    --glass-border: rgba(120, 120, 200, 0.25);
+    --glass-border-hover: rgba(160, 160, 240, 0.45);
+
+    --transition-fast: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[alt-theme="light"]{
+	--base: #f4f5f8;
+    --surface-alt: #e0eaf2;
+    --surface: #ffffff;
+    --overlay: #f1d5e6;
+    --overlay-light: #b0b6d1;
+    --text: #101a2e;
+    --text-muted: #0a0f35;
+
+    /* Couleurs d'accentuation légèrement assombries pour rester lisibles sur fond clair */
+    --mauve: #9d50e5;
+    --mauve-glow: rgba(157, 80, 229, 0.2);
+    --sapphire: #007bb5;
+    --sapphire-glow: rgba(0, 123, 181, 0.2);
+    --softlime: #228b22; 
+    --softlime-glow: rgba(34, 139, 34, 0.2);
+    --rose: #e6395b;
+    --rose-glow: rgba(230, 57, 91, 0.2);
+    --accent-btn: #4a7aed;
+    --accent-btn-hover: #3661c9;
+    --accent-btn-glow: rgba(74, 122, 237, 0.3);
+
+    --card-bg: rgba(255, 255, 255, 0.65);
+    --card-bg-hover: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --glass-border-hover: rgba(0, 0, 0, 0.2);
+}
+[alt-theme="light"] body {
+    background-image:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(157, 80, 229, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(74, 122, 237, 0.08) 0%, transparent 60%);
+}
+
+body, .glass-panel, input, textarea, select {
+    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
 
 html { scroll-behavior: smooth; }
 
@@ -1581,4 +1648,40 @@ button:active, .btn:active {
 .profile-admin-btn {
     max-width: 240px;
     display: inline-block;
+}
+/* LE PANIER  ETC*/
+.btn-theme {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+    color: var(--text);
+    margin-left: 10px;
+}
+
+.btn-theme:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1) rotate(15deg);
+    border-color: var(--sapphire);
+    box-shadow: 0 0 15px var(--sapphire-glow);
+}
+
+/* Badge du Panier */
+.badge {
+    background: linear-gradient(135deg, var(--rose) 0%, #ff4a6e 100%);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-left: 6px;
+    box-shadow: 0 0 10px var(--rose-glow);
+    display: none; /* Masqué par défaut, affiché par JS si > 0 */
 }

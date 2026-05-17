@@ -27,6 +27,12 @@ $userRole = $_SESSION['user_role'] ?? 'client';
 
             <?php if ($userRole === 'client'): ?>
                 <li><a href="commande.php" class="<?= $currentPage == 'commande.php' ? 'active' : '' ?>">Commander</a></li>
+                
+                <li>
+                    <a href="panier.php" class="<?= $currentPage == 'panier.php' ? 'active' : '' ?>">
+                        🛒 Panier <span id="cart-count" class="badge" style="display: none;">0</span>
+                    </a>
+                </li>
             <?php endif; ?>
 
             <li><a href="profil.php" class="<?= $currentPage == 'profil.php' ? 'active' : '' ?>">Mon Profil</a></li>
@@ -35,5 +41,11 @@ $userRole = $_SESSION['user_role'] ?? 'client';
         <?php else: ?>
             <li><a href="connect.php" class="<?= in_array($currentPage, ['connect.php','compte.php']) ? 'active' : '' ?>">Se Connecter</a></li>
         <?php endif; ?>
+        
+        <li>
+            <button id="theme-toggle" class="btn-theme" title="Changer le thème">🌓</button>
+        </li>
     </ul>
 </nav>
+
+<script src="theme_changer.js"></script>
