@@ -78,6 +78,182 @@ nav .logo h2 {
     letter-spacing: 0.02em;
 }
 
+
+
+/* =========================================
+   VIEW — CLASSES PROPRES
+   ========================================= */
+
+.view-back-link {
+    color: var(--sapphire);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.view-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--overlay);
+    margin-bottom: 20px;
+}
+
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.view-title {
+    color: var(--mauve);
+    font-family: 'Playfair Display', serif;
+}
+
+.view-price {
+    font-size: 1.8rem;
+}
+
+.view-veg-badge {
+    color: var(--base);
+    background: var(--softlime);
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+}
+
+.view-description {
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.view-stats {
+    display: flex;
+    gap: 30px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-top: 1px solid var(--overlay);
+    padding-top: 20px;
+    justify-content: center;
+}
+
+.view-like-count {
+    color: var(--softlime);
+}
+
+.view-dislike-count {
+    color: #f38ba8;
+}
+
+.view-order-btn {
+    margin-top: 20px;
+}
+
+.view-comments-title {
+    color: var(--sapphire);
+    margin-bottom: 20px;
+}
+
+.view-empty-comments {
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+.view-comments-list {
+    margin-bottom: 30px;
+}
+
+.view-comment-card {
+    background: var(--surface);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--overlay);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.view-comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.view-comment-author {
+    color: var(--mauve);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.view-comment-self {
+    color: var(--sapphire);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.view-comment-text {
+    line-height: 1.5;
+}
+
+.view-comment-id {
+    color: var(--overlay);
+    font-size: 0.7rem;
+    font-family: monospace;
+    text-align: right;
+}
+
+.view-comment-form-wrapper {
+    border-top: 1px solid var(--overlay);
+    padding-top: 20px;
+}
+
+.view-comment-form-title {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.view-anonymous-note {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.view-comment-textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--overlay);
+    background: var(--surface);
+    color: var(--text);
+}
+
+.view-login-prompt {
+    text-align: center;
+    border-top: 1px solid var(--overlay);
+    padding-top: 20px;
+}
+
+.view-login-text {
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.view-login-btn {
+    max-width: 200px;
+    display: inline-block;
+}
+
 nav ul.nav-links {
     display: flex;
     list-style: none;
