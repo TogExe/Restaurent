@@ -618,3 +618,155 @@ button:active, .btn:active {
         .btn-sm{display:inline-block;width:auto;padding:6px 14px;font-size:.78rem;margin-top:0;border-radius:6px;letter-spacing:.05em;}
         .btn-danger-sm{background:linear-gradient(135deg,var(--rose),#ff4a6e);color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.78rem;font-family:'Outfit',sans-serif;font-weight:700;}
         .btn-danger-sm:hover{opacity:.85;transform:translateY(-1px);}
+
+
+
+/* =========================================
+   ADMIN — CLASSES PROPRES
+   ========================================= */
+
+.admin-stat-grid {
+    max-width: 850px;
+    width: 100%;
+}
+
+.admin-panel {
+    max-width: 950px;
+}
+
+.revenue-value {
+    color: var(--softlime) !important;
+}
+
+.admin-form-inline {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.admin-form-delete {
+    display: inline;
+}
+
+.admin-code-muted,
+.admin-code-small {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+.admin-code-small {
+    font-size: 0.75rem;
+}
+
+.admin-muted {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.admin-muted-small {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+.admin-address {
+    font-size: 0.82rem;
+}
+
+.admin-price {
+    color: var(--softlime);
+    font-weight: 700;
+}
+
+.admin-dish-name {
+    font-weight: 600;
+    color: var(--sapphire);
+}
+
+.admin-table-spaced {
+    margin-bottom: 30px;
+}
+
+.admin-separator {
+    border: none;
+    border-top: 1px solid var(--overlay);
+    margin: 20px 0;
+}
+
+.admin-subtitle {
+    color: var(--sapphire);
+    margin-bottom: 16px;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-row input {
+    width: auto;
+    padding: 0;
+}
+
+.checkbox-row label {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+/* Rôles */
+.role-admin {
+    background: rgba(255,255,255,.06);
+    color: var(--mauve);
+    border: 1px solid var(--mauve);
+}
+
+.role-cuisiner {
+    background: rgba(255,255,255,.06);
+    color: var(--softlime);
+    border: 1px solid var(--softlime);
+}
+
+.role-livreur {
+    background: rgba(255,255,255,.06);
+    color: var(--sapphire);
+    border: 1px solid var(--sapphire);
+}
+
+.role-client {
+    background: rgba(255,255,255,.06);
+    color: var(--text-muted);
+    border: 1px solid var(--text-muted);
+}
+
+/* Statuts commandes */
+.status-0 {
+    background: rgba(255,255,255,.05);
+    color: var(--text-muted);
+    border: 1px solid var(--text-muted);
+}
+
+.status-1 {
+    background: rgba(255,255,255,.05);
+    color: var(--accent-btn);
+    border: 1px solid var(--accent-btn);
+}
+
+.status-2 {
+    background: rgba(255,255,255,.05);
+    color: var(--softlime);
+    border: 1px solid var(--softlime);
+}
+
+.status-3 {
+    background: rgba(255,255,255,.05);
+    color: var(--sapphire);
+    border: 1px solid var(--sapphire);
+}
+
+.status-4 {
+    background: rgba(255,255,255,.05);
+    color: var(--mauve);
+    border: 1px solid var(--mauve);
+}
