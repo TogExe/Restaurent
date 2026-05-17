@@ -206,20 +206,27 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 </main>
 
 <script>
-const cart = {};
+const cart   = {};
 const prices = {};
-const names = {};
+const names  = {};
+
+/* ── helpers ── */
+function saveCartToStorage() {
+    const items = Object.keys(cart).map(id => ({
+        id:       encodeURIComponent(id),
+        name:     names[id],
+        price:    prices[id],
+        quantity: cart[id]
+    }));
+    localStorage.setItem('cart', JSON.stringify(items));
+}
 
 function changeQty(id, price, name, delta) {
-    cart[id] = (cart[id] || 0) + delta;
-
-    if (cart[id] <= 0) {
-        delete cart[id];
-    }
-
+    cart[id]   = (cart[id] || 0) + delta;
     prices[id] = price;
-    names[id] = name;
-
+    names[id]  = name;
+    if (cart[id] <= 0) delete cart[id];
+    saveCartToStorage();
     renderCart();
 }
 
@@ -229,52 +236,45 @@ function renderCart() {
     const totalVal  = document.getElementById('totalVal');
     const orderBtn  = document.getElementById('orderBtn');
 
-    let html = '';
+    let html  = '';
     let total = 0;
     let count = 0;
 
     for (const id in cart) {
         const q = cart[id];
-        total += prices[id] * q;
-        count += q;
-
-        html += `
-            <div class="cart-item">
-                <span>${names[id]} ×${q}</span>
-                <span class="cart-item-price">${(prices[id] * q).toFixed(2).replace('.', ',')} €</span>
-            </div>
-        `;
-
-        document.getElementById('qty-' + id).textContent = q;
+        total  += prices[id] * q;
+        count  += q;
+        html   += `<div class="cart-item">
+            <span>${names[id]} ×${q}</span>
+            <span class="cart-item-price">${(prices[id] * q).toFixed(2).replace('.', ',')} €</span>
+        </div>`;
+        const el = document.getElementById('qty-' + id);
+        if (el) el.textContent = q;
     }
 
+    // reset counters for items not in cart
     document.querySelectorAll('.qty-val').forEach(el => {
         const pid = el.id.replace('qty-', '');
-        if (!cart[pid]) {
-            el.textContent = '0';
-        }
+        if (!cart[pid]) el.textContent = '0';
     });
 
-    container.innerHTML = count ? html : '<p class="cart-empty">Aucun article pour l\\'instant.</p>';
+    container.innerHTML = count
+        ? html
+        : '<p class="cart-empty">Aucun article pour l\'instant.</p>';
 
     totalDiv.classList.toggle('is-hidden', count === 0);
-
     totalVal.textContent = total.toFixed(2).replace('.', ',') + ' €';
 
     orderBtn.disabled = count === 0;
     orderBtn.classList.toggle('order-btn-disabled', count === 0);
 
-    document.getElementById('payAmt').textContent = total.toFixed(2).replace('.', ',') + ' €';
+    const payAmt = document.getElementById('payAmt');
+    if (payAmt) payAmt.textContent = total.toFixed(2).replace('.', ',') + ' €';
 }
 
 function openPayment() {
     const addr = document.getElementById('deliveryAddr').value.trim();
-
-    if (!addr) {
-        alert('Veuillez entrer une adresse de livraison.');
-        return;
-    }
-
+    if (!addr) { alert('Veuillez entrer une adresse de livraison.'); return; }
     document.getElementById('payModal').classList.add('open');
 }
 
@@ -300,9 +300,8 @@ function submitPayment() {
     setTimeout(() => {
         document.getElementById('cartData').value = JSON.stringify(cart);
         document.getElementById('addrData').value = document.getElementById('deliveryAddr').value;
-
         closeModal();
-
+        localStorage.removeItem('cart');
         document.getElementById('orderForm').submit();
     }, 1800);
 }
@@ -314,13 +313,21 @@ function fmtCard(el) {
 
 function fmtExp(el) {
     let v = el.value.replace(/\D/g, '');
-
-    if (v.length >= 2) {
-        v = v.substring(0, 2) + '/' + v.substring(2, 4);
-    }
-
+    if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2, 4);
     el.value = v;
 }
+
+/* ── Load cart from localStorage AFTER all functions are defined ── */
+document.addEventListener('DOMContentLoaded', () => {
+    const stored = JSON.parse(localStorage.getItem('cart')) || [];
+    stored.forEach(item => {
+        const id   = decodeURIComponent(item.id);
+        cart[id]   = item.quantity;
+        prices[id] = item.price;
+        names[id]  = item.name;
+    });
+    renderCart();
+});
 </script>
 
 </body>
