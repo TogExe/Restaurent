@@ -1260,3 +1260,114 @@ button:active, .btn:active {
         margin-left: 0;
     }
 }
+
+
+
+/* =========================================
+   PROFIL — CLASSES PROPRES
+   ========================================= */
+
+.info-display-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.profile-role-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid var(--overlay);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.profile-logout-btn {
+    margin-top: 20px;
+}
+
+.profile-section-title {
+    color: var(--sapphire);
+    margin-bottom: 16px;
+}
+
+.profile-orders-title {
+    margin-bottom: 20px;
+}
+
+.profile-empty-orders {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.profile-order-link {
+    color: var(--sapphire);
+    text-decoration: none;
+}
+
+.profile-order-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--overlay);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.profile-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.profile-order-id {
+    color: var(--sapphire);
+}
+
+.profile-order-status {
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.profile-order-items {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.profile-order-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.85rem;
+}
+
+.profile-order-date {
+    color: var(--text-muted);
+}
+
+.profile-order-price {
+    color: var(--softlime);
+}
+
+.profile-admin-panel {
+    text-align: center;
+}
+
+.profile-admin-title {
+    color: var(--mauve);
+    margin-bottom: 16px;
+}
+
+.profile-admin-btn {
+    max-width: 240px;
+    display: inline-block;
+}
