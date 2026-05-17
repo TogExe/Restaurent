@@ -1115,3 +1115,148 @@ button:active, .btn:active {
     color: #0a0a1a;
     border: none;
 }
+
+
+/* =========================================
+   MENU — CLASSES PROPRES
+   ========================================= */
+
+.empty-menu {
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.menu-item-card {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.menu-item-image {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--overlay);
+    flex-shrink: 0;
+}
+
+.menu-item-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+}
+
+.menu-item-header {
+    border-bottom: none;
+    padding-bottom: 5px;
+}
+
+.menu-item-title {
+    font-size: 1.4rem;
+}
+
+.menu-item-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.menu-item-price {
+    font-size: 1.4rem;
+}
+
+.menu-veg-badge {
+    font-size: 0.7em;
+    color: var(--softlime);
+    margin-left: 10px;
+}
+
+.menu-item-description {
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.menu-item-footer {
+    display: flex;
+    gap: 20px;
+    font-weight: bold;
+    font-size: 0.9em;
+    border-top: 1px solid var(--overlay);
+    padding-top: 10px;
+    align-items: center;
+}
+
+.like-positive {
+    color: var(--softlime);
+}
+
+.like-negative {
+    color: #f38ba8;
+}
+
+.menu-comments-link {
+    color: var(--sapphire);
+    text-decoration: none;
+}
+
+.menu-order-link {
+    margin-left: auto;
+    color: var(--accent-btn);
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+/* Like animation */
+
+@keyframes likePop {
+
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.55);
+    }
+
+    70% {
+        transform: scale(.88);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.like-btn.popping {
+    animation: likePop .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+.like-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+
+    .menu-item-card {
+        flex-direction: column;
+    }
+
+    .menu-item-image {
+        width: 100%;
+        height: 220px;
+    }
+
+    .menu-item-footer {
+        flex-wrap: wrap;
+    }
+
+    .menu-order-link {
+        margin-left: 0;
+    }
+}
