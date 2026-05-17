@@ -879,3 +879,80 @@ button:active, .btn:active {
     display: inline-block;
     margin-top: 10px;
 }
+
+
+
+/* =========================================
+   CONNEXION — CLASSES PROPRES
+   ========================================= */
+
+.login-panel {
+    max-width: 460px;
+}
+
+.demo-details {
+    margin-top: 25px;
+    border-top: 1px solid var(--overlay);
+    padding-top: 15px;
+}
+
+.demo-summary {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+}
+
+.demo-list {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.82rem;
+}
+
+.demo-badge {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--overlay);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text-muted);
+}
+
+.demo-badge strong {
+    font-weight: 700;
+}
+
+/* Variantes */
+
+.demo-admin {
+    border-left: 3px solid var(--mauve);
+}
+
+.demo-admin strong {
+    color: var(--mauve);
+}
+
+.demo-cook {
+    border-left: 3px solid var(--softlime);
+}
+
+.demo-cook strong {
+    color: var(--softlime);
+}
+
+.demo-delivery {
+    border-left: 3px solid var(--sapphire);
+}
+
+.demo-delivery strong {
+    color: var(--sapphire);
+}
+
+.demo-client {
+    border-left: 3px solid var(--accent-btn);
+}
+
+.demo-client strong {
+    color: var(--accent-btn);
+}
