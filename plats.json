@@ -1,7 +1,7 @@
 {
     "pizza_margherita": {
         "name": "Pizza Margherita",
-        "image_url": "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=600&auto=format&fit=crop",
+        "image_url": "https://eu.ooni.com/cdn/shop/articles/20220211142754-margherita-9920_0483214a-7057-4277-9a3b-f2ab17c01e13.jpg?v=1737105958",
         "text_description": "La classique italienne par excellence avec sauce tomate, mozzarella et basilic frais.",
         "price": 15,
         "is_vegetarian": true,
