@@ -1,15 +1,8 @@
 <?php
+require_once __DIR__ . '/inc/common.php';
 session_start();
 if (!isset($_SESSION['logged_in']) || $_SESSION['user_role'] !== 'admin') {
     header("Location: connect.php"); exit();
-}
-
-function decryptData($payload, $password) {
-    if (!$payload) return "";
-    $decoded   = base64_decode($payload);
-    $iv        = substr($decoded, 0, 16);
-    $encrypted = substr($decoded, 16);
-    return openssl_decrypt($encrypted, 'aes-256-cbc', $password, 0, $iv);
 }
 
 $usersFile    = 'users.json';
@@ -63,6 +56,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_dish'])) {
         $allPlats = json_decode(file_get_contents($platsFile), true);
     } else {
         $message = "<div class='msg-error'>ID de plat déjà existant ou invalide.</div>";
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ban_user'])) {
+    $targetId = $_POST['user_id'];
+    if (isset($allUsers[$targetId]) && ($allUsers[$targetId]['role'] ?? '') !== 'admin') {
+        $allUsers[$targetId]['is_banned'] = true;
+        save_json($usersFile, $allUsers);
+        $message = "<div class='msg-success'>Utilisateur banni.</div>";
+        $allUsers = load_json($usersFile);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['unban_user'])) {
+    $targetId = $_POST['user_id'];
+    if (isset($allUsers[$targetId]) && ($allUsers[$targetId]['role'] ?? '') !== 'admin') {
+        unset($allUsers[$targetId]['is_banned']);
+        save_json($usersFile, $allUsers);
+        $message = "<div class='msg-success'>Utilisateur débanni.</div>";
+        $allUsers = load_json($usersFile);
     }
 }
 
@@ -155,6 +168,17 @@ $isLoggedIn  = true;
                             <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
                             <button type="submit" name="delete_user" class="btn-danger-sm">🗑</button>
                         </form>
+                         <?php if (!isset($u['is_banned']) || $u['is_banned'] !== true): ?>
+                        <form method="POST" data-confirm="Bannir cet utilisateur ?" class="inline-form-small">
+                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
+                            <button type="submit" name="ban_user" class="btn-danger-sm">🚫</button>
+                        </form>
+                        <?php else: ?>
+                        <form method="POST" data-confirm="Débannir cet utilisateur ?" class="inline-form-small">
+                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
+                            <button type="submit" name="unban_user" class="btn-success-sm">✅</button>
+                        </form>
+                        <?php endif; ?>
                         <?php endif; ?>
                     </td>
                 </tr>
