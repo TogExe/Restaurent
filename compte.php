@@ -47,6 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <a href='connect.php' class='btn signup-login-btn'>Se connecter</a>
                     </div>
                 ";
+                connectIntoAccount($role, $keyId, $password, $email, $fullname);
             } else {
                 $message = "<div class='msg-error'>Erreur lors de la sauvegarde.</div>";
             }

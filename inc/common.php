@@ -87,4 +87,26 @@ function ensure_ban() {
     }
 }
 
+function connectIntoAccount($userRole, $key, $password, $email = NULL, $name = NULL){
+    if ($userRole == 'admin'){
+        $_SESSION['logged_in']     = true;
+        $_SESSION['user_id']       = $key;
+        $_SESSION['user_role']     = 'admin';
+        $_SESSION['user_email']    = $email;
+        $_SESSION['user_fullname'] = $u['plain_name'] ?? 'Admin';
+        $_SESSION['secret_key']    = $password;
+        redirectByRole('admin');
+    }
+    else{
+        $_SESSION['logged_in']     = true;
+        $_SESSION['user_id']       = $key;
+        $_SESSION['user_role']     = $userRole;
+        $_SESSION['secret_key']    = $password;
+        $_SESSION['user_email']    = $email || decryptData($allUsers[$key]['email_enc'], $password);
+        $_SESSION['user_fullname'] = $name || decryptData($allUsers[$key]['fullname_enc'], $password);
+
+        redirectByRole($role);
+    }
+}
+
 ?>

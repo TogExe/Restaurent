@@ -23,15 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (($u['role'] ?? '') === 'admin' && ($u['plain_email'] ?? '') === $email) {
 
             if (password_verify($password, $u['password_auth'])) {
-
-                $_SESSION['logged_in']     = true;
-                $_SESSION['user_id']       = $key;
-                $_SESSION['user_role']     = 'admin';
-                $_SESSION['user_email']    = $email;
-                $_SESSION['user_fullname'] = $u['plain_name'] ?? 'Admin';
-                $_SESSION['secret_key']    = $password;
-
-                redirectByRole('admin');
+                connectIntoAccount('admin', $key, $password, $email);
             }
 
             $foundAdmin = true;
@@ -46,14 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!isset($allUsers[$userKeyId]['is_banned']) || $allUsers[$userKeyId]['is_banned'] !== true) {
             $role = $allUsers[$userKeyId]['role'] ?? 'client';
 
-            $_SESSION['logged_in']     = true;
-            $_SESSION['user_id']       = $userKeyId;
-            $_SESSION['user_role']     = $role;
-            $_SESSION['secret_key']    = $password;
-            $_SESSION['user_email']    = decryptData($allUsers[$userKeyId]['email_enc'], $password);
-            $_SESSION['user_fullname'] = decryptData($allUsers[$userKeyId]['fullname_enc'], $password);
-
-            redirectByRole($role);
+            connectIntoAccount($role, $userKeyId, $password, $email);
             }
             else { $message = "<div class='msg-error'>Votre compte a été banni. Contactez le support.</div>"; }
         } else {
