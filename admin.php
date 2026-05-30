@@ -16,6 +16,26 @@ $allPlats    = file_exists($platsFile)    ? json_decode(file_get_contents($plats
 $message = "";
 $isAjax = (isset($_POST['ajax']) && $_POST['ajax']) || (isset($_GET['ajax']) && $_GET['ajax']) || (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
 
+$commandesParClient = [];
+foreach ($allOrders as $oid => $o) {
+    $clientId = $o['client_id'] ?? '';
+    if (!empty($clientId)) {
+        // On regroupe les commandes sous l'index du client
+        $commandesParClient[$clientId][$oid] = $o;
+    }
+}
+
+// Extension des libellés de statut pour couvrir les cas d'annulation ou défaut de paiement
+$statusLabels = [
+    -2 => 'Non payée',
+    -1 => 'Annulée',
+    0  => 'Payée',
+    1  => 'En préparation',
+    2  => 'Prête',
+    3  => 'En livraison',
+    4  => 'Livrée'
+];
+
 // --- CHANGE USER ROLE ---
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['change_role'])) {
     $targetId  = $_POST['user_id'];
@@ -181,6 +201,7 @@ $isLoggedIn  = true;
     <meta charset="UTF-8">
     <title>Administration</title>
     <link rel="stylesheet" href="style.css">
+    <script src="scripts.js" defer></script>
     
 </head>
 <body>
@@ -212,11 +233,20 @@ $isLoggedIn  = true;
         <!-- TAB: USERS -->
         <div class="tab-panel active" id="tab-users">
             <table>
-                <thead><tr><th>ID (8c)</th><th>Rôle</th><th>Modifier</th><th>Supprimer</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>ID (8c)</th>
+                        <th>Rôle</th>
+                        <th>Modifier Rôle</th>
+                        <th>Historique Commandes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
                 <tbody>
                 <?php foreach ($allUsers as $uid => $u):
                     $role = $u['role'] ?? 'client';
-                    $name = $u['plain_name'] ?? substr($uid, 0, 8).'…';
+                    // On affiche directement $uid si le plain_name n'est pas dispo
+                    $name = $u['plain_name'] ?? $uid; 
                     $color = $roleBadge[$role] ?? 'var(--text-muted)';
                     $icon  = $roleIcon[$role]  ?? '👤';
                 ?>
@@ -236,6 +266,38 @@ $isLoggedIn  = true;
                             <button type="submit" name="change_role" class="btn btn-sm">OK</button>
                         </form>
                         <?php else: echo '<span style="color:var(--text-muted);font-size:.8rem;">Compte système</span>'; endif; ?>
+                    </td>
+                    
+                    <td>
+                        <?php if (!empty($commandesParClient[$uid])): ?>
+                            <details style="cursor: pointer;">
+                                <summary style="color: var(--sapphire); font-weight: 600; font-size: 0.85rem;">
+                                    Voir les <?= count($commandesParClient[$uid]) ?> commandes
+                                </summary>
+                                <div style="padding: 8px; background: rgba(0,0,0,0.2); border-radius: 4px; margin-top: 5px; max-height: 180px; overflow-y: auto; text-align: left; min-width: 250px;">
+                                    <?php foreach ($commandesParClient[$uid] as $orderId => $orderData): 
+                                        $rVal = $orderData['ready'] ?? 0;
+                                        $lbl  = $statusLabels[$rVal] ?? 'Inconnu';
+                                        
+                                        // Préparation des données pour la modale
+                                        $orderDataForJS = $orderData;
+                                        $orderDataForJS['status_label'] = $lbl;
+                                        $orderDataForJS['client_name'] = $name;
+                                        $jsonString = htmlspecialchars(json_encode($orderDataForJS), ENT_QUOTES, 'UTF-8');
+                                    ?>
+                                        <div style="font-size: 0.75rem; margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <strong style="color: var(--softlime);"><?= number_format($orderData['price'], 2, ',', ' ') ?> €</strong><br>
+                                                <span style="font-size: 0.7rem; color: var(--text-muted);">Statut : <em><?= $lbl ?></em></span>
+                                            </div>
+                                            <button type="button" class="btn-sm btn view-order-btn" style="padding: 4px 8px; font-size: 0.7rem;" data-id="<?= htmlspecialchars($orderId) ?>" data-order="<?= $jsonString ?>">🔍 Détails</button>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </details>
+                        <?php else: ?>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">Aucune commande</span>
+                        <?php endif; ?>
                     </td>
                     <td>
                         <?php if ($role !== 'admin'): ?>
@@ -265,20 +327,43 @@ $isLoggedIn  = true;
         <!-- TAB: ORDERS -->
         <div class="tab-panel" id="tab-orders">
             <table>
-                <thead><tr><th>ID</th><th>Adresse</th><th>Plats</th><th>Prix</th><th>Heure</th><th>Statut</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Client</th>
+                        <th>Adresse</th>
+                        <th>Prix</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
                 <tbody>
-                <?php foreach ($allOrders as $oid => $o):
+                <?php 
+                $statusColors = [-2=>'var(--text-muted)', -1=>'var(--danger)', 0=>'var(--text-muted)', 1=>'var(--accent-btn)', 2=>'var(--softlime)', 3=>'var(--sapphire)', 4=>'var(--mauve)'];
+
+                foreach ($allOrders as $oid => $o):
                     $readyVal = $o['ready'] ?? 0;
-                    $statusColors = [0=>'var(--text-muted)',1=>'var(--accent-btn)',2=>'var(--softlime)',3=>'var(--sapphire)',4=>'var(--mauve)'];
                     $sc = $statusColors[$readyVal] ?? 'var(--text-muted)';
+                    
+                    $cid = $o['client_id'] ?? '';
+                    $clientDisplay = ($cid && isset($allUsers[$cid])) ? htmlspecialchars($allUsers[$cid]['plain_name'] ?? $cid) : "⚠️ Supprimé";
+                    $clientStyle = ($cid && isset($allUsers[$cid])) ? "color: var(--text);" : "color: var(--danger); font-style: italic;";
+
+                    // Préparation des données complètes pour le JavaScript
+                    $orderDataForJS = $o;
+                    $orderDataForJS['status_label'] = $statusLabels[$readyVal] ?? 'Inconnu';
+                    $orderDataForJS['client_name'] = $clientDisplay;
+                    $jsonString = htmlspecialchars(json_encode($orderDataForJS), ENT_QUOTES, 'UTF-8');
                 ?>
                 <tr>
                     <td><code style="font-size:.75rem;color:var(--text-muted);"><?= substr($oid,0,8) ?>…</code></td>
+                    <td style="<?= $clientStyle ?>; font-size:.82rem;"><?= $clientDisplay ?></td>
                     <td style="font-size:.82rem;"><?= htmlspecialchars($o['adress'] ?? '') ?></td>
-                    <td style="font-size:.78rem;color:var(--text-muted);"><?= htmlspecialchars(implode(', ', $o['commands'] ?? [])) ?></td>
                     <td style="color:var(--softlime);font-weight:700;"><?= number_format($o['price'],2,',',' ') ?> €</td>
-                    <td style="font-size:.78rem;color:var(--text-muted);"><?= substr($o['comm_t'] ?? '', -8, 5) ?></td>
-                    <td><span class="role-pill" style="background:rgba(255,255,255,.05);color:<?= $sc ?>;border:1px solid <?= $sc ?>;"><?= $statusLabels[$readyVal] ?? '?' ?></span></td>
+                    <td><span class="role-pill" style="background:rgba(255,255,255,.05);color:<?= $sc ?>;border:1px solid <?= $sc ?>;"><?= $statusLabels[$readyVal] ?? 'Inconnu' ?></span></td>
+                    <td>
+                        <button type="button" class="btn-sm btn view-order-btn" data-id="<?= htmlspecialchars($oid) ?>" data-order="<?= $jsonString ?>">🔍 Détails</button>
+                    </td>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -324,7 +409,159 @@ $isLoggedIn  = true;
             </form>
         </div>
     </div>
+    <div class="tab-panel" id="tab-orders">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Client</th>
+                        <th>Adresse</th>
+                        <th>Prix</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php 
+                $statusColors = [-2=>'var(--text-muted)', -1=>'var(--danger)', 0=>'var(--text-muted)', 1=>'var(--accent-btn)', 2=>'var(--softlime)', 3=>'var(--sapphire)', 4=>'var(--mauve)'];
+
+                foreach ($allOrders as $oid => $o):
+                    $readyVal = $o['ready'] ?? 0;
+                    $sc = $statusColors[$readyVal] ?? 'var(--text-muted)';
+                    
+                    $cid = $o['client_id'] ?? '';
+                    $clientDisplay = ($cid && isset($allUsers[$cid])) ? htmlspecialchars($allUsers[$cid]['plain_name'] ?? substr($cid, 0, 8).'…') : "⚠️ Supprimé";
+                    $clientStyle = ($cid && isset($allUsers[$cid])) ? "color: var(--text);" : "color: var(--danger); font-style: italic;";
+
+                    // Préparation des données complètes pour le JavaScript
+                    $orderDataForJS = $o;
+                    $orderDataForJS['status_label'] = $statusLabels[$readyVal] ?? 'Inconnu';
+                    $orderDataForJS['client_name'] = $clientDisplay;
+                    $jsonString = htmlspecialchars(json_encode($orderDataForJS), ENT_QUOTES, 'UTF-8');
+                ?>
+                <tr>
+                    <td><code style="font-size:.75rem;color:var(--text-muted);"><?= substr($oid,0,8) ?>…</code></td>
+                    <td style="<?= $clientStyle ?>; font-size:.82rem;"><?= $clientDisplay ?></td>
+                    <td style="font-size:.82rem;"><?= htmlspecialchars($o['adress'] ?? '') ?></td>
+                    <td style="color:var(--softlime);font-weight:700;"><?= number_format($o['price'],2,',',' ') ?> €</td>
+                    <td><span class="role-pill" style="background:rgba(255,255,255,.05);color:<?= $sc ?>;border:1px solid <?= $sc ?>;"><?= $statusLabels[$readyVal] ?? 'Inconnu' ?></span></td>
+                    <td>
+                        <button type="button" class="btn-sm btn view-order-btn" data-id="<?= htmlspecialchars($oid) ?>" data-order="<?= $jsonString ?>">🔍 Détails</button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
 </main>
-<script src="scripts.js" defer></script>
+        <div id="orderModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div class="glass-panel" style="width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; position: relative; padding: 25px;">
+            <button type="button" id="closeModalBtn" class="btn-danger-sm" style=" font-size: 1.2rem; padding: 5px 10px; cursor: pointer; z-index: 10;">✕</button>
+            <h2 style="color: var(--sapphire); margin-bottom: 5px; padding-right: 40px; line-height: 1.2;">
+                Commande <br><code id="modal-oid" style="font-size: 0.9rem; color: var(--text-muted); word-break: break-all;"></code>
+            </h2>
+            
+            <p id="modal-status" style="margin-bottom: 20px; font-weight: bold;"></p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                    <strong style="color: var(--text-muted); font-size: 0.8rem;">Client & Livraison</strong><br>
+                    👤 <span id="modal-client" style="word-break: break-all;"></span><br>
+                    📍 <span id="modal-address"></span>
+                </div>
+                <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                    <strong style="color: var(--text-muted); font-size: 0.8rem;">Horaires</strong><br>
+                    ⏱ Passée à: <span id="modal-comm-t"></span><br>
+                    🎯 Désirée à: <span id="modal-des-t"></span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <strong style="color: var(--text-muted); font-size: 0.8rem;">Plats commandés</strong>
+                <ul id="modal-plats" style="background: rgba(0,0,0,0.2); padding: 10px 10px 10px 30px; border-radius: 8px; margin-top: 5px;"></ul>
+                <div style="text-align: right; margin-top: 10px; font-size: 1.2rem;">
+                    Total : <strong style="color: var(--softlime);" id="modal-price"></strong>
+                </div>
+            </div>
+
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; border-top: 1px solid var(--overlay); padding-top: 15px;">
+                💳 ID Paiement : <code id="modal-paid-id"></code><br>
+                🔗 Type : <span id="modal-is-add">Standard</span>
+            </div>
+
+            <div id="modal-rating-box" style="display: none; background: rgba(255, 215, 0, 0.1); border-left: 4px solid gold; padding: 15px; border-radius: 4px;">
+                <h4 style="margin: 0 0 5px 0; color: gold;">Avis Client</h4>
+                <div style="font-size: 1.2rem; margin-bottom: 5px;" id="modal-rating-stars"></div>
+                <div style="font-style: italic; color: var(--text);" id="modal-rating-comment"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('orderModal');
+        
+        // Fermeture
+        if (event.target.id === 'closeModalBtn' || event.target.id === 'orderModal') {
+            if (modal) modal.style.display = 'none';
+            return;
+        }
+
+        // Ouverture (délégation d'événement)
+        const btn = event.target.closest('.view-order-btn');
+        if (btn) {
+            event.preventDefault(); 
+            
+            try {
+                const oid = btn.dataset.id;
+                const data = JSON.parse(btn.dataset.order); // C'est souvent ici que ça casse si le JSON est mal formaté
+
+                document.getElementById('modal-oid').textContent = oid;
+                document.getElementById('modal-status').innerHTML = `Statut actuel : <span style="color:var(--accent-btn)">${data.status_label}</span>`;
+                document.getElementById('modal-client').textContent = data.client_name || 'Inconnu';
+                document.getElementById('modal-address').textContent = data.adress || 'Non renseignée';
+                document.getElementById('modal-comm-t').textContent = data.comm_t || '--';
+                document.getElementById('modal-des-t').textContent = data.des_t || '--';
+                document.getElementById('modal-price').textContent = Number(data.price || 0).toFixed(2).replace('.', ',') + ' €';
+                
+                document.getElementById('modal-paid-id').textContent = data.paid_id || 'Aucun';
+                
+                const isAdd = document.getElementById('modal-is-add');
+                if (data.is_addition) {
+                    isAdd.innerHTML = `<span style="color:var(--danger)">Ajout sur la commande ${data.parent_order_id}</span>`;
+                } else {
+                    isAdd.textContent = 'Commande Principale';
+                }
+
+                const listePlats = document.getElementById('modal-plats');
+                listePlats.innerHTML = '';
+                if (data.commands && Array.isArray(data.commands)) {
+                    data.commands.forEach(plat => {
+                        const li = document.createElement('li');
+                        li.textContent = plat;
+                        listePlats.appendChild(li);
+                    });
+                }
+
+                const ratingBox = document.getElementById('modal-rating-box');
+                if (data.rating) {
+                    ratingBox.style.display = 'block';
+                    const notesEtoiles = Math.ceil(data.rating / 2);
+                    document.getElementById('modal-rating-stars').textContent = `${data.rating}/10 ` + '⭐'.repeat(notesEtoiles);
+                    document.getElementById('modal-rating-comment').textContent = data.rating_comment ? `« ${data.rating_comment} »` : 'Aucun commentaire textuel.';
+                } else {
+                    ratingBox.style.display = 'none';
+                }
+
+                if (modal) {
+                    modal.style.display = 'flex';
+                }
+            } catch (error) {
+                console.error("Erreur lors de la lecture des données de la commande :", error);
+                alert("Impossible d'ouvrir les détails. Vérifie la console (F12).");
+            }
+        }
+    });
+    </script>
 </body>
 </html>

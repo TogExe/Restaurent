@@ -12,17 +12,17 @@ const App = (() => {
                     .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     };
 
-    const showSavedTip = (bouton, messageTexte = 'Enregistré') => {
-        if (!bouton) return;
+    const showSavedTip = (elementCible, messageTexte = 'Enregistré') => {
+        if (!elementCible) return;
         const bulle = document.createElement('span');
         bulle.className = 'saved-tip';
         bulle.textContent = messageTexte;
-        bouton.parentNode.appendChild(bulle);
+        elementCible.parentNode.appendChild(bulle);
         setTimeout(() => bulle.remove(), 1500);
     };
 
     // =========================================================================
-    // 2. INITIALISATIONS UI (Bases)
+    // 2. INITIALISATIONS UI (Bases & Onglets)
     // =========================================================================
     const initConfirmForms = () => {
         qsa('form[data-confirm]:not([data-confirm-init])').forEach(form => {
@@ -142,7 +142,7 @@ const App = (() => {
     };
 
     // =========================================================================
-    // 4. MODULE MENU & PANIER
+    // 4. MODULE MENU & PANIER INTERACTIF
     // =========================================================================
     let menuCart = JSON.parse(localStorage.getItem('menuCart') || '[]');
     const saveMenuCart = () => localStorage.setItem('menuCart', JSON.stringify(menuCart));
@@ -263,10 +263,8 @@ const App = (() => {
     };
 
     // =========================================================================
-    // 5. MODULE COMMANDES COMPLET (commande.php & commande_simple.php)
+    // 5. MODULE COMMANDES (Standard & Rapide)
     // =========================================================================
-    
-    // --- Commande Standard ---
     const initCommandePage = () => {
         let cart = {}, prices = {}, names = {};
         const elements = {
@@ -429,54 +427,70 @@ const App = (() => {
         renderOrderCart();
     };
 
-    // Fonction de routage globale pour gérer les 2 types de paniers depuis le HTML
     window.changeQty = (id, a, b, c) => (typeof b === 'undefined') ? changeMenuQty(id, a) : changeOrderQty(id, a, b, c);
 
 
     // =========================================================================
-    // 6. MES COMMANDES (Client)
+    // 6. SUIVI CLIENT (mes_commandes.php) & AJOUT DE PLATS POST-COMMANDE
     // =========================================================================
-    let additionsState = {};
+
+    // Objet global pour l'état des ajouts de plats
+    const additionsState = {};
 
     window.toggleAdditions = (orderId) => {
-        const panel = qs(`#additions-panel-${orderId}`);
-        if (!panel) return;
-        panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
-        if (!additionsState[orderId]) additionsState[orderId] = {};
-        window.updateAdditionTotal(orderId);
+        const panneau = document.getElementById('additions-panel-' + orderId);
+        if (!panneau) return;
+        
+        if (panneau.style.display === 'none' || panneau.style.display === '') {
+            panneau.style.display = 'block';
+            additionsState[orderId] = {}; 
+            window.updateAdditionTotal(orderId);
+        } else {
+            panneau.style.display = 'none';
+            delete additionsState[orderId]; 
+        }
     };
 
     window.adjustAdditionQty = (orderId, dishId, delta) => {
         if (!additionsState[orderId]) additionsState[orderId] = {};
         
-        let newQty = (additionsState[orderId][dishId] || 0) + delta;
-        if (newQty <= 0) delete additionsState[orderId][dishId];
-        else additionsState[orderId][dishId] = newQty;
-
-        const qtyLabel = qs(`#qty-add-${orderId}-${dishId}`);
-        if (qtyLabel) qtyLabel.textContent = Math.max(0, newQty);
+        let nouvelleQuantite = (additionsState[orderId][dishId] || 0) + delta;
+        if (nouvelleQuantite < 0) nouvelleQuantite = 0;
+        
+        if (nouvelleQuantite === 0) {
+            delete additionsState[orderId][dishId];
+        } else {
+            additionsState[orderId][dishId] = nouvelleQuantite;
+        }
+        
+        const etiquetteQuantite = document.getElementById('qty-add-' + orderId + '-' + dishId);
+        if (etiquetteQuantite) etiquetteQuantite.textContent = nouvelleQuantite;
+        
         window.updateAdditionTotal(orderId);
     };
 
     window.updateAdditionTotal = (orderId) => {
-        const panel = qs(`#additions-panel-${orderId}`);
-        if (!panel) return;
-
-        let total = 0;
-        panel.querySelectorAll('.addition-item').forEach(item => {
-            const pid = item.dataset.pid;
-            const price = parseFloat(item.dataset.price) || 0;
-            total += price * ((additionsState[orderId] || {})[pid] || 0);
-        });
-
-        const totalSpan = qs(`#diff-val-${orderId}`);
-        if (totalSpan) totalSpan.textContent = total.toFixed(2).replace('.', ',') + ' €';
-
-        const btn = qs(`#checkout-add-btn-${orderId}`);
-        if (btn) btn.disabled = total <= 0;
+        const panneau = document.getElementById('additions-panel-' + orderId);
+        if (!panneau) return;
         
-        const dataInput = qs(`#additions-data-${orderId}`);
-        if (dataInput) dataInput.value = JSON.stringify(additionsState[orderId] || {});
+        let totalDifference = 0;
+        
+        panneau.querySelectorAll('.addition-item').forEach(element => {
+            const platId = element.dataset.pid;
+            const platPrix = parseFloat(element.dataset.price) || 0;
+            const quantiteSelectionnee = additionsState[orderId][platId] || 0;
+            
+            totalDifference += platPrix * quantiteSelectionnee;
+        });
+        
+        const zoneTotal = document.getElementById('diff-val-' + orderId);
+        if (zoneTotal) zoneTotal.textContent = totalDifference.toFixed(2).replace('.', ',') + ' €';
+        
+        const boutonPayer = document.getElementById('checkout-add-btn-' + orderId);
+        if (boutonPayer) boutonPayer.disabled = (totalDifference <= 0);
+        
+        const champDonnees = document.getElementById('additions-data-' + orderId);
+        if (champDonnees) champDonnees.value = JSON.stringify(additionsState[orderId] || {});
     };
 
     const initMesCommandesAjax = () => {
@@ -521,9 +535,77 @@ const App = (() => {
         });
     };
 
+    // =========================================================================
+    // 7. SYSTEME DE NOTATION
+    // =========================================================================
+    const initNotationAjax = () => {
+        // Cible la liste des commandes ou la page de notation dédiée
+        const conteneurNotations = qs('.ratings-list') || qs('.orders-list');
+        if (!conteneurNotations) return;
+        
+        const pageCible = qs('.ratings-list') ? 'notation.php' : 'mes_commandes.php';
+        
+        conteneurNotations.addEventListener('submit', async (evenement) => {
+            if (evenement.defaultPrevented) return;
+            
+            const formulaireCible = evenement.target;
+            if (!formulaireCible.classList.contains('ajax-rate-order-form')) return;
+            
+            evenement.preventDefault();
+            
+            const donneesFormulaire = new FormData(formulaireCible);
+            donneesFormulaire.append('submit_rating', '1');
+            donneesFormulaire.append('ajax', '1');
+            
+            const identifiantCommande = formulaireCible.querySelector('input[name="order_id"]').value;
+            const boutonEnregistrement = formulaireCible.querySelector('button');
+            if (boutonEnregistrement) boutonEnregistrement.disabled = true;
+            
+            try {
+                const reponse = await fetch(pageCible, { method: 'POST', body: donneesFormulaire, credentials: 'same-origin' });
+                const donnees = await reponse.json();
+                
+                if (donnees.success) {
+                    const conteneurNote = document.getElementById('rating-container-' + identifiantCommande);
+                    if (conteneurNote) {
+                        const nombreEtoiles = Math.ceil(donnees.rating / 2);
+                        const chaineEtoiles = '⭐'.repeat(nombreEtoiles);
+                        const commentaireAffiche = donnees.comment !== '' 
+                            ? '« ' + escapeHtml(donnees.comment) + ' »' 
+                            : 'Aucun commentaire écrit laissé.';
+                        
+                        conteneurNote.innerHTML = `
+                            <div class="rating-display" style="opacity: 0; transform: translateY(10px); transition: all 0.5s ease;">
+                                <div class="rating-score">
+                                    <span>Note : ${donnees.rating} / 10</span>
+                                    <span>${chaineEtoiles}</span>
+                                </div>
+                                <div class="rating-comment">${commentaireAffiche}</div>
+                            </div>
+                        `;
+                        
+                        const nouvelAffichage = conteneurNote.querySelector('.rating-display');
+                        void nouvelAffichage.offsetWidth; 
+                        nouvelAffichage.style.opacity = '1';
+                        nouvelAffichage.style.transform = 'translateY(0)';
+                        
+                        showSavedTip(conteneurNote, 'Évaluation enregistrée !');
+                    }
+                } else {
+                    alert(donnees.message || 'Erreur lors de la notation.');
+                    if (boutonEnregistrement) boutonEnregistrement.disabled = false;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur réseau.');
+                if (boutonEnregistrement) boutonEnregistrement.disabled = false;
+            }
+        });
+    };
+
 
     // =========================================================================
-    // 7. ROLES (Admin, Cuisinier, Livreur)
+    // 8. ROLES (Admin, Cuisinier, Livreur)
     // =========================================================================
     
     // --- Admin ---
@@ -618,7 +700,7 @@ const App = (() => {
         });
     };
 
-    // --- Cuisinier & Livreur (Logique commune factorisée) ---
+    // --- Cuisinier & Livreur ---
     const initRoleAjax = (scriptName, statusKey, transitionMap) => {
         const container = qs('.orders');
         if (!container) return;
@@ -673,19 +755,80 @@ const App = (() => {
         });
     };
 
-    // Configuration des états pour le cuisinier
     const initCuisineAjax = () => initRoleAjax('cuisinier.php', 'ready', {
         1: { hideOn: ['paid', 'prepared'], selector: '.status-paid, .status-progress', cssClass: 'status-progress', label: 'En préparation', btnUpdate: (f, b) => { if(b) b.textContent = 'Définir comme Prête'; } },
         2: { hideOn: ['paid', 'in-progress'], selector: '.status-progress', cssClass: 'status-ready', label: 'Prête', btnUpdate: (f) => f.outerHTML = `<div class='order-ready-badge'>✓ Commande Prête</div>` }
     });
 
-    // Configuration des états pour le livreur
     const initLivreurAjax = () => initRoleAjax('livreur.php', 'ready', {
         3: { hideOn: ['to-pickup', 'delivered'], selector: '.delivery-status-ready, .delivery-status-transit, .delivery-status-default', cssClass: 'delivery-status-transit', label: 'En livraison', btnUpdate: (f, b) => { if(b) { b.textContent = 'Marquer comme Livrée'; b.className = 'btn delivery-btn-finished'; } } },
         4: { hideOn: ['to-pickup', 'in-transit'], selector: '.delivery-status-transit', cssClass: 'delivery-status-done', label: 'Livrée ✅', btnUpdate: (f) => f.outerHTML = `<div class='btn delivery-complete-badge'>Livraison Terminée ✅</div>` }
     });
 
     const initAutoSubmitCybankForm = () => qs('#cybankForm')?.submit();
+
+    const initAdminModal = () => {
+        document.addEventListener('click', (event) => {
+            const modal = qs('#orderModal');
+            if (!modal) return;
+
+            // 1. Fermeture
+            if (event.target.id === 'closeModalBtn' || event.target.id === 'orderModal') {
+                modal.style.display = 'none';
+                return;
+            }
+
+            // 2. Ouverture
+            const btn = event.target.closest('.view-order-btn');
+            if (btn) {
+                event.preventDefault(); 
+                try {
+                    const oid = btn.dataset.id;
+                    const data = JSON.parse(btn.dataset.order);
+
+                    qs('#modal-oid').textContent = oid;
+                    qs('#modal-status').innerHTML = `Statut actuel : <span style="color:var(--accent-btn)">${data.status_label}</span>`;
+                    qs('#modal-client').textContent = data.client_name || 'Inconnu';
+                    qs('#modal-address').textContent = data.adress || 'Non renseignée';
+                    qs('#modal-comm-t').textContent = data.comm_t || '--';
+                    qs('#modal-des-t').textContent = data.des_t || '--';
+                    qs('#modal-price').textContent = Number(data.price || 0).toFixed(2).replace('.', ',') + ' €';
+                    qs('#modal-paid-id').textContent = data.paid_id || 'Aucun';
+                    
+                    const isAdd = qs('#modal-is-add');
+                    if (data.is_addition) {
+                        isAdd.innerHTML = `<span style="color:var(--danger)">Ajout sur la commande ${data.parent_order_id}</span>`;
+                    } else {
+                        isAdd.textContent = 'Commande Principale';
+                    }
+
+                    const listePlats = qs('#modal-plats');
+                    listePlats.innerHTML = '';
+                    if (data.commands && Array.isArray(data.commands)) {
+                        data.commands.forEach(plat => {
+                            const li = document.createElement('li');
+                            li.textContent = plat;
+                            listePlats.appendChild(li);
+                        });
+                    }
+
+                    const ratingBox = qs('#modal-rating-box');
+                    if (data.rating) {
+                        ratingBox.style.display = 'block';
+                        const notesEtoiles = Math.ceil(data.rating / 2);
+                        qs('#modal-rating-stars').textContent = `${data.rating}/10 ` + '⭐'.repeat(notesEtoiles);
+                        qs('#modal-rating-comment').textContent = data.rating_comment ? `« ${data.rating_comment} »` : 'Aucun commentaire textuel.';
+                    } else {
+                        ratingBox.style.display = 'none';
+                    }
+
+                    modal.style.display = 'flex';
+                } catch (error) {
+                    console.error("Erreur JSON modale:", error);
+                }
+            }
+        });
+    };
 
     // =========================================================================
     // INITIALISATION PRINCIPALE
@@ -695,7 +838,8 @@ const App = (() => {
             initConfirmForms(); initTabs(); initLikeButtons(); initCommandePage();
             initCommandeSimplePage(); initMenuPage(); initProfileEditButtons();
             initAutoSubmitCybankForm(); initAdminAjax(); initCuisineAjax();
-            initLivreurAjax(); initMesCommandesAjax();
+            initLivreurAjax(); initMesCommandesAjax(); initNotationAjax();
+            initAdminModal(); // <-- Ajout de l'appel ici
         }
     };
 })();

@@ -142,6 +142,52 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['prepare_addition'])) 
     }
 }
 
+// --- POST: SUBMIT RATING ---
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit_rating'])) {
+    $orderId = $_POST['order_id'] ?? '';
+    
+    if (isset($allOrders[$orderId])) {
+        $order = $allOrders[$orderId];
+        
+        // Ensure the order belongs to this client, is delivered (ready == 4), and has not been rated yet
+        if (($order['client_id'] ?? '') === $uid && ($order['ready'] ?? -1) === 4 && !isset($order['rating'])) {
+            $rating = intval($_POST['rating'] ?? 10);
+            $comment = trim($_POST['rating_comment'] ?? '');
+            
+            // Limit rating between 0 and 10
+            if ($rating < 0) $rating = 0;
+            if ($rating > 10) $rating = 10;
+            
+            $allOrders[$orderId]['rating'] = $rating;
+            $allOrders[$orderId]['rating_comment'] = $comment;
+            
+            save_json($orderFile, $allOrders);
+            $message = "<div class='msg-success'>Merci ! Votre évaluation a été enregistrée avec succès.</div>";
+            
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'rating' => $rating,
+                    'comment' => $comment,
+                    'message' => 'Évaluation enregistrée avec succès.'
+                ]);
+                exit();
+            }
+        } else {
+            $message = "<div class='msg-error'>Impossible de noter cette commande. Elle a peut-être déjà été notée ou n'est pas encore livrée.</div>";
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Impossible de noter cette commande.'
+                ]);
+                exit();
+            }
+        }
+    }
+}
+
 // Fetch only user orders, filtering out temporary addition transactions
 $myOrders = [];
 foreach ($allOrders as $oid => $o) {
@@ -340,6 +386,70 @@ $statusColors = [
             from { opacity: 0; transform: translateY(-5px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .rating-display {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.25);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .rating-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--softlime);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .rating-comment {
+            font-style: italic;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        .rating-form {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+        .rating-form-title {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: var(--sapphire);
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
+        }
+        .select-rating {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+        .select-rating option {
+            background: #1a1c1e;
+            color: var(--text);
+        }
+        .textarea-comment {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: 6px;
+            resize: vertical;
+            margin-bottom: 16px;
+            outline: none;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
@@ -429,6 +539,60 @@ $statusColors = [
                                     <button type="submit" class="btn" style="background: var(--softlime); color: var(--background); border: none; font-weight: bold; padding: 6px 14px; font-size:0.9rem;" id="checkout-add-btn-<?= $oid ?>" disabled>💳 Payer la différence</button>
                                 </form>
                             </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- Rating section for delivered orders (ready === 4) -->
+                    <?php if ($st === 4): 
+                        $hasBeenRated = isset($o['rating']);
+                    ?>
+                        <div class="rating-container" id="rating-container-<?= $oid ?>">
+                            <?php if ($hasBeenRated): 
+                                $ratingVal = intval($o['rating']);
+                                $commentVal = $o['rating_comment'] ?? '';
+                            ?>
+                                <div class="rating-display">
+                                    <div class="rating-score">
+                                        <span>Note : <?= $ratingVal ?> / 10</span>
+                                        <span><?= str_repeat('⭐', ceil($ratingVal / 2)) ?></span>
+                                    </div>
+                                    <?php if ($commentVal !== ''): ?>
+                                        <div class="rating-comment">« <?= htmlspecialchars($commentVal) ?> »</div>
+                                    <?php else: ?>
+                                        <div class="rating-comment" style="color: var(--text-muted);">Aucun commentaire écrit laissé.</div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php else: ?>
+                                <form method="POST" class="rating-form ajax-rate-order-form">
+                                    <h4 class="rating-form-title">⭐ Évaluer cette commande</h4>
+                                    <input type="hidden" name="order_id" value="<?= htmlspecialchars($oid) ?>">
+                                    <input type="hidden" name="submit_rating" value="1">
+                                    
+                                    <div class="form-group">
+                                        <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:0.9rem;">Attribuer une Note :</label>
+                                        <select name="rating" class="select-rating">
+                                            <option value="10">⭐⭐⭐⭐⭐ (10/10 - Excellent)</option>
+                                            <option value="9">⭐⭐⭐⭐⭐ (9/10)</option>
+                                            <option value="8">⭐⭐⭐⭐ (8/10 - Très bon)</option>
+                                            <option value="7">⭐⭐⭐⭐ (7/10)</option>
+                                            <option value="6">⭐⭐⭐ (6/10 - Bon)</option>
+                                            <option value="5">⭐⭐⭐ (5/10 - Moyen)</option>
+                                            <option value="4">⭐⭐ (4/10 - Passable)</option>
+                                            <option value="3">⭐⭐ (3/10)</option>
+                                            <option value="2">⭐ (2/10 - Mauvais)</option>
+                                            <option value="1">⭐ (1/10)</option>
+                                            <option value="0">🌑 (0/10 - Inacceptable)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:0.9rem;">Votre Commentaire :</label>
+                                        <textarea name="rating_comment" class="textarea-comment" rows="3" placeholder="Laissez vos impressions sur la cuisine et la livraison..."></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn" style="background: var(--softlime); color: var(--background); border: none; font-weight: bold; padding: 8px 16px;">Enregistrer mon évaluation</button>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
                 </div>
