@@ -103,6 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
         <head>
             <meta charset="UTF-8">
             <title>Redirection vers la passerelle de paiement...</title>
+            <script src="scripts.js" defer></script>
         </head>
         <body style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; background-color: #f4f6f8; margin:0;">
             <div style="text-align: center; padding: 40px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); max-width: 450px;">
@@ -119,7 +120,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
                 </form>
             </div>
             <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
-            <script>document.getElementById('cybankForm').submit();</script>
         </body>
         </html>
         <?php
@@ -215,98 +215,6 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
         </div>
     </div>
 </main>
-
-<script>
-const cart   = {};
-const prices = {};
-const names  = {};
-
-function saveCartToStorage() {
-    const items = Object.keys(cart).map(id => ({
-        id:       encodeURIComponent(id),
-        name:     names[id],
-        price:    prices[id],
-        quantity: cart[id]
-    }));
-    localStorage.setItem('cart', JSON.stringify(items));
-}
-
-function changeQty(id, price, name, delta) {
-    cart[id]   = (cart[id] || 0) + delta;
-    prices[id] = price;
-    names[id]  = name;
-    if (cart[id] <= 0) delete cart[id];
-    saveCartToStorage();
-    renderCart();
-}
-
-function renderCart() {
-    const container = document.getElementById('cartItems');
-    const totalDiv  = document.getElementById('cartTotal');
-    const totalVal  = document.getElementById('totalVal');
-    const orderBtn  = document.getElementById('orderBtn');
-
-    let html  = '';
-    let total = 0;
-    let count = 0;
-
-    for (const id in cart) {
-        const q = cart[id];
-        total  += prices[id] * q;
-        count  += q;
-        html   += `<div class="cart-item">
-            <span>${names[id]} ×${q}</span>
-            <span class="cart-item-price">${(prices[id] * q).toFixed(2).replace('.', ',')} €</span>
-        </div>`;
-        const el = document.getElementById('qty-' + id);
-        if (el) el.textContent = q;
-    }
-
-    document.querySelectorAll('.qty-val').forEach(el => {
-        const pid = el.id.replace('qty-', '');
-        if (!cart[pid]) el.textContent = '0';
-    });
-
-    container.innerHTML = count
-        ? html
-        : '<p class="cart-empty">Aucun article pour l\'instant.</p>';
-
-    totalDiv.classList.toggle('is-hidden', count === 0);
-    totalVal.textContent = total.toFixed(2).replace('.', ',') + ' €';
-
-    orderBtn.disabled = count === 0;
-    orderBtn.classList.toggle('order-btn-disabled', count === 0);
-}
-
-function openPayment() {
-    const addr = document.getElementById('deliveryAddr').value.trim();
-    if (!addr) { alert('Veuillez entrer une adresse de livraison.'); return; }
-    
-    // Remplissage du formulaire masqué avant l'envoi en POST interne
-    document.getElementById('cartData').value = JSON.stringify(cart);
-    document.getElementById('addrData').value = addr;
-    
-    // Vidage préventif du panier local
-    localStorage.removeItem('cart');
-    
-    const btn = document.getElementById('orderBtn');
-    btn.textContent = '⏳ Redirection...';
-    btn.disabled = true;
-
-    document.getElementById('orderForm').submit();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const stored = JSON.parse(localStorage.getItem('cart')) || [];
-    stored.forEach(item => {
-        const id   = decodeURIComponent(item.id);
-        cart[id]   = item.quantity;
-        prices[id] = item.price;
-        names[id]  = item.name;
-    });
-    renderCart();
-});
-</script>
 
 </body>
 </html>

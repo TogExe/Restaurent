@@ -15,5 +15,12 @@
         "phone_enc": "mvbaKIWusNv5JEYGeuw61ytsVDdyOGNDQytJWFRCRTI0UVBDM2c9PQ==",
         "role": "livreur",
         "address_enc": "rCCA6SCuq2n5xM3H1Bm1lkN6NHF4L2M5dURCMitDSjFHNmtQdm5nY211VkhpbTJ0RDUxcTFpWnJOczg9"
+    },
+    "5517e17e79ea15cfdf6337dd07147183561baece32984821a20a6fa836886675": {
+        "password_auth": "$2y$10$hsN1buKML37TnRHHovovf.nF7HqpA77Wgeu2VcdDXcepDJd/ksMfq",
+        "email_enc": "i4Xnryr7UXbhObJErYMIw3g2cWxmcDFhMG5DVFJrbHJrRllxL24ydEtJc1dGWDNOZXQyaUFVTlh1enc9",
+        "fullname_enc": "Ogh20+33TzWMpy+gBeq0VmNGaUJRN3VFdTlmb212UUxKc1IxN0E9PQ==",
+        "phone_enc": "/K7g+OynXvQZvDAs+Sy49lEzdDI5bWduYTg4bUc1TkNMZFltNFE9PQ==",
+        "role": "client"
     }
 }

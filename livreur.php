@@ -12,8 +12,21 @@ $statusPrepared = 2;
 $statusDelivery = 3;
 $statusDone     = 4;
 
+$isAjax = (isset($_POST['ajax']) && $_POST['ajax']) || (isset($_GET['ajax']) && $_GET['ajax']) || (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+
 if (isset($_POST['change_status'])) {
     updateOrderStatus($_POST['order_id']);
+    if ($isAjax) {
+        $allorders = load_json('commandes.json');
+        $order = $allorders[$_POST['order_id']] ?? null;
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'order_id' => $_POST['order_id'],
+            'ready' => $order ? $order['ready'] : null
+        ]);
+        exit;
+    }
     header("Location: livreur.php?filter=" . $selectedFilter);
     exit;
 }
@@ -252,6 +265,6 @@ $isLoggedIn  = true;
     </div>
 
 </main>
-
+<script src="scripts.js" defer></script>
 </body>
 </html>

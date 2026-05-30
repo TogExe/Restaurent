@@ -14,6 +14,7 @@ $allOrders   = file_exists($commandsFile) ? json_decode(file_get_contents($comma
 $allPlats    = file_exists($platsFile)    ? json_decode(file_get_contents($platsFile),    true) : [];
 
 $message = "";
+$isAjax = (isset($_POST['ajax']) && $_POST['ajax']) || (isset($_GET['ajax']) && $_GET['ajax']) || (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
 
 // --- CHANGE USER ROLE ---
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['change_role'])) {
@@ -24,6 +25,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['change_role'])) {
         file_put_contents($usersFile, json_encode($allUsers, JSON_PRETTY_PRINT));
         $message = "<div class='msg-success'>Rôle mis à jour.</div>";
         $allUsers = json_decode(file_get_contents($usersFile), true);
+        
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'role' => $newRole,
+                'color' => $roleBadge[$newRole] ?? 'var(--text-muted)',
+                'icon' => $roleIcon[$newRole] ?? '👤',
+                'message' => 'Rôle mis à jour.'
+            ]);
+            exit();
+        }
     }
 }
 
@@ -35,6 +48,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_user'])) {
         file_put_contents($usersFile, json_encode($allUsers, JSON_PRETTY_PRINT));
         $message = "<div class='msg-success'>Utilisateur supprimé.</div>";
         $allUsers = json_decode(file_get_contents($usersFile), true);
+        
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'message' => 'Utilisateur supprimé.'
+            ]);
+            exit();
+        }
     }
 }
 
@@ -54,8 +76,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_dish'])) {
         file_put_contents($platsFile, json_encode($allPlats, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $message = "<div class='msg-success'>Plat ajouté.</div>";
         $allPlats = json_decode(file_get_contents($platsFile), true);
+        
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'message' => 'Plat ajouté.',
+                'dish' => [
+                    'id' => $dishId,
+                    'name' => trim($_POST['dish_name']),
+                    'price' => floatval($_POST['dish_price']),
+                    'is_vegetarian' => isset($_POST['dish_veg']),
+                    'likes_count' => 0
+                ]
+            ]);
+            exit();
+        }
     } else {
         $message = "<div class='msg-error'>ID de plat déjà existant ou invalide.</div>";
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'message' => 'ID de plat déjà existant ou invalide.'
+            ]);
+            exit();
+        }
     }
 }
 
@@ -66,6 +112,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ban_user'])) {
         save_json($usersFile, $allUsers);
         $message = "<div class='msg-success'>Utilisateur banni.</div>";
         $allUsers = load_json($usersFile);
+        
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'is_banned' => true,
+                'message' => 'Utilisateur banni.'
+            ]);
+            exit();
+        }
     }
 }
 
@@ -76,6 +132,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['unban_user'])) {
         save_json($usersFile, $allUsers);
         $message = "<div class='msg-success'>Utilisateur débanni.</div>";
         $allUsers = load_json($usersFile);
+        
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'is_banned' => false,
+                'message' => 'Utilisateur débanni.'
+            ]);
+            exit();
+        }
     }
 }
 
@@ -87,6 +153,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_dish'])) {
         file_put_contents($platsFile, json_encode($allPlats, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $message = "<div class='msg-success'>Plat supprimé.</div>";
         $allPlats = json_decode(file_get_contents($platsFile), true);
+        
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'message' => 'Plat supprimé.'
+            ]);
+            exit();
+        }
     }
 }
 
@@ -116,7 +191,7 @@ $isLoggedIn  = true;
         <p>Gestion complète du restaurant</p>
     </div>
 
-    <?= $message ?><
+    <?= $message ?>
 
     <!-- Stats -->
     <div class="stat-grid" style="max-width:850px;width:100%;">
@@ -250,13 +325,6 @@ $isLoggedIn  = true;
         </div>
     </div>
 </main>
-<script>
-function switchTab(id, el) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-'+id).classList.add('active');
-    el.classList.add('active');
-}
-</script>
+<script src="scripts.js" defer></script>
 </body>
 </html>

@@ -27,12 +27,7 @@ $userRole = $_SESSION['user_role'] ?? 'client';
 
             <?php if ($userRole === 'client'): ?>
                 <li><a href="commande.php" class="<?= $currentPage == 'commande.php' ? 'active' : '' ?>">Commander</a></li>
-                
-                <li>
-                    <a href="panier.php" class="<?= $currentPage == 'panier.php' ? 'active' : '' ?>">
-                        🛒 Panier <span id="cart-count" class="badge" style="display: none;">0</span>
-                    </a>
-                </li>
+                <li><a href="mes_commandes.php" class="<?= $currentPage == 'mes_commandes.php' ? 'active' : '' ?>">Mes Commandes</a></li>
             <?php endif; ?>
 
             <li><a href="profil.php" class="<?= $currentPage == 'profil.php' ? 'active' : '' ?>">Mon Profil</a></li>
