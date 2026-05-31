@@ -4,12 +4,6 @@ Ce projet est une refonte conceptuelle d'un site web de restauration. Nous avons
 voulu nous éloigner des codes classiques (fonds blancs, designs neutres) pour
 proposer une interface premium, nocturne et hautement personnalisée.
 
-## Accès Direct
-
-Le site est déployé via GitHub Pages et peut être visité directement à cette
-adresse :\
-**[https://togexe.github.io/Restaurent/](https://togexe.github.io/Restaurent/)**
-
 ---
 
 ## Concept Visuel : Gastronomie Nocturne, Liquid Glass et Ricing
