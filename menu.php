@@ -126,7 +126,8 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     </div>
 
     <div class="menu-search-wrapper">
-        <input type="text" id="menuSearch" class="menu-search-input" placeholder="Rechercher un plat, un ingrédient...">
+        <label for="menuSearch" class="sr-only">Rechercher un plat ou un ingrédient</label>
+        <input type="text" id="menuSearch" class="menu-search-input" placeholder="Rechercher un plat, un ingrédient..." aria-label="Recherche de plat">
     </div>
 
     <section class="glass-panel menu-panel">
@@ -166,16 +167,16 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                                     </p>
                                     
                                     <div class="menu-item-footer">
-                                        <button class="like-btn like-positive" data-id="<?= urlencode($id) ?>" data-action="like">
+                                        <button class="like-btn like-positive" data-id="<?= urlencode($id) ?>" data-action="like" aria-label="Aimer <?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>">
                                             👍 <span class="like-count"><?= count($plat['likes'] ?? []) ?></span>
                                         </button>
-                                        <button class="like-btn like-negative" data-id="<?= urlencode($id) ?>" data-action="dislike">
+                                        <button class="like-btn like-negative" data-id="<?= urlencode($id) ?>" data-action="dislike" aria-label="Ne pas aimer <?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>">
                                             👎 <span class="dislike-count"><?= count($plat['dislikes'] ?? []) ?></span>
                                         </button>
-                                        <a href="view.php?id=<?= urlencode($id) ?>" class="menu-comments-link">
+                                        <a href="view.php?id=<?= urlencode($id) ?>" class="menu-comments-link" aria-label="Voir les avis de <?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>">
                                             💬 <?= count($plat['comments'] ?? []) ?>
                                         </a>
-                                        <button class="add-to-cart-btn" data-id="<?= urlencode($id) ?>" data-name="<?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>" data-price="<?= $plat['price'] ?>">
+                                        <button class="add-to-cart-btn" data-id="<?= urlencode($id) ?>" data-name="<?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>" data-price="<?= $plat['price'] ?>" aria-label="Ajouter <?= htmlspecialchars($plat['name'], ENT_QUOTES) ?> au panier">
                                             + Ajouter
                                         </button>
                                     </div>

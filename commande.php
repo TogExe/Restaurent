@@ -161,9 +161,9 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
                             </p>
 
                             <div class="qty-ctrl">
-                                <button class="qty-btn" onclick="changeQty('<?= $pid ?>', <?= $p['price'] ?>, '<?= addslashes($p['name']) ?>', -1)">−</button>
+                                <button class="qty-btn" onclick="changeQty('<?= $pid ?>', <?= $p['price'] ?>, '<?= addslashes($p['name']) ?>', -1)" aria-label="Diminuer la quantité de <?= htmlspecialchars($p['name'], ENT_QUOTES) ?>">−</button>
                                 <span class="qty-val" id="qty-<?= $pid ?>">0</span>
-                                <button class="qty-btn" onclick="changeQty('<?= $pid ?>', <?= $p['price'] ?>, '<?= addslashes($p['name']) ?>', 1)">+</button>
+                                <button class="qty-btn" onclick="changeQty('<?= $pid ?>', <?= $p['price'] ?>, '<?= addslashes($p['name']) ?>', 1)" aria-label="Augmenter la quantité de <?= htmlspecialchars($p['name'], ENT_QUOTES) ?>">+</button>
                             </div>
                         </div>
                     </div>
@@ -184,8 +184,8 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
             </div>
 
             <div class="form-group cart-address">
-                <label>Adresse de livraison</label>
-                <input type="text" id="deliveryAddr" value="<?= htmlspecialchars($savedAddress) ?>" placeholder="5 rue de la Paix…">
+                <label for="deliveryAddr">Adresse de livraison</label>
+                <input type="text" id="deliveryAddr" value="<?= htmlspecialchars($savedAddress) ?>" placeholder="5 rue de la Paix…" aria-label="Adresse de livraison">
             </div>
 
             <button id="orderBtn" onclick="openPayment()" disabled class="order-btn-disabled">
