@@ -22,5 +22,12 @@
         "fullname_enc": "Ogh20+33TzWMpy+gBeq0VmNGaUJRN3VFdTlmb212UUxKc1IxN0E9PQ==",
         "phone_enc": "/K7g+OynXvQZvDAs+Sy49lEzdDI5bWduYTg4bUc1TkNMZFltNFE9PQ==",
         "role": "client"
+    },
+    "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac": {
+        "password_auth": "$2y$12$gcPZyRClkBjAOQXbGpqQ/euURiavAnlpv6zFzJAqhH2LXntVDNa1i",
+        "email_enc": "5OO4ugIB188/RTgdlpH7t0dQUENSc0R2elRvczZwdnU4bXJ4N202UWNtWUlhOENlV05za2pDek5pSkE9",
+        "fullname_enc": "NL2uyH1P7Z23Zacoc2SfAWxUclQxS21mU3VkcjlUQmlqL3g1RFE9PQ==",
+        "phone_enc": "hxGhv6TUHbDHiCyaXbarqU53cHlkUFAzTWlmY3VML0piNWVRZ3c9PQ==",
+        "role": "client"
     }
 }
