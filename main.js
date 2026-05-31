@@ -101,41 +101,7 @@ function updateCartCounter() {
     }
 }
 
-function renderCartSidebar() {
-    const cartList = document.getElementById("cart-items-list");
-    const cartTotal = document.getElementById("cart-total");
-    if(!cartList || !cartTotal) return;
 
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    
-    if (cart.length === 0) {
-        cartList.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Votre panier est vide.<br>Ajoutez des plats depuis la carte !</p></div>`;
-        cartTotal.textContent = "0,00 €";
-        return;
-    }
-
-    cartList.innerHTML = "";
-    let total = 0;
-
-    cart.forEach(item => {
-        total += (item.price * item.quantity);
-        cartList.innerHTML += `
-            <div class="cart-item">
-                <div class="cart-item-info">
-                    <div class="cart-item-name">${item.name}</div>
-                    <div class="cart-item-price">${item.price.toFixed(2).replace('.', ',')} €</div>
-                </div>
-                <div class="cart-item-qty">
-                    <button class="qty-btn" onclick="updateItemQty('${item.id}', -1)">-</button>
-                    <span class="qty-value">${item.quantity}</span>
-                    <button class="qty-btn" onclick="updateItemQty('${item.id}', 1)">+</button>
-                </div>
-            </div>
-        `;
-    });
-
-    cartTotal.textContent = total.toFixed(2).replace('.', ',') + " €";
-}
 
 // Global functions so inline onclick handlers in renderCartSidebar work
 window.updateItemQty = function(id, change) {

@@ -2,7 +2,7 @@
 require_once __DIR__ . '/inc/common.php';
 require_once __DIR__ . '/getapikey.php'; // Inclusion requise pour l'API
 
-// CONFIGURATION CYBANK — AJOUTEZ ICI VOTRE IDENTIFIANT DE GROUPE UNIQUE
+// CONFIGURATION CYBANK
 $vendeur = 'MI-2_D'; 
 
 $platsFile  = 'plats.json';
