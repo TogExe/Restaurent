@@ -170,7 +170,8 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     </div>
 
     <div class="menu-search-wrapper" style="margin-bottom: 20px;">
-        <input type="text" id="menuSearch" class="menu-search-input" placeholder="Rechercher un plat, un ingrédient..." style="width: 100%; padding: 10px; margin-bottom: 15px;">
+        <label for="menuSearch" class="sr-only">Rechercher un plat ou un ingrédient</label>
+        <input type="text" id="menuSearch" class="menu-search-input" placeholder="Rechercher un plat, un ingrédient..." aria-label="Recherche de plat" style="width: 100%; padding: 10px; margin-bottom: 15px;">
         
         <div class="menu-filters" style="display: flex; gap: 15px; flex-wrap: wrap; background: rgba(255,255,255,0.03); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--overlay);">
             <strong style="margin-right: 10px; color: var(--text-muted);">Filtrer par catégorie :</strong>
@@ -220,13 +221,13 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                                     </p>
                                     
                                     <div class="menu-item-footer">
-                                        <a href="menu.php?action=like&id=<?= urlencode($id) ?>" class="like-btn like-positive" style="text-decoration:none;">
+                                        <a href="menu.php?action=like&id=<?= urlencode($id) ?>" class="like-btn like-positive" style="text-decoration:none;" aria-label="Aimer <?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>">
                                             👍 <span class="like-count"><?= count($plat['likes'] ?? []) ?></span>
                                         </a>
-                                        <a href="menu.php?action=dislike&id=<?= urlencode($id) ?>" class="like-btn like-negative" style="text-decoration:none;">
+                                        <a href="menu.php?action=dislike&id=<?= urlencode($id) ?>" class="like-btn like-negative" style="text-decoration:none;" aria-label="Ne pas aimer <?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>">
                                             👎 <span class="dislike-count"><?= count($plat['dislikes'] ?? []) ?></span>
                                         </a>
-                                        <a href="view.php?id=<?= urlencode($id) ?>" class="menu-comments-link">
+                                        <a href="view.php?id=<?= urlencode($id) ?>" class="menu-comments-link" aria-label="Voir les avis de <?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>">
                                             💬 <?= count($plat['comments'] ?? []) ?>
                                         </a>
                                         
@@ -234,7 +235,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                                                 data-id="<?= htmlspecialchars($id) ?>" 
                                                 data-name="<?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>" 
                                                 data-price="<?= $plat['price'] ?>"
-                                                onclick="addToCartJS(event, this)">
+                                                onclick="addToCartJS(event, this)" aria-label="Ajouter <?= htmlspecialchars($plat['name'], ENT_QUOTES) ?> au panier">
                                             + Ajouter
                                         </button>
                                     </div>

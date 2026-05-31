@@ -8,45 +8,55 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) redirectBy
 
 $message = "";
 
+$postedEmail = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $email    = strtolower(trim($_POST['email'] ?? ''));
-    $password = $_POST['password'] ?? '';
+    $postedEmail = strtolower(trim($_POST['email'] ?? ''));
+    $password    = $_POST['password'] ?? '';
+    $errors      = [];
 
-    $file     = 'users.json';
-    $allUsers = load_json($file);
+    if (!validate_email($postedEmail)) {
+        $errors[] = "L'adresse email est invalide.";
+    }
+    if (!validate_password($password)) {
+        $errors[] = "Le mot de passe doit contenir au moins 6 caractères.";
+    }
 
-    $foundAdmin = false;
+    if (empty($errors)) {
+        $file     = 'users.json';
+        $allUsers = load_json($file);
 
-    foreach ($allUsers as $key => $u) {
+        $foundAdmin = false;
 
-        if (($u['role'] ?? '') === 'admin' && ($u['plain_email'] ?? '') === $email) {
-
-            if (password_verify($password, $u['password_auth'])) {
-                connectIntoAccount('admin', $key, $password, $email);
+        foreach ($allUsers as $key => $u) {
+            if (($u['role'] ?? '') === 'admin' && ($u['plain_email'] ?? '') === $postedEmail) {
+                if (password_verify($password, $u['password_auth'])) {
+                    connectIntoAccount('admin', $key, $password, $postedEmail);
+                }
+                $foundAdmin = true;
+                break;
             }
+        }
 
-            $foundAdmin = true;
-            break;
+        if (!$foundAdmin) {
+            $userKeyId = hash('sha256', $postedEmail);
+            if (isset($allUsers[$userKeyId]) && password_verify($password, $allUsers[$userKeyId]['password_auth'])) {
+                if (!isset($allUsers[$userKeyId]['is_banned']) || $allUsers[$userKeyId]['is_banned'] !== true) {
+                    $role = $allUsers[$userKeyId]['role'] ?? 'client';
+                    connectIntoAccount($role, $userKeyId, $password, $postedEmail);
+                } else {
+                    $errors[] = "Votre compte a été banni. Contactez le support.";
+                }
+            } else {
+                $errors[] = "Identifiants incorrects.";
+            }
+        } else {
+            $errors[] = "Identifiants incorrects.";
         }
     }
 
-    if (!$foundAdmin) {
-
-        $userKeyId = hash('sha256', $email);
-        if (isset($allUsers[$userKeyId]) && password_verify($password, $allUsers[$userKeyId]['password_auth'])) {
-            if (!isset($allUsers[$userKeyId]['is_banned']) || $allUsers[$userKeyId]['is_banned'] !== true) {
-            $role = $allUsers[$userKeyId]['role'] ?? 'client';
-
-            connectIntoAccount($role, $userKeyId, $password, $email);
-            }
-            else { $message = "<div class='msg-error'>Votre compte a été banni. Contactez le support.</div>"; }
-        } else {
-            $message = "<div class='msg-error'>Identifiants incorrects.</div>";
-        }
-
-    } else {
-        $message = "<div class='msg-error'>Identifiants incorrects.</div>";
+    if (!empty($errors)) {
+        $message = "<div class='msg-error'>" . implode('<br>', $errors) . "</div>";
     }
 }
 
@@ -78,16 +88,27 @@ $isLoggedIn  = false;
 
         <?= $message ?>
 
-        <form action="" method="POST">
+        <form action="" method="POST" id="loginForm" data-login-form>
 
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" name="email" required>
+                <input type="email" id="email" name="email" required maxlength="100" value="<?= htmlspecialchars($postedEmail, ENT_QUOTES) ?>" title="Format d'email valide requis">
+                <div class="field-feedback">
+                    <span class="field-error" id="error-email"></span>
+                    <span class="signup-char-counter" id="counter-email"></span>
+                </div>
             </div>
 
             <div class="form-group">
                 <label>Mot de passe</label>
-                <input type="password" name="password" required>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <input type="password" id="password" name="password" required minlength="6" maxlength="64">
+                    <button type="button" class="pwd-toggle" aria-pressed="false" title="Afficher / Masquer">👁</button>
+                </div>
+                <div class="field-feedback">
+                    <span class="field-error" id="error-password"></span>
+                    <span class="signup-char-counter" id="counter-password"></span>
+                </div>
             </div>
 
             <button type="submit">
@@ -100,6 +121,8 @@ $isLoggedIn  = false;
             <p>Pas encore de compte ?</p>
             <a href="compte.php">Créez un compte</a>
         </div>
+
+        <script src="scripts.js" defer></script>
 
         <details class="demo-details">
 

@@ -38,7 +38,7 @@ $userRole = $_SESSION['user_role'] ?? 'client';
         <?php endif; ?>
         
         <li>
-            <button id="theme-toggle" class="btn-theme" title="Changer le thème">🌓</button>
+            <button id="theme-toggle" class="btn-theme" title="Changer le thème" aria-label="Changer le thème">🌓</button>
         </li>
     </ul>
 </nav>

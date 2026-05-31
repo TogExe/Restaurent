@@ -19,6 +19,7 @@ if (!isset($allUsers[$userId]) || !is_array($allUsers[$userId])) {
 ensure_ban();
 
 $currentUserData = $allUsers[$userId];
+$message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $isAjax = (isset($_POST['ajax']) && $_POST['ajax'])
@@ -30,23 +31,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
 
-        $existingAddr = [
-            'street' => '',
-            'number' => '',
-            'complement' => '',
-            'postal' => '',
-            'city' => ''
-        ];
-
-        if (!empty($currentUserData['address_enc'])) {
-            $raw = decryptData($currentUserData['address_enc'], $secretKey);
-            $dec = json_decode($raw, true);
-
-            if (is_array($dec)) {
-                $existingAddr = array_merge($existingAddr, $dec);
-            }
-        }
-
         $fields = [
             'addr_street' => 'street',
             'addr_number' => 'number',
@@ -55,152 +39,114 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'addr_city'   => 'city'
         ];
 
-        $updatedAddr = $existingAddr;
+        $updatedAddr = get_user_address_parts($currentUserData, $secretKey);
 
         foreach ($fields as $postKey => $partKey) {
             if (array_key_exists($postKey, $_POST)) {
-                $updatedAddr[$partKey] = trim($_POST[$postKey]);
+                $updatedAddr[$partKey] = trim(strip_tags($_POST[$postKey]));
             }
         }
 
-        if ($name !== '') {
-            $allUsers[$userId]['plain_name']   = $name;
-            $allUsers[$userId]['fullname_enc'] = encryptData($name, $secretKey);
+        $errors = [];
+
+        // Validation Serveur
+       // --- DÉBUT : VÉRIFICATIONS CÔTÉ SERVEUR ---
+        $errors = [];
+
+        // Nom (Lettres)
+        if ($name !== '' && !validate_user_name($name)) {
+            $errors[] = "Le nom contient des caractères invalides (2 à 50 caractères).";
+        }
+        // Email
+        if ($email !== '' && !validate_email($email)) {
+            $errors[] = "Le format de l'adresse email est invalide.";
+        }
+        // Téléphone
+        if ($phone !== '' && !validate_phone($phone)) {
+            $errors[] = "Le format du téléphone est invalide.";
+        }
+        // Code Postal (Exactement 5 chiffres)
+        if ($updatedAddr['postal'] !== '' && !validate_postal_code($updatedAddr['postal'])) {
+            $errors[] = "Le code postal doit contenir exactement 5 chiffres.";
+        }
+        // Ville (Lettres uniquement, anti-chiffres)
+        if ($updatedAddr['city'] !== '' && !validate_city($updatedAddr['city'])) {
+            $errors[] = "Le nom de la ville ne doit contenir que des lettres.";
+        }
+        // N° de rue (Doit commencer par un chiffre, ex: 12, 12B, 1 bis)
+        if ($updatedAddr['number'] !== '' && !validate_address_number($updatedAddr['number'])) {
+            $errors[] = "Le numéro de rue doit commencer par un chiffre.";
+        }
+        // Rue (Lettres et chiffres)
+        if ($updatedAddr['street'] !== '' && !validate_street($updatedAddr['street'])) {
+            $errors[] = "Le nom de la rue contient des caractères invalides.";
         }
 
-        if ($email !== '') {
-            $allUsers[$userId]['plain_email'] = $email;
-            $allUsers[$userId]['email_enc']   = encryptData($email, $secretKey);
-        }
-
-        if ($phone !== '') {
-            $allUsers[$userId]['phone_enc'] = encryptData($phone, $secretKey);
-        }
-
-        $anyAddr = false;
-
-        foreach ($updatedAddr as $val) {
-            if ($val !== '') {
-                $anyAddr = true;
-                break;
+        if (!empty($errors)) {
+            $errorText = implode('<br>', $errors);
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => $errorText]);
+                exit();
+            } else {
+                $message = "<div class='msg-error'>$errorText</div>";
             }
-        }
+        } else {
+            // Sauvegarde
+            if ($name !== '') {
+                $allUsers[$userId]['plain_name'] = $name;
+                unset($allUsers[$userId]['fullname_enc']);
+            }
+            if ($email !== '') {
+                $allUsers[$userId]['plain_email'] = $email;
+                $allUsers[$userId]['email_enc']   = encryptData($email, $secretKey);
+            }
+            if ($phone !== '') {
+                $allUsers[$userId]['phone'] = $phone;
+                unset($allUsers[$userId]['phone_enc']);
+            }
 
-        if ($anyAddr) {
-            $allUsers[$userId]['address_enc'] = encryptData(json_encode($updatedAddr), $secretKey);
-        }
-
-        save_json($file, $allUsers);
-        $currentUserData = $allUsers[$userId];
-
-        if ($isAjax) {
-            $retAddr = [
-                'street' => '',
-                'number' => '',
-                'complement' => '',
-                'postal' => '',
-                'city' => ''
-            ];
-
-            if (!empty($currentUserData['address_enc'])) {
-                $raw2 = decryptData($currentUserData['address_enc'], $secretKey);
-                $dec2 = json_decode($raw2, true);
-
-                if (is_array($dec2)) {
-                    $retAddr = array_merge($retAddr, $dec2);
+            $anyAddr = false;
+            foreach ($updatedAddr as $val) {
+                if ($val !== '') {
+                    $anyAddr = true;
+                    break;
                 }
             }
+            if ($anyAddr) {
+                $allUsers[$userId]['address'] = $updatedAddr;
+                unset($allUsers[$userId]['address_enc']);
+            }
 
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success'       => true,
-                'message'       => 'Profil mis à jour.',
-                'address_parts' => $retAddr,
-                'fullname'      => $currentUserData['plain_name'] ?? '',
-                'email'         => $currentUserData['plain_email'] ?? ''
-            ]);
-            exit();
+            save_json($file, $allUsers);
+            $currentUserData = $allUsers[$userId];
+            $message = "<div class='msg-success'>Profil mis à jour avec succès.</div>";
+
+            if ($isAjax) {
+                $retAddr = get_user_address_parts($currentUserData, $secretKey);
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success'       => true,
+                    'message'       => 'Profil mis à jour avec succès.',
+                    'address_parts' => $retAddr,
+                    'fullname'      => $currentUserData['plain_name'] ?? get_user_name($currentUserData, $secretKey),
+                    'email'         => $currentUserData['plain_email'] ?? get_user_email($currentUserData, $secretKey)
+                ]);
+                exit();
+            }
         }
     }
 }
 
 $isAdmin = $userRole === 'admin';
 
-$fullname = $isAdmin
-    ? ($currentUserData['plain_name'] ?? 'Admin')
-    : decryptData($currentUserData['fullname_enc'] ?? '', $secretKey);
+$fullname = $isAdmin ? ($currentUserData['plain_name'] ?? 'Admin') : get_user_name($currentUserData, $secretKey);
+$email = get_user_email($currentUserData, $secretKey);
+$phone = $isAdmin ? 'N/A' : get_user_phone($currentUserData, $secretKey);
+$addressParts = get_user_address_parts($currentUserData, $secretKey);
 
-$email = $isAdmin
-    ? ($currentUserData['plain_email'] ?? '')
-    : decryptData($currentUserData['email_enc'] ?? '', $secretKey);
-
-$phone = $isAdmin
-    ? 'N/A'
-    : decryptData($currentUserData['phone_enc'] ?? '', $secretKey);
-
-$address_raw = isset($currentUserData['address_enc'])
-    ? decryptData($currentUserData['address_enc'], $secretKey)
-    : '';
-
-$addressParts = [
-    'street'     => '',
-    'number'     => '',
-    'complement' => '',
-    'postal'     => '',
-    'city'       => ''
-];
-
-if ($address_raw !== '') {
-    $decoded = json_decode($address_raw, true);
-
-    if (is_array($decoded)) {
-        $addressParts = array_merge($addressParts, $decoded);
-    } else {
-        $addressParts['street'] = $address_raw;
-    }
-}
-
-$myOrders = [];
-
-if ($userRole === 'client') {
-    $allOrders = load_json('commandes.json');
-
-    foreach ($allOrders as $oid => $o) {
-        if (($o['client_id'] ?? '') === $userId) {
-            $myOrders[$oid] = $o;
-        }
-    }
-}
-
-$statusLabels = [
-    0 => 'En attente',
-    1 => 'En préparation',
-    2 => 'Prête',
-    3 => 'En livraison',
-    4 => 'Livrée ✅'
-];
-
-$statusColors = [
-    0 => 'var(--text-muted)',
-    1 => 'var(--accent-btn)',
-    2 => 'var(--softlime)',
-    3 => 'var(--sapphire)',
-    4 => 'var(--mauve)'
-];
-
-$roleColors = [
-    'admin'    => 'var(--mauve)',
-    'cuisinier' => 'var(--softlime)',
-    'livreur'  => 'var(--sapphire)',
-    'client'   => 'var(--accent-btn)'
-];
-
-$roleIcons = [
-    'admin'    => '⚙',
-    'cuisinier' => '🍳',
-    'livreur'  => '🛵',
-    'client'   => '👤'
-];
+$roleColors = ['admin'=>'var(--mauve)', 'cuisinier'=>'var(--softlime)', 'livreur'=>'var(--sapphire)', 'client'=>'var(--accent-btn)'];
+$roleIcons  = ['admin'=>'⚙', 'cuisinier'=>'🍳', 'livreur'=>'🛵', 'client'=>'👤'];
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 $isLoggedIn  = true;
@@ -212,6 +158,23 @@ $isLoggedIn  = true;
     <meta charset="UTF-8">
     <title>Mon Profil</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* CSS additionnel pour l'UX des formulaires */
+        .field-feedback {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-top: 4px; font-size: 0.8rem; min-height: 18px;
+        }
+        .field-error { color: #e74c3c; font-weight: 600; display: none; }
+        .char-counter { color: var(--text-muted); font-variant-numeric: tabular-nums; margin-left: auto; }
+        .char-counter.limit-reached { color: #e74c3c; font-weight: bold; }
+        .input-error { border-color: #e74c3c !important; background: rgba(231, 76, 60, 0.05) !important; }
+        
+        /* Différenciation visuelle quand on édite */
+        .inline-edit input:not([readonly]) {
+            background: rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid var(--softlime);
+        }
+    </style>
 </head>
 
 <body>
@@ -222,20 +185,20 @@ $isLoggedIn  = true;
 
     <section class="glass-panel medium profile-settings-panel">
 
-        <div class="page-header">
-            <h1>Mon Profil</h1>
-
-            <p>
-                <span class="profile-role-badge"
-                      style="
-                        border-color:<?= $roleColors[$userRole] ?? 'var(--overlay)' ?>;
-                        color:<?= $roleColors[$userRole] ?? 'var(--text)' ?>;
-                      ">
-                    <?= $roleIcons[$userRole] ?? '👤' ?>
-                    <?= ucfirst($userRole) ?>
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <div>
+                <h1 style="margin-bottom: 5px;">Mon Profil</h1>
+                <span class="profile-role-badge" style="border-color:<?= $roleColors[$userRole] ?? 'var(--overlay)' ?>; color:<?= $roleColors[$userRole] ?? 'var(--text)' ?>;">
+                    <?= $roleIcons[$userRole] ?? '👤' ?> <?= ucfirst($userRole) ?>
                 </span>
-            </p>
+            </div>
+            
+            <button type="button" id="enableEditBtn" class="btn btn-sm" style="background: rgba(255,255,255,0.05); border: 1px solid var(--overlay);">
+                ✏️ Modifier mes informations
+            </button>
         </div>
+
+        <div id="profile-messages"><?= $message ?></div>
 
         <form id="profileForm" action="" method="POST" class="profile-inline-form">
             <input type="hidden" name="update_profile" value="1">
@@ -243,8 +206,11 @@ $isLoggedIn  = true;
             <div class="profile-field-full">
                 <label class="info-display-label">Nom Complet</label>
                 <div class="inline-edit">
-                    <input type="text" id="fullname" name="fullname" value="<?= htmlspecialchars($fullname) ?>" readonly>
-                    <button type="button" class="field-edit-btn" data-target="fullname">✏️</button>
+                    <input type="text" id="fullname" name="fullname" value="<?= htmlspecialchars($fullname) ?>" 
+                           pattern="^[a-zA-ZÀ-ÿ\s\-\']{2,50}$" title="2 à 50 lettres (espaces et tirets acceptés)" maxlength="50" readonly>
+                </div>
+                <div class="field-feedback">
+                    <span class="field-error" id="error-fullname"></span><span class="char-counter" id="counter-fullname"></span>
                 </div>
             </div>
 
@@ -252,8 +218,11 @@ $isLoggedIn  = true;
                 <div>
                     <label class="info-display-label">Email</label>
                     <div class="inline-edit">
-                        <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" readonly>
-                        <button type="button" class="field-edit-btn" data-target="email">✏️</button>
+                        <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" 
+                               maxlength="100" title="Format d'email valide requis" readonly>
+                    </div>
+                    <div class="field-feedback">
+                        <span class="field-error" id="error-email"></span><span class="char-counter" id="counter-email"></span>
                     </div>
                 </div>
 
@@ -261,29 +230,36 @@ $isLoggedIn  = true;
                     <div>
                         <label class="info-display-label">Téléphone</label>
                         <div class="inline-edit">
-                            <input type="tel" id="phone" name="phone" value="<?= htmlspecialchars($phone) ?>" readonly>
-                            <button type="button" class="field-edit-btn" data-target="phone">✏️</button>
+                            <input type="tel" id="phone" name="phone" value="<?= htmlspecialchars($phone) ?>" 
+                                   pattern="^\+?[0-9\s\-]{8,15}$" title="Uniquement des chiffres, de 8 à 15 caractères" maxlength="15" readonly>
+                        </div>
+                        <div class="field-feedback">
+                            <span class="field-error" id="error-phone"></span><span class="char-counter" id="counter-phone"></span>
                         </div>
                     </div>
                 <?php endif; ?>
             </div>
 
             <?php if (!$isAdmin): ?>
-
-                <div class="profile-field-row profile-row-street">
-                    <div>
+                <div>
                         <label class="info-display-label">Rue</label>
                         <div class="inline-edit">
-                            <input type="text" id="addr_street" name="addr_street" value="<?= htmlspecialchars($addressParts['street'] ?? '') ?>" readonly>
-                            <button type="button" class="field-edit-btn" data-target="addr_street">✏️</button>
+                            <input type="text" id="addr_street" name="addr_street" value="<?= htmlspecialchars($addressParts['street'] ?? '') ?>" 
+                                   pattern="^[a-zA-Z0-9À-ÿ\s\-\']{2,100}$" title="Lettres et chiffres uniquement" maxlength="100" readonly>
                         </div>
+                        <div class="field-feedback">
+                            <span class="field-error" id="error-addr_street"></span>
+                            </div>
                     </div>
 
                     <div>
                         <label class="info-display-label">N°</label>
                         <div class="inline-edit">
-                            <input type="text" id="addr_number" name="addr_number" value="<?= htmlspecialchars($addressParts['number'] ?? '') ?>" readonly>
-                            <button type="button" class="field-edit-btn" data-target="addr_number">✏️</button>
+                            <input type="text" id="addr_number" name="addr_number" value="<?= htmlspecialchars($addressParts['number'] ?? '') ?>" 
+                                   pattern="^\d{1,4}[a-zA-Z\s]*$" title="Doit commencer par un chiffre (ex: 12, 45B)" maxlength="10" readonly>
+                        </div>
+                        <div class="field-feedback">
+                            <span class="field-error" id="error-addr_number"></span>
                         </div>
                     </div>
                 </div>
@@ -292,32 +268,38 @@ $isLoggedIn  = true;
                     <div>
                         <label class="info-display-label">Code Postal</label>
                         <div class="inline-edit">
-                            <input type="text" id="addr_postal" name="addr_postal" value="<?= htmlspecialchars($addressParts['postal'] ?? '') ?>" readonly>
-                            <button type="button" class="field-edit-btn" data-target="addr_postal">✏️</button>
+                            <input type="text" id="addr_postal" name="addr_postal" value="<?= htmlspecialchars($addressParts['postal'] ?? '') ?>" 
+                                   pattern="^\d{5}$" title="5 chiffres requis" maxlength="5" readonly>
+                        </div>
+                        <div class="field-feedback">
+                            <span class="field-error" id="error-addr_postal"></span>
                         </div>
                     </div>
 
                     <div>
                         <label class="info-display-label">Ville</label>
                         <div class="inline-edit">
-                            <input type="text" id="addr_city" name="addr_city" value="<?= htmlspecialchars($addressParts['city'] ?? '') ?>" readonly>
-                            <button type="button" class="field-edit-btn" data-target="addr_city">✏️</button>
+                            <input type="text" id="addr_city" name="addr_city" value="<?= htmlspecialchars($addressParts['city'] ?? '') ?>" 
+                                   pattern="^[a-zA-ZÀ-ÿ\s\-\']{2,50}$" title="Uniquement des lettres" maxlength="50" readonly>
+                        </div>
+                        <div class="field-feedback">
+                            <span class="field-error" id="error-addr_city"></span>
                         </div>
                     </div>
-                </div>
-
-                <div class="profile-field-full">
-                    <label class="info-display-label">Complément</label>
-                    <div class="inline-edit">
-                        <input type="text" id="addr_comp" name="addr_comp" value="<?= htmlspecialchars($addressParts['complement'] ?? '') ?>" readonly>
-                        <button type="button" class="field-edit-btn" data-target="addr_comp">✏️</button>
-                    </div>
-                </div>
-
             <?php endif; ?>
 
-            <div class="profile-actions">
-                <a href="connect.php?logout=1" class="btn danger profile-logout-btn">
+            <div class="profile-actions" style="margin-top: 20px;">
+                
+                <div id="saveActions" style="display: none; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 15px;">
+                    <button type="submit" id="saveProfileBtn" class="btn" style="background: var(--softlime); color: var(--background); font-weight: bold; width: 100%;">
+                        💾 Enregistrer les modifications
+                    </button>
+                    <button type="button" id="cancelEditBtn" class="btn danger" style="background: rgba(231, 76, 60, 0.1); color: #e74c3c; width: 100%; border: 1px solid rgba(231, 76, 60, 0.3);">
+                        ❌ Annuler
+                    </button>
+                </div>
+
+                <a href="connect.php?logout=1" class="btn danger profile-logout-btn" id="logoutBtn" style="width: 100%; text-align: center;">
                     Se Déconnecter
                 </a>
             </div>
@@ -327,22 +309,114 @@ $isLoggedIn  = true;
     </section>
 
     <?php if ($userRole === 'admin'): ?>
-
         <section class="glass-panel medium profile-admin-panel">
-            <h2 class="profile-admin-title">
-                ⚙ Accès Administration
-            </h2>
-
-            <a href="admin.php" class="btn profile-admin-btn">
-                Ouvrir le panneau admin
-            </a>
+            <h2 class="profile-admin-title">⚙ Accès Administration</h2>
+            <a href="admin.php" class="btn profile-admin-btn">Ouvrir le panneau admin</a>
         </section>
-
     <?php endif; ?>
 
 </main>
 
 <script src="scripts.js" defer></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    
+    const form = document.getElementById('profileForm');
+    const enableEditBtn = document.getElementById('enableEditBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const saveActions = document.getElementById('saveActions');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const inputs = form.querySelectorAll('.inline-edit input');
+
+    // Activer l'édition
+    if (enableEditBtn) {
+        enableEditBtn.addEventListener('click', () => {
+            inputs.forEach(input => input.removeAttribute('readonly'));
+            enableEditBtn.style.display = 'none';
+            saveActions.style.display = 'flex';
+            logoutBtn.style.display = 'none';
+            if(inputs.length > 0) inputs[0].focus();
+        });
+    }
+
+    // Annuler l'édition
+    if (cancelEditBtn) {
+        cancelEditBtn.addEventListener('click', () => {
+            form.reset(); 
+            inputs.forEach(input => {
+                input.setAttribute('readonly', 'readonly');
+                input.classList.remove('input-error');
+                const errorEl = document.getElementById(`error-${input.id}`);
+                if (errorEl) {
+                    errorEl.style.display = 'none';
+                    errorEl.textContent = "";
+                }
+            });
+            enableEditBtn.style.display = 'inline-block';
+            saveActions.style.display = 'none';
+            logoutBtn.style.display = 'block';
+        });
+    }
+
+    // Règles JS alignées sur le PHP
+    const rules = {
+        fullname: { regex: /^[a-zA-ZÀ-ÿ\s\-\']{2,50}$/, msg: "2 à 50 lettres (espaces et tirets acceptés)." },
+        email: { regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, msg: "Adresse email invalide." },
+        phone: { regex: /^\+?[0-9\s\-]{8,15}$/, msg: "Uniquement chiffres, espaces ou tirets (8-15)." },
+        addr_postal: { regex: /^\d{5}$/, msg: "Exactement 5 chiffres." },
+        addr_city: { regex: /^[a-zA-ZÀ-ÿ\s\-\']{2,50}$/, msg: "Uniquement des lettres." },
+        addr_number: { regex: /^\d{1,4}[a-zA-Z\s]*$/, msg: "Doit commencer par un chiffre." },
+        addr_street: { regex: /^[a-zA-Z0-9À-ÿ\s\-\']{2,100}$/, msg: "Caractères invalides." }
+    };
+
+    const validateInput = (input) => {
+        const errorEl = document.getElementById(`error-${input.id}`);
+        const rule = rules[input.id];
+        let isValid = true;
+        let val = input.value.trim();
+
+        if (rule && val !== '') {
+            if (!rule.regex.test(val)) isValid = false;
+        }
+
+        if (!isValid) {
+            input.classList.add('input-error');
+            if (errorEl) {
+                errorEl.textContent = rule.msg;
+                errorEl.style.display = 'block';
+            }
+        } else {
+            input.classList.remove('input-error');
+            if (errorEl) {
+                errorEl.style.display = 'none';
+                errorEl.textContent = "";
+            }
+        }
+        return isValid;
+    };
+
+    // Vérification en temps réel
+    inputs.forEach(input => {
+        input.addEventListener('input', () => validateInput(input));
+        input.addEventListener('blur', () => validateInput(input));
+    });
+
+    // Blocage à la soumission
+    form.addEventListener('submit', (e) => {
+        let isFormValid = true;
+        inputs.forEach(input => {
+            if (!validateInput(input)) isFormValid = false;
+        });
+
+        if (!isFormValid || !form.checkValidity()) {
+            e.preventDefault(); 
+            e.stopPropagation();
+            form.reportValidity(); 
+        }
+    });
+});
+</script>
 
 </body>
 </html>
