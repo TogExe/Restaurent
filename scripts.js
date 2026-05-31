@@ -389,12 +389,20 @@ const App = (() => {
             const qty = orderCart[id], price = Number(orderPrices[id] || 0), name = orderNames[id] || '';
             total += price * qty;
             count += qty;
-            html += `<div class="cart-item"><span>${escapeHtml(name)} ×${qty}</span><span class="cart-item-price">${(price * qty).toFixed(2).replace('.', ',')} €</span></div>`;
-            const qtyLabel = qs(`#qty-${id}`);
-            if (qtyLabel) qtyLabel.textContent = qty;
+            html += `
+                <div class="cart-item cart-item-with-controls">
+                    <div class="cart-item-summary">
+                        <span>${escapeHtml(name)}</span>
+                        <span class="cart-item-price">${(price * qty).toFixed(2).replace('.', ',')} €</span>
+                    </div>
+                    <div class="cart-item-controls">
+                        <button type="button" class="qty-btn" onclick="window.changeQty('${id}', ${price}, '${escapeHtml(name).replace(/'/g, "\\'")}', -1)" aria-label="Réduire la quantité de ${escapeHtml(name)}">−</button>
+                        <span class="qty-val" id="qty-${id}">${qty}</span>
+                        <button type="button" class="qty-btn" onclick="window.changeQty('${id}', ${price}, '${escapeHtml(name).replace(/'/g, "\\'")}', 1)" aria-label="Augmenter la quantité de ${escapeHtml(name)}">+</button>
+                    </div>
+                </div>`;
         });
 
-        qsa('.qty-val').forEach(el => { if (!orderCart[el.id.replace('qty-', '')]) el.textContent = '0'; });
         container.innerHTML = html || '<p class="cart-empty">Aucun article pour l\'instant.</p>';
         totalDiv.classList.toggle('is-hidden', count === 0);
         totalVal.textContent = `${total.toFixed(2).replace('.', ',')} €`;

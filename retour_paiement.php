@@ -2,86 +2,95 @@
 require_once __DIR__ . '/inc/common.php';
 require_once __DIR__ . '/getapikey.php';
 
-// CONFIGURATION CYBANK — DOIT ÊTRE IDENTIQUE AU CODE CONFIGURÉ DANS COMMANDE.PHP [cite: 89]
-$vendeur_code = 'MI-1_A'; 
+$vendeur = 'MI-2_D'; 
+$orderFile = 'commandes.json';
+$allOrders = load_json($orderFile);
 
-$api_key = getAPIKey($vendeur_code);
-
-// Interception des variables ajoutées à l'URL par l'interface CYBank [cite: 60]
+// Récupération des paramètres envoyés par CYBank par l'URL ($_GET)
 $transaction = $_GET['transaction'] ?? '';
 $montant     = $_GET['montant'] ?? '';
-$vendeur     = $_GET['vendeur'] ?? '';
-$statut      = $_GET['statut'] ?? $_GET['status'] ?? ''; // Supporte 'statut' ou l'alternative d'écriture 'status' [cite: 64, 77]
-$control_get = $_GET['control'] ?? '';
-
-// Recalcul strict de la signature attendue d'après la formule de validation de retour CYBank [cite: 66, 67, 68, 69, 70, 71]
-$strToHash = $api_key . "#" . $transaction . "#" . $montant . "#" . $vendeur . "#" . $statut . "#";
-$control_calc = md5($strToHash);
+$status      = $_GET['status'] ?? ''; // ATTENTION: C'est bien 'status' d'après la doc de retour
+$vendeur_ret = $_GET['vendeur'] ?? '';
+$control_ret = $_GET['control'] ?? '';
 
 $message = "";
+$success = false;
 
-// Étape clé de sécurité : On compare la signature calculée à celle transmise par CYBank [cite: 19]
-if ($control_get === $control_calc && $vendeur === $vendeur_code) {
-    $orderFile = 'commandes.json';
-    $allOrders = load_json($orderFile);
-    
-    if (isset($allOrders[$transaction])) {
-        if ($statut === 'accepted') { // Le paiement est officiellement validé [cite: 17, 64]
-            
-            $allOrders[$transaction]['ready']   = 0; // Passe en préparation en cuisine
-            $allOrders[$transaction]['paid_id'] = 'CYB-' . strtoupper(substr(md5($transaction), 0, 10)); // Référence bancaire générée
-            
-            save_json($orderFile, $allOrders);
-            
-            $message = "<div class='msg-success' style='padding: 20px; border-radius: 5px;'>
-                            🎉 <strong>Paiement accepté avec succès !</strong><br><br>
-                            Votre commande <strong>#{$transaction}</strong> a été transmise au restaurant.<br>
-                            Montant réglé : " . htmlspecialchars($montant) . " €<br>
-                            Livraison estimée : " . htmlspecialchars($allOrders[$transaction]['des_t']) . "
-                        </div>";
-        } else { // Cas d'un paiement refusé ('declined' ou 'denied') [cite: 17, 64, 84]
-            
-            $allOrders[$transaction]['ready'] = -2; // Code interne pour échec de paiement
-            save_json($orderFile, $allOrders);
-            
-            $message = "<div class='msg-error' style='padding: 20px; border-radius: 5px;'>
-                            ❌ <strong>Le paiement a été refusé.</strong><br><br>
-                            La transaction a été rejetée par l'établissement bancaire. Votre commande est annulée.
-                        </div>";
-        }
-    } else {
-        $message = "<div class='msg-error' style='padding: 20px; border-radius: 5px;'>⚠️ Numéro de transaction introuvable dans la base de données de la boutique.</div>";
-    }
+if (empty($transaction) || empty($montant) || empty($status) || empty($control_ret)) {
+    $message = "Paramètres de paiement manquants ou invalides.";
 } else {
-    // Les signatures ne correspondent pas : blocage immédiat (fraude ou mauvaise clé API)
-    $message = "<div class='msg-error' style='padding: 20px; border-radius: 5px;'>🛡️ <strong>Erreur critique de sécurité :</strong> La signature numérique de validation est invalide ou corrompue.</div>";
+    // 1. Récupération de la clé API pour recalculer l'empreinte de contrôle
+    $api_key = getAPIKey($vendeur);
+
+    // 2. Calcul du hash local selon la formule : md5(api_key#transaction#montant#vendeur#status#)
+    $strToHash = $api_key . "#" . $transaction . "#" . $montant . "#" . $vendeur_ret . "#" . $status . "#";
+    $local_control = md5($strToHash);
+
+    // 3. Vérification de l'intégrité des données
+    if ($local_control !== $control_ret) {
+        $message = "Échec de la vérification de sécurité (Hash invalide). La transaction a pu être altérée.";
+    } else {
+        // Les données proviennent bien de CYBank. On vérifie si la transaction existe chez nous
+        if (isset($allOrders[$transaction])) {
+            if ($status === 'accepted') {
+                $allOrders[$transaction]['ready'] = 0; 
+                $allOrders[$transaction]['paid_id'] = bin2hex(random_bytes(8)); 
+                $allOrders[$transaction]['status_text'] = "Payé"; // Ajout explicite du statut texte si besoin
+                
+                save_json($orderFile, $allOrders);
+                
+                // Modification du message de succès
+                $message = "Merci ! Votre paiement a été accepté. Le statut de votre commande est désormais : Payé.";
+                $success = true;
+
+                echo "<script>localStorage.removeItem('panier');</script>";
+                
+            } else {
+                // Le paiement a été refusé par la banque (solde insuffisant, rejet...)
+                $allOrders[$transaction]['ready'] = -2; // 0 pour refusé
+                save_json($orderFile, $allOrders);
+                $message = "Le paiement a été refusé par l'établissement bancaire. Veuillez réessayer.";
+            }
+        } else {
+            $message = "Commande introuvable dans notre système informatique.";
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Suivi de votre transaction — Le Restaurant</title>
+    <title>Statut du paiement — Le Restaurant</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <?php include '_nav.php'; ?>
 
-<main class="main-container">
-    <div class="page-header">
-        <h1>Résultat de votre commande</h1>
-        <p>Suivi en direct de la passerelle de paiement CYBank</p>
-    </div>
-
-    <div style="max-width: 600px; margin: 40px auto; padding: 30px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center;">
-        <?= $message ?>
+<main class="main-container" style="margin-top: 50px;">
+    <div class="<?= $success ? 'msg-success' : 'msg-error' ?>" style="max-width: 600px; margin: 40px auto; padding: 30px; text-align:left;">
+        <?php if ($success): ?>
+            <h1>✅ Paiement Validé</h1>
+            <p style="margin: 20px 0;"><?= htmlspecialchars($message) ?></p>
+            <p style="font-size: 0.9rem; color: #888;">Référence de la transaction : <strong><?= htmlspecialchars($transaction) ?></strong></p>
+        <?php else: ?>
+            <h1>❌ Échec du paiement</h1>
+            <p style="margin: 20px 0;"><?= htmlspecialchars($message) ?></p>
+        <?php endif; ?>
         
-        <div style="margin-top: 35px;">
-            <a href="menu.php" class="btn" style="text-decoration: none; display: inline-block;">← Retourner au menu principal</a>
-        </div>
+        <a href="index.php" class="btn" style="display: inline-block; margin-top: 30px;">Retour à l'accueil</a>
     </div>
 </main>
-
+ <?php if ($success): ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+            // Vider le panier (on cible les clés les plus courantes pour être sûr)
+            localStorage.removeItem('panier');
+            localStorage.removeItem('cart');
+            console.log("Panier réinitialisé suite au paiement.");
+        });
+    </script>
+    <?php endif; ?>
 </body>
 </html>

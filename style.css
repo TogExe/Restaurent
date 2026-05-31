@@ -469,6 +469,7 @@ input, select, textarea {
     transition: var(--transition-fast);
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 input::placeholder, textarea::placeholder {

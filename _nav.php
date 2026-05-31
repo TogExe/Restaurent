@@ -26,7 +26,7 @@ $userRole = $_SESSION['user_role'] ?? 'client';
             <?php endif; ?>
 
             <?php if ($userRole === 'client'): ?>
-                <li><a href="commande.php" class="<?= $currentPage == 'commande.php' ? 'active' : '' ?>">Commander_willbedeleted</a></li>
+                <li><a href="commande.php" class="<?= $currentPage == 'commande.php' ? 'active' : '' ?>">Commander</a></li>
                 <li><a href="mes_commandes.php" class="<?= $currentPage == 'mes_commandes.php' ? 'active' : '' ?>">Mes Commandes</a></li>
             <?php endif; ?>
 
