@@ -2191,3 +2191,64 @@ button:active, .btn:active {
     border-color: #e74c3c !important;
     background: rgba(231, 76, 60, 0.05) !important;
 }
+/* =========================================
+   PASSER LA COMMANDE
+   ========================================= */
+.floating-checkout-btn {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 100;
+    background: linear-gradient(135deg, var(--sapphire), #4da8da);
+    color: #0a0a1a;
+    padding: 16px 28px;
+    border-radius: 50px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 30px rgba(125, 211, 255, 0.4);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, opacity 0.3s ease, visibility 0.3s;
+}
+
+.floating-checkout-btn:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(125, 211, 255, 0.6);
+    color: #0a0a1a;
+}
+
+.floating-cart-count {
+    background: #0a0a1a;
+    color: var(--sapphire);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+/* Cache le bouton quand le panier est vide */
+.floating-checkout-btn.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+}
+
+/* Adaptation pour les téléphones (centré en bas) */
+@media (max-width: 700px) {
+    .floating-checkout-btn {
+        bottom: 20px;
+        right: 50%;
+        transform: translateX(50%);
+        width: 90%;
+        justify-content: center;
+    }
+    .floating-checkout-btn:hover {
+        transform: translateX(50%) translateY(-2px);
+    }
+    .floating-checkout-btn.hidden {
+        transform: translateX(50%) translateY(20px);
+    }
+}
