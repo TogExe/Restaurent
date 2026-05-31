@@ -71,93 +71,106 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     <script src="main.js" defer></script>
     
     <script>
-        // --- GESTION DU PANIER JAVASCRIPT SANS RECHARGEMENT ---
-        function addToCartJS(event, btn) {
-            event.preventDefault(); // Sécurité : empêche form submission ou navigation
-            
-            const pid = btn.dataset.id;
-            const price = parseFloat(btn.dataset.price);
-            const name = btn.dataset.name;
+    // --- GESTION DU PANIER JAVASCRIPT SANS RECHARGEMENT ---
+    function addToCartJS(event, btn) {
+        event.preventDefault(); 
+        
+        const pid = btn.dataset.id;
+        const price = parseFloat(btn.dataset.price);
+        const name = btn.dataset.name;
 
-            let cart = JSON.parse(sessionStorage.getItem('restaurantCart')) || {};
-            
-            if (!cart[pid]) {
-                cart[pid] = { qty: 0, price: price, name: name };
-            }
-            cart[pid].qty++;
-            
-            sessionStorage.setItem('restaurantCart', JSON.stringify(cart));
-            
-            // Effet visuel immédiat pour confirmer l'ajout
-            btn.innerHTML = `✔ Ajouté (${cart[pid].qty})`;
-            btn.style.color = "var(--softlime)";
-            btn.style.borderColor = "var(--softlime)";
-            btn.style.background = "rgba(126, 203, 163, 0.1)";
-            
-            // On remet l'affichage normal après 0.8s
-            setTimeout(() => {
-                btn.style.color = "";
-                btn.style.borderColor = "";
-                btn.style.background = "";
-                updateCartBadges(); 
-            }, 300);
+        let cart = JSON.parse(sessionStorage.getItem('restaurantCart')) || {};
+        
+        if (!cart[pid]) {
+            cart[pid] = { qty: 0, price: price, name: name };
         }
+        cart[pid].qty++;
+        
+        const newQty = cart[pid].qty;
+        sessionStorage.setItem('restaurantCart', JSON.stringify(cart));
+        
+        // On cible uniquement les spans pour ne pas casser le HTML du bouton
+        const textSpan = btn.querySelector('.btn-text');
+        const qtySpan = btn.querySelector('.btn-qty');
+        
+        if (textSpan) textSpan.textContent = "✔ Ajouté";
+        if (qtySpan) qtySpan.textContent = ` (${newQty})`;
+        
+        // Effet visuel immédiat
+        btn.style.color = "var(--softlime)";
+        btn.style.borderColor = "var(--softlime)";
+        btn.style.background = "rgba(126, 203, 163, 0.1)";
+        btn.style.transform = "scale(1.05)"; 
+        
+        // Retour à la normale après 0.8s
+        setTimeout(() => {
+            if (textSpan) textSpan.textContent = "+ Ajouter";
+            btn.style.color = "";
+            btn.style.borderColor = "";
+            btn.style.background = "";
+            btn.style.transform = "";
+        }, 800);
+    }
 
-        function updateCartBadges() {
-            let cart = JSON.parse(sessionStorage.getItem('restaurantCart')) || {};
-            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-                const pid = btn.dataset.id;
+    function updateCartBadges() {
+        let cart = JSON.parse(sessionStorage.getItem('restaurantCart')) || {};
+        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+            const pid = btn.dataset.id;
+            const qtySpan = btn.querySelector('.btn-qty');
+            
+            if (qtySpan) {
                 if (cart[pid] && cart[pid].qty > 0) {
-                    btn.innerHTML = `+ Ajouter (${cart[pid].qty})`;
+                    qtySpan.textContent = ` (${cart[pid].qty})`;
                 } else {
-                    btn.innerHTML = `+ Ajouter`;
+                    qtySpan.textContent = "";
+                }
+            }
+        });
+    }
+
+    // --- GESTION DE LA RECHERCHE ET DES FILTRES ---
+    function applyFilters() {
+        const searchInput = document.getElementById('menuSearch');
+        if (!searchInput) return;
+
+        const term = searchInput.value.toLowerCase();
+        const checkedBoxes = Array.from(document.querySelectorAll('.category-filter:checked')).map(cb => cb.value);
+
+        document.querySelectorAll('.menu-category-wrapper').forEach(wrapper => {
+            const catName = wrapper.querySelector('h2').textContent.trim();
+            const isCatSelected = checkedBoxes.length === 0 || checkedBoxes.includes(catName);
+            
+            let hasVisibleCard = false;
+            const cards = wrapper.querySelectorAll('.menu-item-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.menu-item-title').textContent.toLowerCase();
+                const desc = card.querySelector('.menu-item-description').textContent.toLowerCase();
+                const matchesSearch = title.includes(term) || desc.includes(term);
+                
+                if (isCatSelected && matchesSearch) {
+                    card.style.display = 'flex';
+                    hasVisibleCard = true;
+                } else {
+                    card.style.display = 'none';
                 }
             });
-        }
 
-        // --- GESTION DE LA RECHERCHE ET DES FILTRES ---
-        function applyFilters() {
-            const searchInput = document.getElementById('menuSearch');
-            if (!searchInput) return;
-
-            const term = searchInput.value.toLowerCase();
-            const checkedBoxes = Array.from(document.querySelectorAll('.category-filter:checked')).map(cb => cb.value);
-
-            document.querySelectorAll('.menu-category-wrapper').forEach(wrapper => {
-                const catName = wrapper.querySelector('h2').textContent.trim();
-                const isCatSelected = checkedBoxes.length === 0 || checkedBoxes.includes(catName);
-                
-                let hasVisibleCard = false;
-                const cards = wrapper.querySelectorAll('.menu-item-card');
-                
-                cards.forEach(card => {
-                    const title = card.querySelector('.menu-item-title').textContent.toLowerCase();
-                    const desc = card.querySelector('.menu-item-description').textContent.toLowerCase();
-                    const matchesSearch = title.includes(term) || desc.includes(term);
-                    
-                    if (isCatSelected && matchesSearch) {
-                        card.style.display = 'flex';
-                        hasVisibleCard = true;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-
-                wrapper.style.display = hasVisibleCard ? 'block' : 'none';
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateCartBadges();
-            
-            const searchInput = document.getElementById('menuSearch');
-            if (searchInput) searchInput.addEventListener('input', applyFilters);
-            
-            document.querySelectorAll('.category-filter').forEach(cb => {
-                cb.addEventListener('change', applyFilters);
-            });
+            wrapper.style.display = hasVisibleCard ? 'block' : 'none';
         });
-    </script>
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateCartBadges();
+        
+        const searchInput = document.getElementById('menuSearch');
+        if (searchInput) searchInput.addEventListener('input', applyFilters);
+        
+        document.querySelectorAll('.category-filter').forEach(cb => {
+            cb.addEventListener('change', applyFilters);
+        });
+    });
+</script>
 </head>
 <body>
 
@@ -232,11 +245,12 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                                         </a>
                                         
                                         <button type="button" class="add-to-cart-btn" 
-                                                data-id="<?= htmlspecialchars($id) ?>" 
-                                                data-name="<?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>" 
-                                                data-price="<?= $plat['price'] ?>"
-                                                onclick="addToCartJS(event, this)" aria-label="Ajouter <?= htmlspecialchars($plat['name'], ENT_QUOTES) ?> au panier">
-                                            + Ajouter
+                                            data-id="<?= htmlspecialchars($id) ?>" 
+                                            data-name="<?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>" 
+                                            data-price="<?= $plat['price'] ?>"
+                                            onclick="addToCartJS(event, this)" 
+                                            aria-label="Ajouter <?= htmlspecialchars($plat['name'], ENT_QUOTES) ?> au panier">
+                                            <span class="btn-text">+ Ajouter</span><span class="btn-qty"></span>
                                         </button>
                                     </div>
                                 </div>
