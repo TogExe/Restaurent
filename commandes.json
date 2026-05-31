@@ -9,7 +9,9 @@
         "des_t": "5/04/2026-18:08",
         "paid_id": "PAY_DEMO_67F45DDC52E3",
         "ready": 4,
-        "client_id": "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac"
+        "client_id": "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac",
+        "rating": 10,
+        "rating_comment": "e"
     },
     "24091690738": {
         "adress": "6 Chemin Des Chateigners",
@@ -21,7 +23,9 @@
         "des_t": "5/04/2026-18:08",
         "paid_id": "PAY_DEMO_67F45DDC52E3",
         "ready": 4,
-        "client_id": "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac"
+        "client_id": "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac",
+        "rating": 10,
+        "rating_comment": "eraze"
     },
     "20383562012": {
         "adress": "123 Koopa Realm",

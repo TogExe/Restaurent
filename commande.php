@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/inc/common.php';
-require_once __DIR__ . '/getapikey.php'; // Inclusion requise pour l'API [cite: 108]
+require_once __DIR__ . '/getapikey.php'; // Inclusion requise pour l'API
 
-// CONFIGURATION CYBANK — AJOUTEZ ICI VOTRE IDENTIFIANT DE GROUPE UNIQUE [cite: 89]
-$vendeur = 'MI-1_A'; 
+// CONFIGURATION CYBANK
+$vendeur = 'MI-2_D'; 
 
 $platsFile  = 'plats.json';
 $orderFile  = 'commandes.json';
