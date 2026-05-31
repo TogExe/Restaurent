@@ -14,23 +14,14 @@
         "fullname_enc": "uAS5gN7SCk\/L9dOq1DULjmtDbWJmQ21QYzdtcm1ybiswV0FmS1E9PQ==",
         "phone_enc": "mIg7QBq6eHi82l6mBsFzh1c1bWFocThVai9KdmJRK3ZjdHNqcWc9PQ==",
         "role": "client",
-        "address_enc": "i4\/5oTkmlShtzMHTzRuqmS94YklaV1lGcjJnd2djZ25wdG9OclFDeVhSTHNzY1lDeXo3aVhjVVJOSEJXSDRSaGhiSnQ5empMOUt2d2tqUndjd1pwZFFZZlVtelBHeENKOTJndjdIdzBjRkwydVlsVDhmbTZpcms2clAxakxUTm5yMko2LzR1TUlHc00wUm9v",
-        "plain_name": "Mario",
-        "plain_email": "itsmemaario@gmail.com"
+        "address_enc": "HtCYdEmBDY1forb+wLg9jDVUQzNZdVNCR1lWK0NncXVSb2JqMThSM0VPVG4xL0F5MGN6YnVyUWdpOXRWanhocVFGMzhQQ3hVMC9uRmtuUzI2cm02M2VOZ1EwOFA0VFJ0cWRaNWVDZmlCUWRkTmdkK3VEb2c0aTJudTlJPQ=="
     },
-    "810f51934992868213c6a7be9661a451abc7b1df289549ced87cf94fdd19cc84": {
-        "password_auth": "$2y$10$z1.MNcIe167g.QnVBxL5J.pMgSFott8Ug0VCnqsVmA6oaogw\/ihnq",
-        "email_enc": "Ou8yrR4SpvhJLl+TBAsm10huZHRDNHJQeXdVdDcrNSsrbmJZd2hVb21aZlhqL1JOVXFGTzdyUVpwOW89",
-        "plain_email": "johnfoe@gmail.com",
-        "plain_name": "John",
-        "phone": "123456789",
-        "role": "livreur",
-        "address": {
-            "street": "Lacert",
-            "number": "56",
-            "complement": "",
-            "postal": "98476",
-            "city": "Milun"
-        }
+    "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac": {
+        "password_auth": "$2y$12$4US.8rVhDJOlSdK7./JgeOvolb/oxpdIlonLXwVhdHBQ1aJdDjEDG",
+        "email_enc": "mroqy9moKqYmCFn/qFR85FNlRUdwQ1BLUms0RExMam9hQnFaOWVyWUU5WDFLK0FrekN0QUVmRytBQjg9",
+        "fullname_enc": "yfatCLjtC2YmgL7eFfqxBEVqOXRTc0NaWEpXeHVlMFdHK3A4Ync9PQ==",
+        "phone_enc": "nQvZ8FE4cREOKkiAhqnqSGpESGFxZUNlUzZadFAzTmszQkxiVHc9PQ==",
+        "role": "client",
+        "address_enc": "pdoC7NqjvfASEVebkq+VV1dCcU5xWEprMi8zQUxwTmY4N2FuSzZTc1ZUaVRZNjFla2pXeHlENzBXK3ZNRmRsUzU2MDRLK3hpVjQ5ZjB3VndRc3UxbVFUdWw5QWxHOVlzSk1LVUIxRXJzdXgzVjNaTEpNaHdNcGJIOUpuMnZESG5aNFQwaHNaZm5HTzA2U1hUUVZmdllxMFZwRWFkYlZJOFJXSVgrdz09"
     }
 }
