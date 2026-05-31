@@ -88,6 +88,8 @@ function ensure_ban() {
 }
 
 function connectIntoAccount($userRole, $key, $password, $email = NULL, $name = NULL){
+    global $allUsers;
+
     if ($userRole == 'admin'){
         $_SESSION['logged_in']     = true;
         $_SESSION['user_id']       = $key;
@@ -105,7 +107,7 @@ function connectIntoAccount($userRole, $key, $password, $email = NULL, $name = N
         $_SESSION['user_email']    = $email || decryptData($allUsers[$key]['email_enc'], $password);
         $_SESSION['user_fullname'] = $name || decryptData($allUsers[$key]['fullname_enc'], $password);
 
-        redirectByRole($role);
+        redirectByRole($userRole);
     }
 }
 
