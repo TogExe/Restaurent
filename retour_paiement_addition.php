@@ -50,33 +50,29 @@ if ($control_get === $control_calc && $vendeur === $vendeur_code) {
                     save_json($orderFile, $allOrders);
                     
                     $success = true;
-                    $message = "<div class='msg-success' style='padding: 20px; border-radius: 5px; text-align: left; margin-bottom: 20px;'>
-                                    🎉 <strong>Paiement de la différence accepté !</strong><br><br>
-                                    Les plats additionnels ont été ajoutés avec succès à votre commande <strong>#{$parentOrderId}</strong>.<br>
-                                    Montant de la différence réglé : " . htmlspecialchars($montant) . " €<br>
-                                    Nouveau montant total de la commande : " . number_format($allOrders[$parentOrderId]['price'], 2, ',', ' ') . " €
-                                </div>";
+                    $message = "🎉 <strong>Paiement de la différence accepté !</strong><br><br>"
+                        . "Les plats additionnels ont été ajoutés avec succès à votre commande <strong>#{$parentOrderId}</strong>.<br>"
+                        . "Montant de la différence réglé : " . htmlspecialchars($montant) . " €<br>"
+                        . "Nouveau montant total de la commande : " . number_format($allOrders[$parentOrderId]['price'], 2, ',', ' ') . " €";
                 } else {
                     // Payment declined
                     unset($allOrders[$transaction]);
                     save_json($orderFile, $allOrders);
                     
-                    $message = "<div class='msg-error' style='padding: 20px; border-radius: 5px; text-align: left; margin-bottom: 20px;'>
-                                    ❌ <strong>Le paiement de la différence a été refusé.</strong><br><br>
-                                    La transaction a été rejetée. Aucun plat n'a été ajouté à votre commande initiale.
-                                </div>";
+                    $message = "❌ <strong>Le paiement de la différence a été refusé.</strong><br><br>"
+                        . "La transaction a été rejetée. Aucun plat n'a été ajouté à votre commande initiale.";
                 }
             } else {
-                $message = "<div class='msg-error' style='padding: 20px; border-radius: 5px;'>⚠️ Erreur critique : La commande d'origine #{$parentOrderId} est introuvable.</div>";
+                $message = "⚠️ Erreur critique : La commande d'origine #{$parentOrderId} est introuvable.";
             }
         } else {
-            $message = "<div class='msg-error' style='padding: 20px; border-radius: 5px;'>⚠️ Cette transaction n'est pas répertoriée comme un ajout de plats.</div>";
+            $message = "⚠️ Cette transaction n'est pas répertoriée comme un ajout de plats.";
         }
     } else {
-        $message = "<div class='msg-error' style='padding: 20px; border-radius: 5px;'>⚠️ Référence de transaction d'addition introuvable.</div>";
+        $message = "⚠️ Référence de transaction d'addition introuvable.";
     }
 } else {
-    $message = "<div class='msg-error' style='padding: 20px; border-radius: 5px;'>🛡️ <strong>Erreur critique de sécurité :</strong> Signature numérique invalide.</div>";
+    $message = "🛡️ <strong>Erreur critique de sécurité :</strong> Signature numérique invalide.";
 }
 
 $currentPage = 'retour_paiement_addition.php';
@@ -100,7 +96,9 @@ $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
     </div>
 
     <div style="max-width: 600px; margin: 40px auto; padding: 30px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center;">
-        <?= $message ?>
+        <div class="<?= $success ? 'msg-success' : 'msg-error' ?>" style="text-align:left;">
+            <?= $message ?>
+        </div>
         
         <div style="margin-top: 35px; display: flex; justify-content: center; gap: 15px;">
             <a href="mes_commandes.php" class="btn" style="text-decoration: none; display: inline-block;">Voir mes commandes</a>

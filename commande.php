@@ -46,6 +46,8 @@ if ($uid && isset($allUsers[$uid]['address_enc'])) {
 
 ensure_ban();
 
+
+
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
@@ -69,10 +71,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
             }
         }
 
+        // Création d'un identifiant alphanumérique unique respectant le format [0-9a-zA-Z]{10,24}
         $orderId = strtoupper(substr(md5(uniqid(rand(), true)), 0, 16));
         $now     = date("j/m/Y-H:i:s");
         $delTime = date("j/m/Y-H:i", strtotime('+30 minutes'));
         
+        // Formatage obligatoire du montant : 2 chiffres après la virgule avec un point
         $montant_str = number_format($total, 2, '.', ''); 
 
         $allOrders[(string)$orderId] = [
@@ -88,24 +92,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
 
         save_json($orderFile, $allOrders);
 
+        // Récupération dynamique de la clé d'API secrète via le composant fourni
         $api_key = getAPIKey($vendeur);
 
+        // Détection automatisée de l'URL absolue pour créer le lien de retour vers votre projet
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $retour = $protocol . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/') . '/retour_paiement.php';
 
+        // Application stricte de la formule de hachage md5 pour le contrôle d'intégrité à l'envoi
         $strToHash = $api_key . "#" . $orderId . "#" . $montant_str . "#" . $vendeur . "#" . $retour . "#";
         $control = md5($strToHash);
 
+        // Rendu immédiat d'une page de transition avec soumission transparente du formulaire vers CYBank
         ?>
         <!DOCTYPE html>
         <html lang="fr">
         <head>
             <meta charset="UTF-8">
             <title>Redirection vers la passerelle de paiement...</title>
-            <script>
-                // Efface le panier JS après une validation de commande réussie
-                sessionStorage.removeItem('restaurantCart');
-            </script>
         </head>
         <body style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; background-color: #f4f6f8; margin:0;">
             <div style="text-align: center; padding: 40px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); max-width: 450px;">
@@ -124,6 +128,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
                     setTimeout(() => document.getElementById('cybankForm').submit(), 1000);
                 </script>
             </div>
+            <script>
+                // Soumission automatique dès le chargement de la page de transition
+                document.getElementById('cybankForm').submit();
+            </script>
             <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
         </body>
         </html>
@@ -156,42 +164,6 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 
     <?= $message ?>
 
-    <div class="order-layout">
-        <div>
-            <div class="menu-grid">
-                <?php foreach ($plats as $pid => $p): ?>
-                    <div class="dish-card">
-                        <?php if (!empty($p['image_url'])): ?>
-                            <img src="<?= htmlspecialchars($p['image_url']) ?>" alt="<?= htmlspecialchars($p['name']) ?>">
-                        <?php endif; ?>
-
-                        <div class="dish-body">
-                            <div class="dish-name">
-                                <?= htmlspecialchars($p['name']) ?>
-                                <?php if ($p['is_vegetarian'] ?? false): ?>
-                                    <span class="dish-veg-icon">🌱</span>
-                                <?php endif; ?>
-                            </div>
-
-                            <div class="dish-price">
-                                <?= number_format($p['price'], 2, ',', ' ') ?> €
-                            </div>
-
-                            <p class="dish-description">
-                                <?= htmlspecialchars(mb_strimwidth($p['text_description'], 0, 70, '…')) ?>
-                            </p>
-
-                            <div class="qty-ctrl">
-                                <button class="qty-btn" onclick="changeQty('<?= $pid ?>', <?= $p['price'] ?>, '<?= addslashes($p['name']) ?>', -1)">−</button>
-                                <span class="qty-val" id="qty-<?= $pid ?>">0</span>
-                                <button class="qty-btn" onclick="changeQty('<?= $pid ?>', <?= $p['price'] ?>, '<?= addslashes($p['name']) ?>', 1)">+</button>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-
         <div class="cart-panel">
             <h2 class="cart-title">🛒 Mon Panier</h2>
 
@@ -209,17 +181,16 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
                 <input type="text" id="deliveryAddr" value="<?= htmlspecialchars($savedAddress, ENT_QUOTES) ?>" placeholder="5 rue de la Paix…">
             </div>
 
-            <button id="orderBtn" onclick="openPayment()" disabled class="order-btn-disabled">
+            <button id="orderBtn" onclick="openPayment()" class="order-btn">
                 Procéder au paiement
             </button>
 
-            <form id="orderForm" method="POST" class="hidden-form">
+            <form id="orderForm" method="POST" style="display:none;">
                 <input type="hidden" name="place_order" value="1">
                 <input type="hidden" name="cart_items" id="cartData">
                 <input type="hidden" name="delivery_address" id="addrData">
             </form>
         </div>
-    </div>
 </main>
 
 <script>
