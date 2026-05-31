@@ -1,7 +1,7 @@
 {
 "pizza_margherita": {
 "name": "Pizza Margherita",
-"image_url": "pizzamargherita.jpg",
+"image_url": "Images/images/pizzamargherita.jpg",
 "text_description": "Sauce tomate, mozzarella di bufala et basilic frais.",
 "price": 15.00,
 "is_vegetarian": true,
@@ -13,7 +13,7 @@
 
 "burger_maison": {
     "name": "Burger Maison",
-    "image_url": "burgermaison.jpg",
+    "image_url": "Images/images/burgermaison.jpg",
     "text_description": "Steak haché, cheddar affiné, salade, tomate et sauce maison.",
     "price": 16.50,
     "is_vegetarian": false,
@@ -24,7 +24,7 @@
 
 "salade_cesar": {
     "name": "Salade César",
-    "image_url": "saladecesar.jpg",
+    "image_url": "Images/images/saladecesar.jpg",
     "text_description": "Laitue romaine, poulet grillé, parmesan, croûtons et sauce César.",
     "price": 12.50,
     "is_vegetarian": false,
@@ -35,7 +35,7 @@
 
 "pates_carbonara": {
     "name": "Pâtes Carbonara",
-    "image_url": "patescarbonnara.jpg",
+    "image_url": "Images/images/patescarbonnara.jpg",
     "text_description": "Pâtes fraîches, lardons fumés, œuf et parmesan.",
     "price": 14.50,
     "is_vegetarian": false,
@@ -46,7 +46,7 @@
 
 "risotto_champignons": {
     "name": "Risotto aux Champignons",
-    "image_url": "risottochampignon",
+    "image_url": "Images/images/risottochampignon",
     "text_description": "Risotto crémeux aux champignons de saison et parmesan.",
     "price": 16.00,
     "is_vegetarian": true,
@@ -57,7 +57,7 @@
 
 "steak_frites": {
     "name": "Steak Frites",
-    "image_url": "steakfrites.jpg",
+    "image_url": "Images/images/steakfrites.jpg",
     "text_description": "Pièce de bœuf grillée accompagnée de frites maison.",
     "price": 21.00,
     "is_vegetarian": false,
@@ -68,7 +68,7 @@
 
 "saumon_grille": {
     "name": "Saumon Grillé",
-    "image_url": "saumongrille.jpg",
+    "image_url": "Images/images/saumongrille.jpg",
     "text_description": "Filet de saumon grillé, légumes de saison et sauce citronnée.",
     "price": 22.50,
     "is_vegetarian": false,
@@ -79,7 +79,7 @@
 
 "magret_canard": {
     "name": "Magret de Canard",
-    "image_url": "canard.jpg",
+    "image_url": "Images/images/canard.jpg",
     "text_description": "Magret rôti servi avec pommes de terre grenaille.",
     "price": 24.00,
     "is_vegetarian": false,
@@ -90,7 +90,7 @@
 
 "lasagnes_bolognaise": {
     "name": "Lasagnes Bolognaise",
-    "image_url": "lasagnes.jpg",
+    "image_url": "Images/images/lasagnes.jpg",
     "text_description": "Lasagnes gratinées à la sauce bolognaise maison.",
     "price": 15.50,
     "is_vegetarian": false,
@@ -101,7 +101,7 @@
 
 "tarte_chevre_miel": {
     "name": "Tarte Chèvre Miel",
-    "image_url": "tartecherve.jpg",
+    "image_url": "Images/images/tartecherve.jpg",
     "text_description": "Tarte croustillante au chèvre chaud et miel.",
     "price": 13.00,
     "is_vegetarian": true,
@@ -112,7 +112,7 @@
 
 "moules_frites": {
     "name": "Moules Frites",
-    "image_url": "moulefrites.jpg",
+    "image_url": "Images/images/moulefrites.jpg",
     "text_description": "Moules marinières accompagnées de frites maison.",
     "price": 18.50,
     "is_vegetarian": false,
@@ -123,7 +123,7 @@
 
 "fondant_chocolat": {
     "name": "Fondant au Chocolat",
-    "image_url": "fondant.jpg",
+    "image_url": "Images/images/fondant.jpg",
     "text_description": "Fondant au chocolat noir avec cœur coulant.",
     "price": 7.50,
     "is_vegetarian": true,
@@ -134,7 +134,7 @@
 
 "tiramisu": {
     "name": "Tiramisu",
-    "image_url": "tiramisu.jpg",
+    "image_url": "Images/images/tiramisu.jpg",
     "text_description": "Dessert italien au café et mascarpone.",
     "price": 6.50,
     "is_vegetarian": true,
@@ -145,7 +145,7 @@
 
 "creme_brulee": {
     "name": "Crème Brûlée",
-    "image_url": "cremebrulee.jpg",
+    "image_url": "Images/images/cremebrulee.jpg",
     "text_description": "Crème vanillée recouverte d'une fine couche de caramel.",
     "price": 6.00,
     "is_vegetarian": true,
@@ -156,7 +156,7 @@
 
 "coupe_glace_vanille": {
     "name": "Glace Vanille",
-    "image_url": "glace.jpg",
+    "image_url": "Images/images/glace.jpg",
     "text_description": "Glace artisanale à la vanille de Madagascar.",
     "price": 5.50,
     "is_vegetarian": true,
