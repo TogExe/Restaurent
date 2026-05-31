@@ -36,6 +36,38 @@ $statusLabels = [
     4  => 'Livrée'
 ];
 
+// --- RÉCUPÉRATION DES LIVREURS ---
+$listeLivreurs = [];
+foreach ($allUsers as $id => $u) {
+    if (($u['role'] ?? '') === 'livreur') {
+        $listeLivreurs[$id] = $u['plain_name'] ?? 'Livreur-' . strtoupper(substr($id, 0, 6));
+    }
+}
+
+// --- UPDATE ORDER STATUS & LIVREUR ---
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_order'])) {
+    $orderId = $_POST['order_id'];
+    
+    if (isset($allOrders[$orderId])) {
+        // Mise à jour du statut
+        $allOrders[$orderId]['ready'] = (int)$_POST['new_status'];
+        
+        // Mise à jour du livreur
+        if (!empty($_POST['livreur_id'])) {
+            $allOrders[$orderId]['livreur_id'] = $_POST['livreur_id'];
+        } else {
+            unset($allOrders[$orderId]['livreur_id']); // On supprime si "Aucun" est sélectionné
+        }
+
+        // Sauvegarde dans le JSON
+        file_put_contents($commandsFile, json_encode($allOrders, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        $message = "<div class='msg-success'>Commande #$orderId mise à jour avec succès.</div>";
+        
+        // Rechargement des données fraîches
+        $allOrders = json_decode(file_get_contents($commandsFile), true);
+    }
+}
+
 // --- CHANGE USER ROLE ---
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['change_role'])) {
     $targetId  = $_POST['user_id'];
@@ -489,10 +521,43 @@ $isLoggedIn  = true;
                 🔗 Type : <span id="modal-is-add">Standard</span>
             </div>
 
-            <div id="modal-rating-box" style="display: none; background: rgba(255, 215, 0, 0.1); border-left: 4px solid gold; padding: 15px; border-radius: 4px;">
+            <div id="modal-rating-box" style="display: none; background: rgba(255, 215, 0, 0.1); border-left: 4px solid gold; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
                 <h4 style="margin: 0 0 5px 0; color: gold;">Avis Client</h4>
                 <div style="font-size: 1.2rem; margin-bottom: 5px;" id="modal-rating-stars"></div>
                 <div style="font-style: italic; color: var(--text);" id="modal-rating-comment"></div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--sapphire);">
+                <h3 style="color: var(--sapphire); margin-top: 0; margin-bottom: 12px; font-size: 1.1rem;">⚙️ Gestion de la Commande</h3>
+                <form method="POST" action="">
+                    <input type="hidden" name="order_id" id="form-order-id" value="">
+                    <input type="hidden" name="update_order" value="1">
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <div>
+                            <label style="display:block; margin-bottom: 5px; font-size: 0.85rem;">Statut de la commande</label>
+                            <select name="new_status" id="form-order-status" style="width:100%; padding: 8px; border-radius: 4px; background: #1a1c1e; border: 1px solid var(--overlay); color: var(--text);">
+                                <option value="-2">Non payée</option>
+                                <option value="-1">Annulée</option>
+                                <option value="0">Payée</option>
+                                <option value="1">En préparation</option>
+                                <option value="2">Prête</option>
+                                <option value="3">En livraison</option>
+                                <option value="4">Livrée</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom: 5px; font-size: 0.85rem;">Attribuer à un livreur</label>
+                            <select name="livreur_id" id="form-order-livreur" style="width:100%; padding: 8px; border-radius: 4px; background: #1a1c1e; border: 1px solid var(--overlay); color: var(--text);">
+                                <option value="">-- Aucun --</option>
+                                <?php foreach($listeLivreurs as $lId => $lName): ?>
+                                    <option value="<?= htmlspecialchars($lId) ?>">🛵 <?= htmlspecialchars($lName) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Enregistrer les modifications</button>
+                </form>
             </div>
         </div>
     </div>
@@ -518,6 +583,13 @@ $isLoggedIn  = true;
 
                 document.getElementById('modal-oid').textContent = oid;
                 document.getElementById('modal-status').innerHTML = `Statut actuel : <span style="color:var(--accent-btn)">${data.status_label}</span>`;
+                // Préremplir le formulaire de mise à jour (ID, statut et livreur)
+                const formOrderId = document.getElementById('form-order-id');
+                const formOrderStatus = document.getElementById('form-order-status');
+                const formOrderLivreur = document.getElementById('form-order-livreur');
+                if (formOrderId) formOrderId.value = oid;
+                if (formOrderStatus) formOrderStatus.value = (typeof data.ready !== 'undefined') ? String(data.ready) : '';
+                if (formOrderLivreur) formOrderLivreur.value = data.livreur_id ?? '';
                 document.getElementById('modal-client').textContent = data.client_name || 'Inconnu';
                 document.getElementById('modal-address').textContent = data.adress || 'Non renseignée';
                 document.getElementById('modal-comm-t').textContent = data.comm_t || '--';
