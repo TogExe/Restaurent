@@ -89,7 +89,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             sessionStorage.setItem('restaurantCart', JSON.stringify(cart));
             
             // Effet visuel immédiat pour confirmer l'ajout
-            btn.innerHTML = "✔ Ajouté";
+            btn.innerHTML = `✔ Ajouté (${cart[pid].qty})`;
             btn.style.color = "var(--softlime)";
             btn.style.borderColor = "var(--softlime)";
             btn.style.background = "rgba(126, 203, 163, 0.1)";
@@ -100,7 +100,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                 btn.style.borderColor = "";
                 btn.style.background = "";
                 updateCartBadges(); 
-            }, 800);
+            }, 300);
         }
 
         function updateCartBadges() {
