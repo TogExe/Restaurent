@@ -1,6 +1,6 @@
 {
     "__admin__": {
-        "password_auth": "$2y$12$c\/7IjPceiuTSmrjJChcUu.5myXfk\/rltnyEsSjTFRc2oI74ZxAVJ2",
+        "password_auth": "$2y$12$c/7IjPceiuTSmrjJChcUu.5myXfk/rltnyEsSjTFRc2oI74ZxAVJ2",
         "email_enc": "",
         "fullname_enc": "",
         "phone_enc": "",
@@ -9,18 +9,19 @@
         "role": "admin"
     },
     "55bca10a0928ad4356d90ad5e6f4a8d603e167f5a2c8601f42a57ff52572607d": {
-        "password_auth": "$2y$12$2WjEmkmT8Em2\/G0qdZUAY.PWQ2JglG.n7KPYxvFbXTuF5kgCUxZp.",
-        "email_enc": "CvMWqBiVKytdkcmug\/RXaDl6K2llcGlGb0pxZ3Q3RXZLd0RiZ0E9PQ==",
-        "fullname_enc": "DMajiS\/YI3rdL8CfshBNjjZGeW9OMktPOGNBQ1oxdkIyem5OMHc9PQ==",
+        "password_auth": "$2y$12$2WjEmkmT8Em2/G0qdZUAY.PWQ2JglG.n7KPYxvFbXTuF5kgCUxZp.",
+        "email_enc": "CvMWqBiVKytdkcmug/RXaDl6K2llcGlGb0pxZ3Q3RXZLd0RiZ0E9PQ==",
+        "fullname_enc": "DMajiS/YI3rdL8CfshBNjjZGeW9OMktPOGNBQ1oxdkIyem5OMHc9PQ==",
         "phone_enc": "mvbaKIWusNv5JEYGeuw61ytsVDdyOGNDQytJWFRCRTI0UVBDM2c9PQ==",
         "role": "livreur",
         "address_enc": "rCCA6SCuq2n5xM3H1Bm1lkN6NHF4L2M5dURCMitDSjFHNmtQdm5nY211VkhpbTJ0RDUxcTFpWnJOczg9"
     },
     "5517e17e79ea15cfdf6337dd07147183561baece32984821a20a6fa836886675": {
-        "password_auth": "$2y$10$hsN1buKML37TnRHHovovf.nF7HqpA77Wgeu2VcdDXcepDJd\/ksMfq",
+        "password_auth": "$2y$10$hsN1buKML37TnRHHovovf.nF7HqpA77Wgeu2VcdDXcepDJd/ksMfq",
         "email_enc": "i4Xnryr7UXbhObJErYMIw3g2cWxmcDFhMG5DVFJrbHJrRllxL24ydEtJc1dGWDNOZXQyaUFVTlh1enc9",
         "fullname_enc": "Ogh20+33TzWMpy+gBeq0VmNGaUJRN3VFdTlmb212UUxKc1IxN0E9PQ==",
-        "phone_enc": "\/K7g+OynXvQZvDAs+Sy49lEzdDI5bWduYTg4bUc1TkNMZFltNFE9PQ==",
-        "role": "livreur"
+        "phone_enc": "/K7g+OynXvQZvDAs+Sy49lEzdDI5bWduYTg4bUc1TkNMZFltNFE9PQ==",
+        "role": "client",
+        "address_enc": "HtCYdEmBDY1forb+wLg9jDVUQzNZdVNCR1lWK0NncXVSb2JqMThSM0VPVG4xL0F5MGN6YnVyUWdpOXRWanhocVFGMzhQQ3hVMC9uRmtuUzI2cm02M2VOZ1EwOFA0VFJ0cWRaNWVDZmlCUWRkTmdkK3VEb2c0aTJudTlJPQ=="
     }
 }

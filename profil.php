@@ -190,14 +190,14 @@ $statusColors = [
 
 $roleColors = [
     'admin'    => 'var(--mauve)',
-    'cuisiner' => 'var(--softlime)',
+    'cuisinier' => 'var(--softlime)',
     'livreur'  => 'var(--sapphire)',
     'client'   => 'var(--accent-btn)'
 ];
 
 $roleIcons = [
     'admin'    => '⚙',
-    'cuisiner' => '🍳',
+    'cuisinier' => '🍳',
     'livreur'  => '🛵',
     'client'   => '👤'
 ];
@@ -325,72 +325,6 @@ $isLoggedIn  = true;
         </form>
 
     </section>
-
-    <?php if ($userRole === 'client'): ?>
-
-        <section class="glass-panel medium">
-            <h2 class="profile-section-title profile-orders-title">
-                Mes commandes (<?= count($myOrders) ?>)
-            </h2>
-
-            <?php if (empty($myOrders)): ?>
-
-                <p class="profile-empty-orders">
-                    Aucune commande pour le moment.
-                    <a href="commande.php" class="profile-order-link">
-                        Passer une commande →
-                    </a>
-                </p>
-
-            <?php else: ?>
-
-                <?php foreach (array_reverse($myOrders, true) as $oid => $o):
-
-                    $st = $o['ready'] ?? 0;
-                    $sc = $statusColors[$st] ?? 'var(--text-muted)';
-                    $sl = $statusLabels[$st] ?? '?';
-
-                ?>
-
-                    <div class="profile-order-card">
-
-                        <div class="profile-order-header">
-                            <strong class="profile-order-id">
-                                Commande #<?= $oid ?>
-                            </strong>
-
-                            <span class="profile-order-status"
-                                  style="
-                                    color:<?= $sc ?>;
-                                    border-color:<?= $sc ?>;
-                                  ">
-                                <?= $sl ?>
-                            </span>
-                        </div>
-
-                        <p class="profile-order-items">
-                            <?= htmlspecialchars(implode(', ', $o['commands'] ?? [])) ?>
-                        </p>
-
-                        <div class="profile-order-footer">
-                            <span class="profile-order-date">
-                                <?= htmlspecialchars($o['comm_t'] ?? '') ?>
-                            </span>
-
-                            <strong class="profile-order-price">
-                                <?= number_format($o['price'],2,',',' ') ?> €
-                            </strong>
-                        </div>
-
-                    </div>
-
-                <?php endforeach; ?>
-
-            <?php endif; ?>
-
-        </section>
-
-    <?php endif; ?>
 
     <?php if ($userRole === 'admin'): ?>
 

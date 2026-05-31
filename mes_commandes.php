@@ -416,8 +416,61 @@ $statusColors = [
                                             <button type="submit" class="btn-danger-sm" style="padding: 2px 8px; font-size: 0.8rem;" title="Retirer ce plat de la commande">✕</button>
                                         </form>
                                     <?php endif; ?>
+                                    
                                 </li>
                             <?php endforeach; ?>
+                            <?php if ($st === 4): 
+                        $hasBeenRated = isset($o['rating']);
+                    ?>
+                        <div class="rating-container" id="rating-container-<?= $oid ?>">
+                            <?php if ($hasBeenRated): 
+                                $ratingVal = intval($o['rating']);
+                                $commentVal = $o['rating_comment'] ?? '';
+                            ?>
+                                <div class="rating-display">
+                                    <div class="rating-score">
+                                        <span>Note : <?= $ratingVal ?> / 10</span>
+                                        <span><?= str_repeat('⭐', ceil($ratingVal / 2)) ?></span>
+                                    </div>
+                                    <?php if ($commentVal !== ''): ?>
+                                        <div class="rating-comment">« <?= htmlspecialchars($commentVal) ?> »</div>
+                                    <?php else: ?>
+                                        <div class="rating-comment" style="color: var(--text-muted);">Aucun commentaire écrit laissé.</div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php else: ?>
+                                <form method="POST" class="rating-form ajax-rate-order-form">
+                                    <h4 class="rating-form-title">⭐ Évaluer cette commande</h4>
+                                    <input type="hidden" name="order_id" value="<?= htmlspecialchars($oid) ?>">
+                                    <input type="hidden" name="submit_rating" value="1">
+                                    
+                                    <div class="form-group">
+                                        <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:0.9rem;">Attribuer une Note :</label>
+                                        <select name="rating" class="select-rating">
+                                            <option value="10">⭐⭐⭐⭐⭐ (10/10 - Excellent)</option>
+                                            <option value="9">⭐⭐⭐⭐⭐ (9/10)</option>
+                                            <option value="8">⭐⭐⭐⭐ (8/10 - Très bon)</option>
+                                            <option value="7">⭐⭐⭐⭐ (7/10)</option>
+                                            <option value="6">⭐⭐⭐ (6/10 - Bon)</option>
+                                            <option value="5">⭐⭐⭐ (5/10 - Moyen)</option>
+                                            <option value="4">⭐⭐ (4/10 - Passable)</option>
+                                            <option value="3">⭐⭐ (3/10)</option>
+                                            <option value="2">⭐ (2/10 - Mauvais)</option>
+                                            <option value="1">⭐ (1/10)</option>
+                                            <option value="0">🌑 (0/10 - Inacceptable)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label style="display:block; margin-bottom: 6px; font-weight:600; font-size:0.9rem;">Votre Commentaire :</label>
+                                        <textarea name="rating_comment" class="textarea-comment" rows="3" placeholder="Laissez vos impressions sur la cuisine et la livraison..."></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn" style="background: var(--softlime); color: var(--background); border: none; font-weight: bold; padding: 8px 16px;">Enregistrer mon évaluation</button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                         </ul>
                     </div>
 

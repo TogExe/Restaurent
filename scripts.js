@@ -831,6 +831,162 @@ const App = (() => {
     };
 
     // =========================================================================
+    // 9. VALIDATION CLIENT, TOGGLE MOT DE PASSE, COMPTEURS
+    // =========================================================================
+    const showFormError = (form, message) => {
+        if (!form) return;
+        let box = form.querySelector('.form-msg-inline');
+        if (!box) {
+            box = document.createElement('div');
+            box.className = 'form-msg-inline msg-error';
+            form.insertBefore(box, form.firstChild);
+        }
+        box.textContent = message;
+    };
+
+    const clearFormError = (form) => {
+        if (!form) return;
+        const box = form.querySelector('.form-msg-inline');
+        if (box) box.remove();
+    };
+
+    const initPasswordToggles = () => {
+        qsa('input[type="password"]').forEach(input => {
+            const wrap = input.parentNode;
+            if (!wrap) return;
+            if (wrap.querySelector('.pwd-toggle')) return; // already added
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'pwd-toggle';
+            btn.title = 'Afficher / Masquer';
+            btn.style.marginLeft = '8px';
+            btn.textContent = '👁';
+            btn.addEventListener('click', () => {
+                input.type = input.type === 'password' ? 'text' : 'password';
+                btn.textContent = input.type === 'password' ? '👁' : '🙈';
+            });
+
+            // place the button after the input
+            wrap.appendChild(btn);
+        });
+    };
+
+    const initCharCounters = () => {
+        // Default max lengths for common fields (visual aid)
+        const defaults = { fullname:100, phone:20, email:150, password:64, confirm_password:64, dish_name:100, dish_desc:800 };
+
+        qsa('input, textarea').forEach(el => {
+            if (!(el instanceof HTMLElement)) return;
+            const name = el.name || '';
+            // apply default maxlength if not present and in defaults
+            if (!el.hasAttribute('maxlength') && defaults[name]) el.setAttribute('maxlength', String(defaults[name]));
+
+            const max = el.getAttribute('maxlength');
+            if (!max) return;
+            if (el.parentNode.querySelector('.char-counter')) return;
+
+            const counter = document.createElement('div');
+            counter.className = 'char-counter';
+            counter.style.fontSize = '0.75rem';
+            counter.style.color = 'var(--text-muted)';
+            counter.style.marginTop = '6px';
+
+            const minForPwd = (name === 'password' || name === 'confirm_password') ? 6 : 0;
+
+            const updateCounter = () => {
+                const len = el.value.length;
+                if (minForPwd) counter.textContent = `${len}/${max} (min ${minForPwd})`;
+                else counter.textContent = `${len}/${max}`;
+            };
+
+            // initial and live update — counter stays visible while typing
+            updateCounter();
+            el.addEventListener('input', updateCounter);
+
+            // insert after the element
+            el.parentNode.appendChild(counter);
+        });
+    };
+
+    // input filters to accept only valid characters/formats for certain fields
+    const initInputFilters = () => {
+        // phone: allow digits, spaces, + - ()
+        qsa('input[type="tel"], input[name="phone"]').forEach(inp => {
+            inp.addEventListener('input', (e) => {
+                const v = e.target.value;
+                const cleaned = v.replace(/[^0-9\s+\-()\.]/g, '');
+                if (cleaned !== v) e.target.value = cleaned;
+            });
+        });
+
+        // address fields: allow letters, numbers, space, comma, point, - # /
+        qsa('input[name*="addr"], input[name="adress"], textarea[name*="addr"], input[name="address"]').forEach(inp => {
+            inp.addEventListener('input', (e) => {
+                const v = e.target.value;
+                const cleaned = v.replace(/[^\wÀ-ÿ\s,\.\-#\/\\]/g, '');
+                if (cleaned !== v) e.target.value = cleaned;
+            });
+        });
+
+        // email relies on HTML5 type=email — additional quick filter to remove spaces
+        qsa('input[type="email"]').forEach(inp => {
+            inp.addEventListener('input', (e) => {
+                const v = e.target.value;
+                if (v.indexOf(' ') !== -1) e.target.value = v.replace(/\s+/g, '');
+            });
+        });
+    };
+
+    const validateForm = (form) => {
+        clearFormError(form);
+
+        // Admin order update form
+        if (form.querySelector('input[name="update_order"]')) {
+            const oid = form.querySelector('input[name="order_id"]')?.value?.trim();
+            const status = form.querySelector('select[name="new_status"]')?.value;
+            if (!oid) { showFormError(form, 'Identifiant de commande manquant. Ouvrez la modale depuis une commande.'); return false; }
+            if (typeof status === 'undefined' || status === '') { showFormError(form, 'Sélectionnez un statut.'); return false; }
+            return true;
+        }
+
+        // Registration form (has confirm_password)
+        if (form.querySelector('input[name="confirm_password"]')) {
+            const pwd = form.querySelector('input[name="password"]')?.value || '';
+            const confirm = form.querySelector('input[name="confirm_password"]')?.value || '';
+            if (pwd.length < 6) { showFormError(form, 'Le mot de passe doit contenir au moins 6 caractères.'); return false; }
+            if (pwd !== confirm) { showFormError(form, 'Les mots de passe ne correspondent pas.'); return false; }
+            return true;
+        }
+
+        // Generic email validation
+        const emailInput = form.querySelector('input[type="email"]');
+        if (emailInput && !emailInput.checkValidity()) { showFormError(form, 'Email invalide.'); return false; }
+
+        return true;
+    };
+
+    const initClientValidation = () => {
+        document.addEventListener('submit', (e) => {
+            const form = e.target;
+            if (!(form instanceof HTMLFormElement)) return;
+            // let AJAX handlers proceed (they handle their own validation)
+            if (form.classList.contains('ajax-ignore-validation')) return;
+
+            const ok = validateForm(form);
+            if (!ok) e.preventDefault();
+        }, true);
+
+        // clear errors on input
+        document.addEventListener('input', (e) => {
+            const el = e.target;
+            if (!(el instanceof HTMLElement)) return;
+            const form = el.closest('form');
+            if (form) clearFormError(form);
+        });
+    };
+
+    // =========================================================================
     // INITIALISATION PRINCIPALE
     // =========================================================================
     return {
@@ -839,7 +995,9 @@ const App = (() => {
             initCommandeSimplePage(); initMenuPage(); initProfileEditButtons();
             initAutoSubmitCybankForm(); initAdminAjax(); initCuisineAjax();
             initLivreurAjax(); initMesCommandesAjax(); initNotationAjax();
-            initAdminModal(); // <-- Ajout de l'appel ici
+            // Client helpers: validation, password toggles, character counters
+            initPasswordToggles(); initCharCounters(); initClientValidation();
+            initAdminModal();
         }
     };
 })();

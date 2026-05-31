@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_order'])) {
 // --- CHANGE USER ROLE ---
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['change_role'])) {
     $targetId  = $_POST['user_id'];
-    $newRole   = in_array($_POST['new_role'], ['client','cuisiner','livreur','admin']) ? $_POST['new_role'] : 'client';
+    $newRole   = in_array($_POST['new_role'], ['client','cuisinier','livreur','admin']) ? $_POST['new_role'] : 'client';
     if (isset($allUsers[$targetId])) {
         $allUsers[$targetId]['role'] = $newRole;
         file_put_contents($usersFile, json_encode($allUsers, JSON_PRETTY_PRINT));
@@ -221,8 +221,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_dish'])) {
 //$totalRevenue  = array_sum(array_column($allOrders, 'price'));
 $totalRevenue  = array_sum(array_column($allOrders, 'price'));
 $statusLabels  = [0=>'Payée',1=>'En préparation',2=>'Prête',3=>'En livraison',4=>'Livrée'];
-$roleBadge     = ['admin'=>'var(--mauve)','cuisiner'=>'var(--softlime)','livreur'=>'var(--sapphire)','client'=>'var(--text-muted)'];
-$roleIcon      = ['admin'=>'⚙','cuisiner'=>'🍳','livreur'=>'🛵','client'=>'👤'];
+$roleBadge     = ['admin'=>'var(--mauve)','cuisinier'=>'var(--softlime)','livreur'=>'var(--sapphire)','client'=>'var(--text-muted)'];
+$roleIcon      = ['admin'=>'⚙','cuisinier'=>'🍳','livreur'=>'🛵','client'=>'👤'];
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 $isLoggedIn  = true;
@@ -291,7 +291,7 @@ $isLoggedIn  = true;
                             <input type="hidden" name="user_id" value="<?= htmlspecialchars($uid) ?>">
                             <select name="new_role" class="inline">
                                 <option value="client"   <?= $role==='client'   ?'selected':'' ?>>👤 Client</option>
-                                <option value="cuisiner" <?= $role==='cuisiner' ?'selected':'' ?>>🍳 Cuisiner</option>
+                                <option value="cuisinier" <?= $role==='cuisinier' ?'selected':'' ?>>🍳 cuisinier</option>
                                 <option value="livreur"  <?= $role==='livreur'  ?'selected':'' ?>>🛵 Livreur</option>
                                 <option value="admin"    <?= $role==='admin'    ?'selected':'' ?>>⚙ Admin</option>
                             </select>
