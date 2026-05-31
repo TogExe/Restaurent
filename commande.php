@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/inc/common.php';
-require_once __DIR__ . '/getapikey.php'; // Inclusion requise pour l'API
+require_once __DIR__ . '/getapikey.php'; 
 
 // CONFIGURATION CYBANK
 $vendeur = 'MI-2_D'; 
@@ -15,21 +15,34 @@ $allUsers  = load_json($usersFile);
 $uid       = current_user_id();
 $secretKey = current_secret_key();
 
-$addressParts = ['street' => '', 'number' => '', 'complement' => '', 'postal' => '', 'city' => ''];
+// --- CORRECTION : Récupération et formatage propre de l'adresse de l'utilisateur ---
+$savedAddress = '';
 if ($uid && isset($allUsers[$uid]['address_enc'])) {
     $address_raw = decryptData($allUsers[$uid]['address_enc'], $secretKey);
     if ($address_raw !== '') {
         $decoded = json_decode($address_raw, true);
         if (is_array($decoded)) {
-            $addressParts = array_merge($addressParts, $decoded);
+            // C'est un JSON, on concatène les parties pour l'input text
+            $parts = [];
+            if (!empty($decoded['number'])) $parts[] = $decoded['number'];
+            if (!empty($decoded['street'])) $parts[] = $decoded['street'];
+            if (!empty($decoded['complement'])) $parts[] = $decoded['complement'];
+            $addressL1 = implode(' ', $parts);
+            
+            $cityParts = [];
+            if (!empty($decoded['postal'])) $cityParts[] = $decoded['postal'];
+            if (!empty($decoded['city'])) $cityParts[] = $decoded['city'];
+            $addressL2 = implode(' ', $cityParts);
+            
+            // Combine rue et ville
+            $savedAddress = trim($addressL1 . (!empty($addressL1) && !empty($addressL2) ? ', ' : '') . $addressL2);
         } else {
-            // Rétrocompatibilité si l'adresse était une simple chaîne
-            $addressParts['street'] = $address_raw;
+            // C'est une simple chaîne
+            $savedAddress = $address_raw;
         }
     }
 }
-
-$postedAddressParts = $addressParts;
+// -------------------------------------------------------------------------------------
 
 ensure_ban();
 
@@ -38,13 +51,6 @@ $message = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
     $items   = json_decode($_POST['cart_items'] ?? '[]', true);
     $address = trim($_POST['delivery_address'] ?? '');
-
-    // Preserve address fields when the page reloads after validation errors
-    $postedAddressParts['street'] = trim($_POST['addr_street'] ?? $postedAddressParts['street']);
-    $postedAddressParts['number'] = trim($_POST['addr_number'] ?? $postedAddressParts['number']);
-    $postedAddressParts['complement'] = trim($_POST['addr_comp'] ?? $postedAddressParts['complement']);
-    $postedAddressParts['postal'] = trim($_POST['addr_postal'] ?? $postedAddressParts['postal']);
-    $postedAddressParts['city'] = trim($_POST['addr_city'] ?? $postedAddressParts['city']);
 
     if (empty($items)) {
         $message = "<div class='msg-error'>Votre panier est vide.</div>";
@@ -63,47 +69,43 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
             }
         }
 
-        // Création d'un identifiant alphanumérique unique respectant le format [0-9a-zA-Z]{10,24} [cite: 32]
         $orderId = strtoupper(substr(md5(uniqid(rand(), true)), 0, 16));
         $now     = date("j/m/Y-H:i:s");
         $delTime = date("j/m/Y-H:i", strtotime('+30 minutes'));
         
-        // Formatage obligatoire du montant : 2 chiffres après la virgule avec un point [cite: 34]
         $montant_str = number_format($total, 2, '.', ''); 
 
-        // Enregistrement de la commande avec l'état -1 (en attente de confirmation de paiement)
         $allOrders[(string)$orderId] = [
             "adress"    => $address,
             "commands"  => $names,
             "price"     => round($total, 2),
             "comm_t"    => $now,
             "des_t"     => $delTime,
-            "paid_id"   => null, // Sera complété sur la page de retour
-            "ready"     => -1,   // Indique le statut "En attente"
+            "paid_id"   => null,
+            "ready"     => -1,
             "client_id" => $uid,
         ];
 
         save_json($orderFile, $allOrders);
 
-        // Récupération dynamique de la clé d'API secrète via le composant fourni [cite: 44, 102]
         $api_key = getAPIKey($vendeur);
 
-        // Détection automatisée de l'URL absolue pour créer le lien de retour vers votre projet [cite: 35]
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $retour = $protocol . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/') . '/retour_paiement.php';
 
-        // Application stricte de la formule de hachage md5 pour le contrôle d'intégrité à l'envoi [cite: 37, 38, 39, 40, 41, 42]
         $strToHash = $api_key . "#" . $orderId . "#" . $montant_str . "#" . $vendeur . "#" . $retour . "#";
         $control = md5($strToHash);
 
-        // Rendu immédiat d'une page de transition avec soumission transparente du formulaire vers CYBank [cite: 29, 46]
         ?>
         <!DOCTYPE html>
         <html lang="fr">
         <head>
             <meta charset="UTF-8">
             <title>Redirection vers la passerelle de paiement...</title>
-            <script src="scripts.js" defer></script>
+            <script>
+                // Efface le panier JS après une validation de commande réussie
+                sessionStorage.removeItem('restaurantCart');
+            </script>
         </head>
         <body style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; background-color: #f4f6f8; margin:0;">
             <div style="text-align: center; padding: 40px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); max-width: 450px;">
@@ -118,6 +120,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
                     <input type="hidden" name="retour" value="<?= htmlspecialchars($retour) ?>">
                     <input type="hidden" name="control" value="<?= htmlspecialchars($control) ?>">
                 </form>
+                <script>
+                    setTimeout(() => document.getElementById('cybankForm').submit(), 1000);
+                </script>
             </div>
             <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
         </body>
@@ -129,6 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -200,7 +206,7 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 
             <div class="form-group cart-address">
                 <label>Adresse de livraison</label>
-                <input type="text" id="deliveryAddr" value="<?= htmlspecialchars($savedAddress) ?>" placeholder="5 rue de la Paix…">
+                <input type="text" id="deliveryAddr" value="<?= htmlspecialchars($savedAddress, ENT_QUOTES) ?>" placeholder="5 rue de la Paix…">
             </div>
 
             <button id="orderBtn" onclick="openPayment()" disabled class="order-btn-disabled">
@@ -215,6 +221,23 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
         </div>
     </div>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof changeQty === 'function') {
+        let cart = JSON.parse(sessionStorage.getItem('restaurantCart')) || {};
+        
+        for (const [pid, item] of Object.entries(cart)) {
+            if (item.qty > 0) {
+                for (let i = 0; i < item.qty; i++) {
+                    let safeName = item.name.replace(/'/g, "\\'");
+                    changeQty(pid, parseFloat(item.price), safeName, 1);
+                }
+            }
+        }
+    }
+});
+</script>
 
 </body>
 </html>

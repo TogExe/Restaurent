@@ -23,5 +23,13 @@
         "phone_enc": "/K7g+OynXvQZvDAs+Sy49lEzdDI5bWduYTg4bUc1TkNMZFltNFE9PQ==",
         "role": "client",
         "address_enc": "HtCYdEmBDY1forb+wLg9jDVUQzNZdVNCR1lWK0NncXVSb2JqMThSM0VPVG4xL0F5MGN6YnVyUWdpOXRWanhocVFGMzhQQ3hVMC9uRmtuUzI2cm02M2VOZ1EwOFA0VFJ0cWRaNWVDZmlCUWRkTmdkK3VEb2c0aTJudTlJPQ=="
+    },
+    "40a84f172af2f349fab6247111127c4bf08a156ed83ea2f1b1c32e1bee29e2ac": {
+        "password_auth": "$2y$12$4US.8rVhDJOlSdK7./JgeOvolb/oxpdIlonLXwVhdHBQ1aJdDjEDG",
+        "email_enc": "mroqy9moKqYmCFn/qFR85FNlRUdwQ1BLUms0RExMam9hQnFaOWVyWUU5WDFLK0FrekN0QUVmRytBQjg9",
+        "fullname_enc": "yfatCLjtC2YmgL7eFfqxBEVqOXRTc0NaWEpXeHVlMFdHK3A4Ync9PQ==",
+        "phone_enc": "nQvZ8FE4cREOKkiAhqnqSGpESGFxZUNlUzZadFAzTmszQkxiVHc9PQ==",
+        "role": "client",
+        "address_enc": "pdoC7NqjvfASEVebkq+VV1dCcU5xWEprMi8zQUxwTmY4N2FuSzZTc1ZUaVRZNjFla2pXeHlENzBXK3ZNRmRsUzU2MDRLK3hpVjQ5ZjB3VndRc3UxbVFUdWw5QWxHOVlzSk1LVUIxRXJzdXgzVjNaTEpNaHdNcGJIOUpuMnZESG5aNFQwaHNaZm5HTzA2U1hUUVZmdllxMFZwRWFkYlZJOFJXSVgrdz09"
     }
 }

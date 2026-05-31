@@ -2,7 +2,6 @@
 require_once __DIR__ . '/inc/common.php';
 
 $currentPage = basename($_SERVER['PHP_SELF']);
-
 $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 $userId = $isLoggedIn ? $_SESSION['user_id'] : null;
 
@@ -17,7 +16,6 @@ if (!empty($plats)) {
     foreach ($plats as $id => $plat) {
         if (isset($plat['tags']) && is_array($plat['tags']) && !empty($plat['tags'])) {
             foreach ($plat['tags'] as $tag) {
-                // Majuscule sur la première lettre pour un affichage propre
                 $catName = ucfirst(trim($tag));
                 $categories[$catName][$id] = $plat;
             }
@@ -27,10 +25,8 @@ if (!empty($plats)) {
     }
 }
 
-// Optionnel : Trier les catégories par ordre alphabétique
 ksort($categories);
 
-// Ajouter les plats sans tags à la fin
 if (!empty($untagged)) {
     $categories['Autres'] = $untagged;
 }
@@ -47,7 +43,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
 
     if (isset($plats[$platId])) {
         $likes    = $plats[$platId]['likes'] ?? [];
-        $dislikes = $plats[$platsId]['dislikes'] ?? [];
+        $dislikes = $plats[$platId]['dislikes'] ?? [];
 
         if ($action === 'like') {
             $dislikes = array_diff($dislikes, [$userId]);
@@ -61,15 +57,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         $plats[$platId]['dislikes'] = array_values($dislikes);
 
         save_json($filePlats, $plats);
-
-        if (isset($_GET['ajax'])) {
-            header('Content-Type: application/json');
-            echo json_encode([
-                'likes'    => count($plats[$platId]['likes']),
-                'dislikes' => count($plats[$platId]['dislikes'])
-            ]);
-            exit();
-        }
         header("Location: menu.php");
         exit();
     }
@@ -84,33 +71,90 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     <script src="main.js" defer></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        // --- GESTION DU PANIER JAVASCRIPT SANS RECHARGEMENT ---
+        function addToCartJS(event, btn) {
+            event.preventDefault(); // Sécurité : empêche form submission ou navigation
+            
+            const pid = btn.dataset.id;
+            const price = parseFloat(btn.dataset.price);
+            const name = btn.dataset.name;
+
+            let cart = JSON.parse(sessionStorage.getItem('restaurantCart')) || {};
+            
+            if (!cart[pid]) {
+                cart[pid] = { qty: 0, price: price, name: name };
+            }
+            cart[pid].qty++;
+            
+            sessionStorage.setItem('restaurantCart', JSON.stringify(cart));
+            
+            // Effet visuel immédiat pour confirmer l'ajout
+            btn.innerHTML = "✔ Ajouté";
+            btn.style.color = "var(--softlime)";
+            btn.style.borderColor = "var(--softlime)";
+            btn.style.background = "rgba(126, 203, 163, 0.1)";
+            
+            // On remet l'affichage normal après 0.8s
+            setTimeout(() => {
+                btn.style.color = "";
+                btn.style.borderColor = "";
+                btn.style.background = "";
+                updateCartBadges(); 
+            }, 800);
+        }
+
+        function updateCartBadges() {
+            let cart = JSON.parse(sessionStorage.getItem('restaurantCart')) || {};
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                const pid = btn.dataset.id;
+                if (cart[pid] && cart[pid].qty > 0) {
+                    btn.innerHTML = `+ Ajouter (${cart[pid].qty})`;
+                } else {
+                    btn.innerHTML = `+ Ajouter`;
+                }
+            });
+        }
+
+        // --- GESTION DE LA RECHERCHE ET DES FILTRES ---
+        function applyFilters() {
             const searchInput = document.getElementById('menuSearch');
             if (!searchInput) return;
 
-            searchInput.addEventListener('input', function(e) {
-                const term = e.target.value.toLowerCase();
-                const sections = document.querySelectorAll('.menu-category-wrapper');
-                
-                sections.forEach(section => {
-                    const cards = section.querySelectorAll('.menu-item-card');
-                    let hasVisibleCard = false;
-                    
-                    cards.forEach(card => {
-                        const title = card.querySelector('.menu-item-title').textContent.toLowerCase();
-                        const desc = card.querySelector('.menu-item-description').textContent.toLowerCase();
-                        
-                        if (title.includes(term) || desc.includes(term)) {
-                            card.style.display = 'flex';
-                            hasVisibleCard = true;
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
+            const term = searchInput.value.toLowerCase();
+            const checkedBoxes = Array.from(document.querySelectorAll('.category-filter:checked')).map(cb => cb.value);
 
-                    // Masquer le titre de la catégorie si aucun plat ne correspond
-                    section.style.display = hasVisibleCard ? 'block' : 'none';
+            document.querySelectorAll('.menu-category-wrapper').forEach(wrapper => {
+                const catName = wrapper.querySelector('h2').textContent.trim();
+                const isCatSelected = checkedBoxes.length === 0 || checkedBoxes.includes(catName);
+                
+                let hasVisibleCard = false;
+                const cards = wrapper.querySelectorAll('.menu-item-card');
+                
+                cards.forEach(card => {
+                    const title = card.querySelector('.menu-item-title').textContent.toLowerCase();
+                    const desc = card.querySelector('.menu-item-description').textContent.toLowerCase();
+                    const matchesSearch = title.includes(term) || desc.includes(term);
+                    
+                    if (isCatSelected && matchesSearch) {
+                        card.style.display = 'flex';
+                        hasVisibleCard = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
                 });
+
+                wrapper.style.display = hasVisibleCard ? 'block' : 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartBadges();
+            
+            const searchInput = document.getElementById('menuSearch');
+            if (searchInput) searchInput.addEventListener('input', applyFilters);
+            
+            document.querySelectorAll('.category-filter').forEach(cb => {
+                cb.addEventListener('change', applyFilters);
             });
         });
     </script>
@@ -125,8 +169,18 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         <p>Découvrez nos spécialités</p>
     </div>
 
-    <div class="menu-search-wrapper">
-        <input type="text" id="menuSearch" class="menu-search-input" placeholder="Rechercher un plat, un ingrédient...">
+    <div class="menu-search-wrapper" style="margin-bottom: 20px;">
+        <input type="text" id="menuSearch" class="menu-search-input" placeholder="Rechercher un plat, un ingrédient..." style="width: 100%; padding: 10px; margin-bottom: 15px;">
+        
+        <div class="menu-filters" style="display: flex; gap: 15px; flex-wrap: wrap; background: rgba(255,255,255,0.03); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--overlay);">
+            <strong style="margin-right: 10px; color: var(--text-muted);">Filtrer par catégorie :</strong>
+            <?php foreach (array_keys($categories) as $catName): ?>
+                <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; color: var(--text);">
+                    <input type="checkbox" class="category-filter" value="<?= htmlspecialchars($catName) ?>">
+                    <?= htmlspecialchars($catName) ?>
+                </label>
+            <?php endforeach; ?>
+        </div>
     </div>
 
     <section class="glass-panel menu-panel">
@@ -166,16 +220,21 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                                     </p>
                                     
                                     <div class="menu-item-footer">
-                                        <button class="like-btn like-positive" data-id="<?= urlencode($id) ?>" data-action="like">
+                                        <a href="menu.php?action=like&id=<?= urlencode($id) ?>" class="like-btn like-positive" style="text-decoration:none;">
                                             👍 <span class="like-count"><?= count($plat['likes'] ?? []) ?></span>
-                                        </button>
-                                        <button class="like-btn like-negative" data-id="<?= urlencode($id) ?>" data-action="dislike">
+                                        </a>
+                                        <a href="menu.php?action=dislike&id=<?= urlencode($id) ?>" class="like-btn like-negative" style="text-decoration:none;">
                                             👎 <span class="dislike-count"><?= count($plat['dislikes'] ?? []) ?></span>
-                                        </button>
+                                        </a>
                                         <a href="view.php?id=<?= urlencode($id) ?>" class="menu-comments-link">
                                             💬 <?= count($plat['comments'] ?? []) ?>
                                         </a>
-                                        <button class="add-to-cart-btn" data-id="<?= urlencode($id) ?>" data-name="<?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>" data-price="<?= $plat['price'] ?>">
+                                        
+                                        <button type="button" class="add-to-cart-btn" 
+                                                data-id="<?= htmlspecialchars($id) ?>" 
+                                                data-name="<?= htmlspecialchars($plat['name'], ENT_QUOTES) ?>" 
+                                                data-price="<?= $plat['price'] ?>"
+                                                onclick="addToCartJS(event, this)">
                                             + Ajouter
                                         </button>
                                     </div>
