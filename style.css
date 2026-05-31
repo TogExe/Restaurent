@@ -2035,33 +2035,36 @@ button:active, .btn:active {
 
 
 
-
-
 /* =========================================
-   PROFIL - LAYOUT ADRESSE MODERNE
+   PROFIL — CHAMPS TYPE ACCOUNT SETTINGS
    ========================================= */
 
-.profile-grid {
+.profile-settings-panel {
+    max-width: 760px;
+}
+
+.profile-inline-form {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.profile-field-full {
+    margin-bottom: 16px;
+}
+
+.profile-field-row {
     display: grid;
-    grid-template-columns: 2fr 120px;
-    gap: 15px;
-    margin-bottom: 15px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
 }
 
-.profile-grid-reverse {
-    grid-template-columns: 120px 2fr;
+.profile-row-street {
+    grid-template-columns: 1fr 120px;
 }
 
-.profile-col-large {
-    width: 100%;
-}
-
-.profile-col-small {
-    width: 100%;
-}
-
-.address-inline {
-    margin-top: 10px;
+.profile-row-city {
+    grid-template-columns: 160px 1fr;
 }
 
 .inline-edit {
@@ -2072,46 +2075,38 @@ button:active, .btn:active {
 
 .inline-edit input {
     flex: 1;
+    height: 42px;
+    padding: 10px 12px;
 }
 
 .field-edit-btn {
-    width: 42px !important;
-    min-width: 42px !important;
-    height: 42px !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
     padding: 0 !important;
     margin: 0 !important;
-
+    font-size: 0.85rem;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    font-size: 0.95rem;
 }
 
 .profile-actions {
     display: flex;
     justify-content: flex-end;
-    margin-top: 20px;
+    margin-top: 18px;
 }
 
 .profile-logout-btn {
     width: auto !important;
-    min-width: 180px;
+    min-width: 170px;
     padding: 10px 18px !important;
 }
 
-/* Espace entre les champs profil */
-
-.form-row {
-    margin-bottom: 15px;
-}
-
-/* Responsive */
-
 @media (max-width: 700px) {
-
-    .profile-grid,
-    .profile-grid-reverse {
+    .profile-field-row,
+    .profile-row-street,
+    .profile-row-city {
         grid-template-columns: 1fr;
     }
 
