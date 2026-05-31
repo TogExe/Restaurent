@@ -24,7 +24,7 @@
 
 "salade_cesar": {
     "name": "Salade César",
-    "image_url": "saladecesar.jpg,
+    "image_url": "saladecesar.jpg",
     "text_description": "Laitue romaine, poulet grillé, parmesan, croûtons et sauce César.",
     "price": 12.50,
     "is_vegetarian": false,
