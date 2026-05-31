@@ -73,7 +73,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     <script>
     // --- GESTION DU PANIER JAVASCRIPT SANS RECHARGEMENT ---
     function addToCartJS(event, btn) {
-        event.preventDefault(); 
+        event.preventDefault(); // Empêche le rechargement de la page
         
         const pid = btn.dataset.id;
         const price = parseFloat(btn.dataset.price);
@@ -89,12 +89,8 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         const newQty = cart[pid].qty;
         sessionStorage.setItem('restaurantCart', JSON.stringify(cart));
         
-        // On cible uniquement les spans pour ne pas casser le HTML du bouton
-        const textSpan = btn.querySelector('.btn-text');
-        const qtySpan = btn.querySelector('.btn-qty');
-        
-        if (textSpan) textSpan.textContent = "✔ Ajouté";
-        if (qtySpan) qtySpan.textContent = ` (${newQty})`;
+        // 1. On affiche la quantité PENDANT le clic (l'aria-label n'est pas touché)
+        btn.innerHTML = `✔ Ajouté (${newQty})`;
         
         // Effet visuel immédiat
         btn.style.color = "var(--softlime)";
@@ -102,9 +98,9 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         btn.style.background = "rgba(126, 203, 163, 0.1)";
         btn.style.transform = "scale(1.05)"; 
         
-        // Retour à la normale après 0.8s
+        // 2. On remet le bouton à la normale après 0.8s, en GARDANT la quantité
         setTimeout(() => {
-            if (textSpan) textSpan.textContent = "+ Ajouter";
+            btn.innerHTML = `+ Ajouter (${newQty})`;
             btn.style.color = "";
             btn.style.borderColor = "";
             btn.style.background = "";
@@ -112,18 +108,15 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         }, 800);
     }
 
+    // Fonction qui s'assure que les quantités restent affichées si on recharge la page
     function updateCartBadges() {
         let cart = JSON.parse(sessionStorage.getItem('restaurantCart')) || {};
         document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
             const pid = btn.dataset.id;
-            const qtySpan = btn.querySelector('.btn-qty');
-            
-            if (qtySpan) {
-                if (cart[pid] && cart[pid].qty > 0) {
-                    qtySpan.textContent = ` (${cart[pid].qty})`;
-                } else {
-                    qtySpan.textContent = "";
-                }
+            if (cart[pid] && cart[pid].qty > 0) {
+                btn.innerHTML = `+ Ajouter (${cart[pid].qty})`;
+            } else {
+                btn.innerHTML = `+ Ajouter`;
             }
         });
     }
@@ -262,6 +255,9 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         <?php endif; ?>
     </section>
 </main>
-
+<a href="commande.php" id="floating-checkout-btn" class="floating-checkout-btn hidden">
+    🛒 Passer la commande
+    <span id="floating-cart-count" class="floating-cart-count">0</span>
+</a>
 </body>
 </html>

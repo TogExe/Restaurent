@@ -100,7 +100,38 @@ function updateCartCounter() {
         }
     }
 }
+function updateCartBadges() {
+    let cart = JSON.parse(sessionStorage.getItem('restaurantCart')) || {};
+    let totalItems = 0;
 
+    // 1. Calcul du total des articles dans le panier
+    for (const pid in cart) {
+        totalItems += cart[pid].qty;
+    }
+
+    // 2. Mise à jour des petits boutons individuels sous les plats
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        const pid = btn.dataset.id;
+        if (cart[pid] && cart[pid].qty > 0) {
+            btn.innerHTML = `+ Ajouter (${cart[pid].qty})`;
+        } else {
+            btn.innerHTML = `+ Ajouter`;
+        }
+    });
+
+    // 3. Mise à jour du bouton flottant (Apparaît seulement si on a > 0 articles)
+    const floatingBtn = document.getElementById('floating-checkout-btn');
+    const floatingCount = document.getElementById('floating-cart-count');
+    
+    if (floatingBtn && floatingCount) {
+        if (totalItems > 0) {
+            floatingCount.textContent = totalItems;
+            floatingBtn.classList.remove('hidden'); // Fait apparaître le bouton
+        } else {
+            floatingBtn.classList.add('hidden'); // Cache le bouton si vide
+        }
+    }
+}
 
 
 // Expose cart control functions globally for inline onclick handlers used in the sidebar
