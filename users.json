@@ -18,10 +18,27 @@
     },
     "5517e17e79ea15cfdf6337dd07147183561baece32984821a20a6fa836886675": {
         "password_auth": "$2y$10$hsN1buKML37TnRHHovovf.nF7HqpA77Wgeu2VcdDXcepDJd/ksMfq",
-        "email_enc": "i4Xnryr7UXbhObJErYMIw3g2cWxmcDFhMG5DVFJrbHJrRllxL24ydEtJc1dGWDNOZXQyaUFVTlh1enc9",
-        "fullname_enc": "Ogh20+33TzWMpy+gBeq0VmNGaUJRN3VFdTlmb212UUxKc1IxN0E9PQ==",
-        "phone_enc": "/K7g+OynXvQZvDAs+Sy49lEzdDI5bWduYTg4bUc1TkNMZFltNFE9PQ==",
+        "email_enc": "NJCf/gKvY2iyJeCsJEC1a0ZxVzZ1N0YzdGMxNnN2ems0TVVTY1cwOEZ6ZG9mZ1hYWEpOaUVXYTkvYTQ9",
+        "fullname_enc": "uAS5gN7SCk/L9dOq1DULjmtDbWJmQ21QYzdtcm1ybiswV0FmS1E9PQ==",
+        "phone_enc": "mIg7QBq6eHi82l6mBsFzh1c1bWFocThVai9KdmJRK3ZjdHNqcWc9PQ==",
         "role": "client",
-        "address_enc": "HtCYdEmBDY1forb+wLg9jDVUQzNZdVNCR1lWK0NncXVSb2JqMThSM0VPVG4xL0F5MGN6YnVyUWdpOXRWanhocVFGMzhQQ3hVMC9uRmtuUzI2cm02M2VOZ1EwOFA0VFJ0cWRaNWVDZmlCUWRkTmdkK3VEb2c0aTJudTlJPQ=="
+        "address_enc": "i4/5oTkmlShtzMHTzRuqmS94YklaV1lGcjJnd2djZ25wdG9OclFDeVhSTHNzY1lDeXo3aVhjVVJOSEJXSDRSaGhiSnQ5empMOUt2d2tqUndjd1pwZFFZZlVtelBHeENKOTJndjdIdzBjRkwydVlsVDhmbTZpcms2clAxakxUTm5yMko2LzR1TUlHc00wUm9v",
+        "plain_name": "Mario",
+        "plain_email": "itsmemaario@gmail.com"
+    },
+    "810f51934992868213c6a7be9661a451abc7b1df289549ced87cf94fdd19cc84": {
+        "password_auth": "$2y$10$z1.MNcIe167g.QnVBxL5J.pMgSFott8Ug0VCnqsVmA6oaogw/ihnq",
+        "email_enc": "Ou8yrR4SpvhJLl+TBAsm10huZHRDNHJQeXdVdDcrNSsrbmJZd2hVb21aZlhqL1JOVXFGTzdyUVpwOW89",
+        "plain_email": "johnfoe@gmail.com",
+        "plain_name": "John",
+        "phone": "123456789",
+        "role": "client",
+        "address": {
+            "street": "Lacert",
+            "number": "56",
+            "complement": "",
+            "postal": "98476",
+            "city": "Milun"
+        }
     }
 }

@@ -755,7 +755,42 @@ button:active, .btn:active {
 }
 
 /* =========================================
-   9. SCROLLBAR CUSTOM
+   9. FORM FIELD FEEDBACK
+   ========================================= */
+.field-feedback {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 6px;
+    min-height: 18px;
+    gap: 10px;
+    font-size: 0.82rem;
+}
+.field-error {
+    color: var(--rose);
+    font-weight: 600;
+    display: block;
+    min-width: 0;
+}
+.signup-char-counter,
+.char-counter {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    margin-left: auto;
+    white-space: nowrap;
+}
+.signup-char-counter.limit-reached,
+.char-counter.limit-reached {
+    color: var(--rose);
+    font-weight: 700;
+}
+.input-error {
+    border-color: rgba(231, 76, 60, 0.8) !important;
+    background: rgba(231, 76, 60, 0.05) !important;
+}
+
+/* =========================================
+   10. SCROLLBAR CUSTOM
    ========================================= */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--base); }
@@ -2117,4 +2152,30 @@ button:active, .btn:active {
     .profile-logout-btn {
         width: 100% !important;
     }
+}
+.field-feedback {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    min-height: 18px; /* Évite les sauts de mise en page quand le texte apparaît */
+}
+.field-error {
+    color: #e74c3c;
+    font-weight: 600;
+    display: none; /* Masqué par défaut */
+}
+.char-counter {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums; /* Garde la largeur des chiffres fixe */
+    margin-left: auto;
+}
+.char-counter.limit-reached {
+    color: #e74c3c;
+    font-weight: bold;
+}
+.input-error {
+    border-color: #e74c3c !important;
+    background: rgba(231, 76, 60, 0.05) !important;
 }

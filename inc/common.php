@@ -12,6 +12,114 @@ function save_json(string $path, array $data): bool {
     return (bool) file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 }
 
+function validate_user_name(string $name): bool {
+    return $name !== '' && preg_match('/^[a-zA-ZÀ-ÿ\s\-\']{2,50}$/u', $name);
+}
+
+function validate_email(string $email): bool {
+    return $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+function validate_phone(string $phone): bool {
+    return $phone !== '' && preg_match('/^\+?[0-9\s\-]{8,15}$/', $phone);
+}
+
+function validate_password(string $password): bool {
+    return strlen($password) >= 6;
+}
+
+function validate_postal_code(string $postal): bool {
+    return $postal === '' || preg_match('/^\d{5}$/', $postal);
+}
+
+function validate_city(string $city): bool {
+    return $city === '' || preg_match('/^[a-zA-ZÀ-ÿ\s\-\']{2,50}$/u', $city);
+}
+
+function validate_street(string $street): bool {
+    return $street === '' || preg_match('/^[a-zA-Z0-9À-ÿ\s\-\']{2,100}$/u', $street);
+}
+
+function validate_address_number(string $number): bool {
+    return $number === '' || preg_match('/^\d{1,4}[a-zA-Z\s]*$/', $number);
+}
+
+function get_user_name(array $userData, ?string $secretKey = null): string {
+    if (!empty($userData['plain_name'])) {
+        return $userData['plain_name'];
+    }
+    if (!empty($userData['fullname_enc']) && $secretKey !== null) {
+        return decryptData($userData['fullname_enc'], $secretKey);
+    }
+    return '';
+}
+
+function get_user_email(array $userData, ?string $secretKey = null): string {
+    if (!empty($userData['plain_email'])) {
+        return $userData['plain_email'];
+    }
+    if (!empty($userData['email_enc']) && $secretKey !== null) {
+        return decryptData($userData['email_enc'], $secretKey);
+    }
+    return '';
+}
+
+function get_user_phone(array $userData, ?string $secretKey = null): string {
+    if (!empty($userData['phone'])) {
+        return $userData['phone'];
+    }
+    if (!empty($userData['phone_enc']) && $secretKey !== null) {
+        return decryptData($userData['phone_enc'], $secretKey);
+    }
+    return '';
+}
+
+function get_user_address_parts(array $userData, ?string $secretKey = null): array {
+    $parts = ['street' => '', 'number' => '', 'complement' => '', 'postal' => '', 'city' => ''];
+    if (!empty($userData['address'])) {
+        if (is_array($userData['address'])) {
+            return array_merge($parts, $userData['address']);
+        }
+        $decoded = json_decode($userData['address'], true);
+        if (is_array($decoded)) {
+            return array_merge($parts, $decoded);
+        }
+        $parts['street'] = $userData['address'];
+        return $parts;
+    }
+    if (!empty($userData['address_enc']) && $secretKey !== null) {
+        $raw = decryptData($userData['address_enc'], $secretKey);
+        if ($raw !== '') {
+            $decoded = json_decode($raw, true);
+            if (is_array($decoded)) {
+                return array_merge($parts, $decoded);
+            }
+            $parts['street'] = $raw;
+        }
+    }
+    return $parts;
+}
+
+function format_address_parts(array $addressParts): string {
+    $segments = [];
+    if (!empty($addressParts['street'])) {
+        $segments[] = $addressParts['street'];
+    }
+    if (!empty($addressParts['number'])) {
+        $segments[] = $addressParts['number'];
+    }
+    if (!empty($addressParts['complement'])) {
+        $segments[] = $addressParts['complement'];
+    }
+    if (!empty($addressParts['postal'])) {
+        $segments[] = $addressParts['postal'];
+    }
+    if (!empty($addressParts['city'])) {
+        $segments[] = $addressParts['city'];
+    }
+    return implode(' ', $segments);
+}
+
 function decryptData($payload, $password) {
     if (!$payload) return "";
     $decoded   = base64_decode($payload);
@@ -95,7 +203,7 @@ function connectIntoAccount($userRole, $key, $password, $email = NULL, $name = N
         $_SESSION['user_id']       = $key;
         $_SESSION['user_role']     = 'admin';
         $_SESSION['user_email']    = $email;
-        $_SESSION['user_fullname'] = $u['plain_name'] ?? 'Admin';
+        $_SESSION['user_fullname'] = $name ?? $email ?? 'Admin';
         $_SESSION['secret_key']    = $password;
         redirectByRole('admin');
     }
@@ -104,8 +212,10 @@ function connectIntoAccount($userRole, $key, $password, $email = NULL, $name = N
         $_SESSION['user_id']       = $key;
         $_SESSION['user_role']     = $userRole;
         $_SESSION['secret_key']    = $password;
-        $_SESSION['user_email']    = $email || decryptData($allUsers[$key]['email_enc'], $password);
-        $_SESSION['user_fullname'] = $name || decryptData($allUsers[$key]['fullname_enc'], $password);
+
+        $userRecord = $allUsers[$key] ?? [];
+        $_SESSION['user_email']    = $email ?? get_user_email($userRecord, $password);
+        $_SESSION['user_fullname'] = $name ?? get_user_name($userRecord, $password) ?: ($_SESSION['user_email'] ?? 'Client');
 
         redirectByRole($userRole);
     }

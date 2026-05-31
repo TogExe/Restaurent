@@ -854,21 +854,27 @@ const App = (() => {
         qsa('input[type="password"]').forEach(input => {
             const wrap = input.parentNode;
             if (!wrap) return;
-            if (wrap.querySelector('.pwd-toggle')) return; // already added
 
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'pwd-toggle';
-            btn.title = 'Afficher / Masquer';
-            btn.style.marginLeft = '8px';
-            btn.textContent = '👁';
-            btn.addEventListener('click', () => {
-                input.type = input.type === 'password' ? 'text' : 'password';
-                btn.textContent = input.type === 'password' ? '👁' : '🙈';
-            });
+            let btn = wrap.querySelector('.pwd-toggle');
+            if (!btn) {
+                btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'pwd-toggle';
+                btn.title = 'Afficher / Masquer';
+                btn.style.marginLeft = '8px';
+                btn.textContent = '👁';
+                wrap.appendChild(btn);
+            }
 
-            // place the button after the input
-            wrap.appendChild(btn);
+            if (btn.dataset.pwdToggleInit !== '1') {
+                btn.dataset.pwdToggleInit = '1';
+                btn.addEventListener('click', () => {
+                    const nowShowing = input.type === 'password';
+                    input.type = nowShowing ? 'text' : 'password';
+                    btn.textContent = nowShowing ? '🙈' : '👁';
+                    btn.setAttribute('aria-pressed', String(nowShowing));
+                });
+            }
         });
     };
 
@@ -947,6 +953,15 @@ const App = (() => {
             const status = form.querySelector('select[name="new_status"]')?.value;
             if (!oid) { showFormError(form, 'Identifiant de commande manquant. Ouvrez la modale depuis une commande.'); return false; }
             if (typeof status === 'undefined' || status === '') { showFormError(form, 'Sélectionnez un statut.'); return false; }
+            return true;
+        }
+
+        // Login form
+        if (form.dataset.loginForm === '1' || form.id === 'loginForm') {
+            const emailInput = form.querySelector('input[type="email"]');
+            const passwordInput = form.querySelector('input[name="password"]');
+            if (emailInput && !emailInput.checkValidity()) { showFormError(form, 'Email invalide.'); return false; }
+            if (passwordInput && passwordInput.value.trim().length < 6) { showFormError(form, 'Le mot de passe doit contenir au moins 6 caractères.'); return false; }
             return true;
         }
 

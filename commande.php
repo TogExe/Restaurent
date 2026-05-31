@@ -16,35 +16,20 @@ $uid       = current_user_id();
 $secretKey = current_secret_key();
 
 $addressParts = ['street' => '', 'number' => '', 'complement' => '', 'postal' => '', 'city' => ''];
-if ($uid && isset($allUsers[$uid]['address_enc'])) {
-    $address_raw = decryptData($allUsers[$uid]['address_enc'], $secretKey);
-    if ($address_raw !== '') {
-        $decoded = json_decode($address_raw, true);
-        if (is_array($decoded)) {
-            $addressParts = array_merge($addressParts, $decoded);
-        } else {
-            // Rétrocompatibilité si l'adresse était une simple chaîne
-            $addressParts['street'] = $address_raw;
-        }
-    }
+$savedAddress = '';
+if ($uid && isset($allUsers[$uid]) && is_array($allUsers[$uid])) {
+    $addressParts = get_user_address_parts($allUsers[$uid], $secretKey);
+    $savedAddress = format_address_parts($addressParts);
 }
-
-$postedAddressParts = $addressParts;
 
 ensure_ban();
 
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
-    $items   = json_decode($_POST['cart_items'] ?? '[]', true);
-    $address = trim($_POST['delivery_address'] ?? '');
-
-    // Preserve address fields when the page reloads after validation errors
-    $postedAddressParts['street'] = trim($_POST['addr_street'] ?? $postedAddressParts['street']);
-    $postedAddressParts['number'] = trim($_POST['addr_number'] ?? $postedAddressParts['number']);
-    $postedAddressParts['complement'] = trim($_POST['addr_comp'] ?? $postedAddressParts['complement']);
-    $postedAddressParts['postal'] = trim($_POST['addr_postal'] ?? $postedAddressParts['postal']);
-    $postedAddressParts['city'] = trim($_POST['addr_city'] ?? $postedAddressParts['city']);
+    $items        = json_decode($_POST['cart_items'] ?? '[]', true);
+    $address      = trim($_POST['delivery_address'] ?? '');
+    $savedAddress = $address !== '' ? $address : $savedAddress;
 
     if (empty($items)) {
         $message = "<div class='msg-error'>Votre panier est vide.</div>";
