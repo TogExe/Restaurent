@@ -1,11 +1,11 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 
 ensure_ban();
 // Require cuisinier or admin
 require_login(['cuisinier','admin']);
 
-$allorders      = load_json('commandes.json');
+$allorders      = load_json('data/commandes.json');
 $currentPage    = basename($_SERVER['PHP_SELF']);
 $selectedFilter = $_GET['filter'] ?? 'all';
 
@@ -18,7 +18,7 @@ $isAjax = (isset($_POST['ajax']) && $_POST['ajax']) || (isset($_GET['ajax']) && 
 if (isset($_POST['change_status'])) {
     updateOrderStatus($_POST['order_id']);
     if ($isAjax) {
-        $allorders = load_json('commandes.json');
+        $allorders = load_json('data/commandes.json');
         $order = $allorders[$_POST['order_id']] ?? null;
         header('Content-Type: application/json');
         echo json_encode([
@@ -37,11 +37,11 @@ $inProgressOrders = array_filter($allorders, fn($o) => $o['ready'] == $inProgres
 $paidOrders       = array_filter($allorders, fn($o) => $o['ready'] == $paid);
 
 function updateOrderStatus($orderId) {
-    $data = load_json('commandes.json');
+    $data = load_json('data/commandes.json');
 
     if (isset($data[$orderId]) && $data[$orderId]['ready'] < 2) {
         $data[$orderId]['ready'] += 1;
-        save_json('commandes.json', $data);
+        save_json('data/commandes.json', $data);
     }
 }
 
@@ -149,6 +149,8 @@ $isLoggedIn  = true;
     <meta charset="UTF-8">
     <title>Espace Cuisine</title>
     <link rel="stylesheet" href="style.css">
+    <script src="scripts.js" defer></script>
+
 </head>
 
 <body>
@@ -224,6 +226,6 @@ $isLoggedIn  = true;
     </div>
 
 </main>
-<script src="scripts.js" defer></script>
 </body>
 </html>
+

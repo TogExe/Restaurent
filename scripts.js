@@ -1,6 +1,6 @@
 const App = (() => {
     // =========================================================================
-    // 1. UTILITAIRES GLOBAUX
+    // 1. GLOBAL UTILITIES: shared DOM helpers and UI support
     // =========================================================================
     const qs = (selector, root = document) => root.querySelector(selector);
     const qsa = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -22,7 +22,7 @@ const App = (() => {
     };
 
     // =========================================================================
-    // 2. INITIALISATIONS UI (Bases & Onglets)
+    // 2. UI INITIALIZATION: form confirmations, tabs, and like button binding
     // =========================================================================
     const initConfirmForms = () => {
         qsa('form[data-confirm]:not([data-confirm-init])').forEach(form => {
@@ -91,7 +91,7 @@ const App = (() => {
     };
 
     // =========================================================================
-    // 3. PROFIL UTILISATEUR
+    // 3. PROFILE EDIT INTERACTIONS
     // =========================================================================
     const initProfileEditButtons = () => {
         qsa('.field-edit-btn').forEach(btn => {
@@ -142,7 +142,7 @@ const App = (() => {
     };
 
     // =========================================================================
-    // 4. MODULE MENU & PANIER INTERACTIF
+    // 4. MENU CART MODULE: render cart, manage items, and open/close the sidebar
     // =========================================================================
     let menuCart = JSON.parse(localStorage.getItem('menuCart') || '[]');
     const saveMenuCart = () => localStorage.setItem('menuCart', JSON.stringify(menuCart));
@@ -412,8 +412,27 @@ const App = (() => {
 
     const initCommandeSimplePage = () => {
         if (!qs('#cartItems')) return;
-        
-        JSON.parse(localStorage.getItem('commandeCart') || localStorage.getItem('cart') || '[]').forEach(item => {
+
+        let storedItems = localStorage.getItem('commandeCart') || localStorage.getItem('cart') || sessionStorage.getItem('restaurantCart') || '[]';
+        let items = [];
+
+        try {
+            const parsed = JSON.parse(storedItems);
+            if (Array.isArray(parsed)) {
+                items = parsed;
+            } else if (parsed && typeof parsed === 'object') {
+                items = Object.entries(parsed).map(([id, item]) => ({
+                    id: encodeURIComponent(id),
+                    name: item.name || '',
+                    price: Number(item.price || 0),
+                    quantity: Number(item.qty || item.quantity || 0)
+                }));
+            }
+        } catch (err) {
+            items = [];
+        }
+
+        items.forEach(item => {
             const id = decodeURIComponent(item.id);
             orderCart[id] = item.quantity;
             orderPrices[id] = item.price;
@@ -445,13 +464,38 @@ const App = (() => {
     // Objet global pour l'état des ajouts de plats
     const additionsState = {};
 
+    const populateAdditionsPanel = (orderId, panneau) => {
+        const grid = panneau.querySelector('.additions-grid');
+        if (!grid || !Array.isArray(window.availablePlats) || grid.children.length > 0) return;
+
+        window.availablePlats.forEach(plat => {
+            const item = document.createElement('div');
+            item.className = 'addition-item';
+            item.dataset.price = plat.price;
+            item.dataset.pid = plat.id;
+            item.innerHTML = `
+                <div style="font-size: 0.88rem; font-weight: 600;">${escapeHtml(plat.name)} <span style="color: var(--softlime); font-size: 0.78rem; font-weight: normal; margin-left:4px;">${Number(plat.price).toFixed(2).replace('.', ',')} €</span></div>
+                <div class="add-qty-ctrl">
+                    <button type="button" class="add-qty-btn" onclick="adjustAdditionQty('${orderId}', '${plat.id}', -1)">−</button>
+                    <span class="add-qty-val" id="qty-add-${orderId}-${plat.id}">0</span>
+                    <button type="button" class="add-qty-btn" onclick="adjustAdditionQty('${orderId}', '${plat.id}', 1)">+</button>
+                </div>`;
+            grid.appendChild(item);
+        });
+
+        panneau.dataset.populated = '1';
+    };
+
     window.toggleAdditions = (orderId) => {
         const panneau = document.getElementById('additions-panel-' + orderId);
         if (!panneau) return;
         
         if (panneau.style.display === 'none' || panneau.style.display === '') {
             panneau.style.display = 'block';
-            additionsState[orderId] = {}; 
+            if (!panneau.dataset.populated) {
+                populateAdditionsPanel(orderId, panneau);
+            }
+            additionsState[orderId] = additionsState[orderId] || {};
             window.updateAdditionTotal(orderId);
         } else {
             panneau.style.display = 'none';
@@ -839,7 +883,7 @@ const App = (() => {
     };
 
     // =========================================================================
-    // 9. VALIDATION CLIENT, TOGGLE MOT DE PASSE, COMPTEURS
+    // 9. CLIENT FORM HELPERS: inline errors, password toggles, and char counters
     // =========================================================================
     const showFormError = (form, message) => {
         if (!form) return;

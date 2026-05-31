@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 
 ensure_ban();
@@ -8,7 +8,7 @@ require_login(['livreur','admin']);
 $uid  = current_user_id() ?? $_SESSION['user_id'];
 $role = $_SESSION['user_role'] ?? 'livreur';
 
-$allorders      = load_json('commandes.json');
+$allorders      = load_json('data/commandes.json');
 $currentPage    = basename($_SERVER['PHP_SELF']);
 $selectedFilter = $_GET['filter'] ?? 'all';
 
@@ -21,12 +21,12 @@ $isAjax = (isset($_POST['ajax']) && $_POST['ajax']) || (isset($_GET['ajax']) && 
 // --- 1. ACTION : PRENDRE EN CHARGE UNE COMMANDE ORPHELINE ---
 if (isset($_POST['take_charge']) && isset($_POST['order_id'])) {
     $orderId = $_POST['order_id'];
-    $data = load_json('commandes.json');
+    $data = load_json('data/commandes.json');
 
     // On s'assure que la commande existe et qu'elle n'a toujours pas de livreur (sécurité anti-double clic)
     if (isset($data[$orderId]) && empty($data[$orderId]['livreur_id'])) {
         $data[$orderId]['livreur_id'] = $uid;
-        save_json('commandes.json', $data);
+        save_json('data/commandes.json', $data);
         
         if ($isAjax) {
             header('Content-Type: application/json');
@@ -46,7 +46,7 @@ if (isset($_POST['take_charge']) && isset($_POST['order_id'])) {
 
 // --- 2. ACTION : METTRE À JOUR LE STATUT (Existant) ---
 function updateOrderStatus($orderId, $userId, $userRole) {
-    $data = load_json('commandes.json');
+    $data = load_json('data/commandes.json');
     if (isset($data[$orderId])) {
         $order = $data[$orderId];
         // Le livreur doit être le propriétaire pour changer le statut
@@ -54,7 +54,7 @@ function updateOrderStatus($orderId, $userId, $userRole) {
         
         if ($isAssigned && $order['ready'] >= 2 && $order['ready'] < 4) {
             $data[$orderId]['ready'] += 1;
-            save_json('commandes.json', $data);
+            save_json('data/commandes.json', $data);
             return $data[$orderId]['ready'];
         }
     }
@@ -208,6 +208,8 @@ $isLoggedIn = true;
     <meta charset="UTF-8">
     <title>Espace Livreur</title>
     <link rel="stylesheet" href="style.css">
+    <script src="scripts.js" defer></script>
+
 </head>
 <body>
 
@@ -254,6 +256,5 @@ $isLoggedIn = true;
     </div>
 </main>
 
-<script src="scripts.js" defer></script>
 </body>
 </html>

@@ -1,14 +1,14 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 $userId = $isLoggedIn ? $_SESSION['user_id'] : null;
 
-$filePlats = 'plats.json';
+$filePlats = 'data/plats.json';
 $plats     = load_json($filePlats);
 
-// Traitement des tags pour regrouper les plats par catégorie
+// Build menu sections from dish tags for grouped display by category
 $categories = [];
 $untagged = [];
 
@@ -31,7 +31,7 @@ if (!empty($untagged)) {
     $categories['Autres'] = $untagged;
 }
 
-// Gestion des likes/dislikes
+// Process like/dislike actions and persist the current user's preference
 if (isset($_GET['action']) && isset($_GET['id'])) {
     if (!$isLoggedIn) {
         header("Location: connect.php");

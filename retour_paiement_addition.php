@@ -1,11 +1,11 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 require_once __DIR__ . '/getapikey.php';
 
 $vendeur_code = 'MI-1_A'; 
 $api_key = getAPIKey($vendeur_code);
 
-// CYBank GET parameters validation
+// Read and validate CYBank callback parameters for addition order payment
 $transaction = $_GET['transaction'] ?? '';
 $montant     = $_GET['montant'] ?? '';
 $vendeur     = $_GET['vendeur'] ?? '';
@@ -20,13 +20,13 @@ $message = "";
 $success = false;
 
 if ($control_get === $control_calc && $vendeur === $vendeur_code) {
-    $orderFile = 'commandes.json';
+    $orderFile = 'data/commandes.json';
     $allOrders = load_json($orderFile);
     
     if (isset($allOrders[$transaction])) {
         $additionOrder = $allOrders[$transaction];
         
-        // Ensure this transaction is indeed an addition
+        // Only merge orders that were flagged as a post-order addition
         if (isset($additionOrder['is_addition']) && $additionOrder['is_addition'] === true) {
             $parentOrderId = $additionOrder['parent_order_id'];
             
@@ -109,3 +109,4 @@ $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 
 </body>
 </html>
+

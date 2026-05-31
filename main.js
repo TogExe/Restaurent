@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================================
-   1. GESTION DU THÈME
+   1. THEME SWITCHER: preserve the user's theme preference in localStorage
 ========================================= */
 function initThemeSwitcher() {
     const themeToggleBtn = document.getElementById("theme-toggle");
@@ -22,19 +22,19 @@ function initThemeSwitcher() {
 }
 
 /* =========================================
-   2. UNIFIED CART SYSTEM
+   2. CART SYSTEM: sidebar display and localStorage shopping cart persistence
 ========================================= */
 function initCartSystem() {
     updateCartCounter();
 
-    // Elements
+    // Cache cart sidebar and interaction DOM elements
     const sidebar = document.getElementById("cart-sidebar");
     const overlay = document.getElementById("cart-overlay");
     const closeBtn = document.getElementById("cart-close-btn");
     const fabBtn = document.getElementById("cart-fab");
     const addToCartBtns = document.querySelectorAll(".add-to-cart-btn");
 
-    // Toggles
+    // Attach open/close toggle handlers for the cart panel
     if (fabBtn) fabBtn.addEventListener("click", toggleCart);
     if (closeBtn) closeBtn.addEventListener("click", toggleCart);
     if (overlay) overlay.addEventListener("click", toggleCart);
@@ -49,7 +49,7 @@ function initCartSystem() {
         }
     }
 
-    // Add Item logic
+    // Add item to cart and persist the updated localStorage state
     addToCartBtns.forEach(btn => {
         btn.addEventListener("click", (e) => {
             const id = btn.getAttribute("data-id");
@@ -103,7 +103,7 @@ function updateCartCounter() {
 
 
 
-// Global functions so inline onclick handlers in renderCartSidebar work
+// Expose cart control functions globally for inline onclick handlers used in the sidebar
 window.updateItemQty = function(id, change) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     let item = cart.find(i => i.id === id);

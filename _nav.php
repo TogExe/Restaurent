@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * _nav.php — Shared navigation partial.
  * Include AFTER session_start() and after setting $currentPage / $isLoggedIn / $userRole.
@@ -44,3 +44,4 @@ $userRole = $_SESSION['user_role'] ?? 'client';
 </nav>
 
 <script src="theme_changer.js"></script>
+

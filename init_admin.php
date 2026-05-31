@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * init_admin.php
  * Run ONCE via browser or CLI to create the admin account.
@@ -11,7 +11,7 @@ $adminName     = 'Administrateur';
 
 require_once __DIR__ . '/inc/common.php';
 
-$file     = 'users.json';
+$file     = 'data/users.json';
 $allUsers = load_json($file);
 
 // Remove any existing admin
@@ -32,3 +32,4 @@ $allUsers['__admin__'] = [
 save_json($file, $allUsers);
 echo "Admin account created. Email: $adminEmail / Password: $adminPassword\n";
 echo "Delete this file (init_admin.php) for security.\n";
+

@@ -1,46 +1,43 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 require_once __DIR__ . '/getapikey.php'; 
 
-// CONFIGURATION CYBANK
+// CYBank payment gateway configuration for new order checkout
 $vendeur = 'MI-2_D'; 
 
-$platsFile  = 'plats.json';
-$orderFile  = 'commandes.json';
+$platsFile  = 'data/plats.json';
+$orderFile  = 'data/commandes.json';
 $plats      = load_json($platsFile);
 $allOrders  = load_json($orderFile);
 
-$usersFile = 'users.json';
+$usersFile = 'data/users.json';
 $allUsers  = load_json($usersFile);
 $uid       = current_user_id();
 $secretKey = current_secret_key();
 
-// --- CORRECTION : Récupération et formatage propre de l'adresse de l'utilisateur ---
+// Build the saved delivery address from the user's profile data
 $savedAddress = '';
-if ($uid && isset($allUsers[$uid]['address_enc'])) {
-    $address_raw = decryptData($allUsers[$uid]['address_enc'], $secretKey);
-    if ($address_raw !== '') {
-        $decoded = json_decode($address_raw, true);
-        if (is_array($decoded)) {
-            // C'est un JSON, on concatène les parties pour l'input text
-            $parts = [];
-            if (!empty($decoded['number'])) $parts[] = $decoded['number'];
-            if (!empty($decoded['street'])) $parts[] = $decoded['street'];
-            if (!empty($decoded['complement'])) $parts[] = $decoded['complement'];
-            $addressL1 = implode(' ', $parts);
-            
-            $cityParts = [];
-            if (!empty($decoded['postal'])) $cityParts[] = $decoded['postal'];
-            if (!empty($decoded['city'])) $cityParts[] = $decoded['city'];
-            $addressL2 = implode(' ', $cityParts);
-            
-            // Combine rue et ville
-            $savedAddress = trim($addressL1 . (!empty($addressL1) && !empty($addressL2) ? ', ' : '') . $addressL2);
-        } else {
-            // C'est une simple chaîne
-            $savedAddress = $address_raw;
-        }
-    }
+
+// Vérifie si l'utilisateur est connecté et possède le bloc "address" dans users.json
+if ($uid && isset($allUsers[$uid]['address']) && is_array($allUsers[$uid]['address'])) {
+    $addr = $allUsers[$uid]['address'];
+    
+    // On rassemble les éléments de la rue (Numéro + Rue + Complément)
+    $streetParts = [];
+    if (!empty($addr['number']))     $streetParts[] = $addr['number'];
+    if (!empty($addr['street']))     $streetParts[] = $addr['street'];
+    if (!empty($addr['complement'])) $streetParts[] = $addr['complement'];
+    $streetLine = implode(' ', $streetParts);
+    
+    // On rassemble le code postal et la ville
+    $cityLine = trim(($addr['postal'] ?? '') . ' ' . ($addr['city'] ?? ''));
+    
+    // On combine le tout proprement avec une virgule
+    $fullAddressParts = [];
+    if (!empty($streetLine)) $fullAddressParts[] = $streetLine;
+    if (!empty($cityLine))   $fullAddressParts[] = $cityLine;
+    
+    $savedAddress = implode(', ', $fullAddressParts);
 }
 // -------------------------------------------------------------------------------------
 
@@ -99,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['place_order'])) {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $retour = $protocol . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/') . '/retour_paiement.php';
 
-        // Application stricte de la formule de hachage md5 pour le contrôle d'intégrité à l'envoi
+        // Calculate the gateway control hash to ensure payment data integrity
         $strToHash = $api_key . "#" . $orderId . "#" . $montant_str . "#" . $vendeur . "#" . $retour . "#";
         $control = md5($strToHash);
 
@@ -192,23 +189,6 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
             </form>
         </div>
 </main>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof changeQty === 'function') {
-        let cart = JSON.parse(sessionStorage.getItem('restaurantCart')) || {};
-        
-        for (const [pid, item] of Object.entries(cart)) {
-            if (item.qty > 0) {
-                for (let i = 0; i < item.qty; i++) {
-                    let safeName = item.name.replace(/'/g, "\\'");
-                    changeQty(pid, parseFloat(item.price), safeName, 1);
-                }
-            }
-        }
-    }
-});
-</script>
 
 </body>
 </html>

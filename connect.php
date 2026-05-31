@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 
 ensure_ban();
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($errors)) {
-        $file     = 'users.json';
+        $file     = 'data/users.json';
         $allUsers = load_json($file);
 
         $foundAdmin = false;
@@ -139,17 +139,17 @@ $isLoggedIn  = false;
 
                 <div class="demo-badge demo-cook">
                     <strong>🍳 Cuisinier</strong>
-                    — définissez <code>role:"cuisinier"</code> dans users.json
+                    marie@themarie.com / 13151615
                 </div>
 
                 <div class="demo-badge demo-delivery">
                     <strong>🛵 Livreur</strong>
-                    — définissez <code>role:"livreur"</code> dans users.json
+                    johndoe@john.com / 13151615
                 </div>
 
                 <div class="demo-badge demo-client">
                     <strong>👤 Client</strong>
-                    — créez un compte via le formulaire
+                    itsmemaario@gmail.com / 13151615
                 </div>
 
             </div>
@@ -162,3 +162,4 @@ $isLoggedIn  = false;
 
 </body>
 </html>
+

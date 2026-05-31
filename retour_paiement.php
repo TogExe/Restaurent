@@ -1,15 +1,15 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 require_once __DIR__ . '/getapikey.php';
 
 $vendeur = 'MI-2_D'; 
-$orderFile = 'commandes.json';
+$orderFile = 'data/commandes.json';
 $allOrders = load_json($orderFile);
 
 // Récupération des paramètres envoyés par CYBank par l'URL ($_GET)
 $transaction = $_GET['transaction'] ?? '';
 $montant     = $_GET['montant'] ?? '';
-$status      = $_GET['status'] ?? ''; // ATTENTION: C'est bien 'status' d'après la doc de retour
+$status      = $_GET['status'] ?? ''; 
 $vendeur_ret = $_GET['vendeur'] ?? '';
 $control_ret = $_GET['control'] ?? '';
 
@@ -19,7 +19,7 @@ $success = false;
 if (empty($transaction) || empty($montant) || empty($status) || empty($control_ret)) {
     $message = "Paramètres de paiement manquants ou invalides.";
 } else {
-    // 1. Récupération de la clé API pour recalculer l'empreinte de contrôle
+    // Rebuild the expected control hash using the secret API key
     $api_key = getAPIKey($vendeur);
 
     // 2. Calcul du hash local selon la formule : md5(api_key#transaction#montant#vendeur#status#)

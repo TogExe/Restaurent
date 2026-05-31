@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 
 $currentPage = basename($_SERVER['PHP_SELF']);
@@ -7,7 +7,7 @@ ensure_ban();
 
 if (!isset($_GET['id'])) { header("Location: menu.php"); exit(); }
 $platId    = $_GET['id'];
-$filePlats = 'plats.json';
+$filePlats = 'data/plats.json';
 $plats     = load_json($filePlats);
 if (!isset($plats[$platId])) { header("Location: menu.php"); exit(); }
 $isLoggedIn = isset($_SESSION['logged_in'])
@@ -24,7 +24,7 @@ if (!isset($_GET['id'])) {
 
 $platId = $_GET['id'];
 
-$filePlats = 'plats.json';
+$filePlats = 'data/plats.json';
 $plats     = load_json($filePlats);
 
 if (!isset($plats[$platId])) {
@@ -352,3 +352,4 @@ if ($isLoggedIn && isset($plat['comments'][$userId])) {
 
 </body>
 </html>
+

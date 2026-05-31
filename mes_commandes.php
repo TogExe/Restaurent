@@ -1,12 +1,12 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 require_once __DIR__ . '/getapikey.php';
 
 ensure_ban();
 require_login(['client', 'admin']);
 
-$platsFile  = 'plats.json';
-$orderFile  = 'commandes.json';
+$platsFile  = 'data/plats.json';
+$orderFile  = 'data/commandes.json';
 $plats      = load_json($platsFile);
 $allOrders  = load_json($orderFile);
 $uid        = current_user_id();
@@ -485,20 +485,9 @@ $statusColors = [
                             </form>
                         </div>
                         
-                        <div class="additions-panel" id="additions-panel-<?= $oid ?>">
+                        <div class="additions-panel" id="additions-panel-<?= $oid ?>" style="display:none;">
                             <h4 class="additions-header">Sélectionnez les plats additionnels</h4>
-                            <div class="additions-grid">
-                                <?php foreach ($plats as $pid => $p): ?>
-                                    <div class="addition-item" data-price="<?= $p['price'] ?>" data-pid="<?= $pid ?>">
-                                        <div style="font-size: 0.88rem; font-weight: 600;"><?= htmlspecialchars($p['name']) ?> <span style="color: var(--softlime); font-size: 0.78rem; font-weight: normal; margin-left:4px;"><?= number_format($p['price'], 2, ',', ' ') ?> €</span></div>
-                                        <div class="add-qty-ctrl">
-                                            <button type="button" class="add-qty-btn" onclick="adjustAdditionQty('<?= $oid ?>', '<?= $pid ?>', -1)">−</button>
-                                            <span class="add-qty-val" id="qty-add-<?= $oid ?>-<?= $pid ?>">0</span>
-                                            <button type="button" class="add-qty-btn" onclick="adjustAdditionQty('<?= $oid ?>', '<?= $pid ?>', 1)">+</button>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
+                            <div class="additions-grid"></div>
                             
                             <div class="additions-checkout">
                                 <div class="diff-text">Différence à régler : <span class="diff-val" id="diff-val-<?= $oid ?>">0,00 €</span></div>
@@ -556,6 +545,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+</script>
+<script>
+window.availablePlats = <?= json_encode(array_map(function($pid, $plat){ return ['id' => $pid, 'name' => $plat['name'] ?? '', 'price' => floatval($plat['price'] ?? 0)]; }, array_keys($plats), $plats), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 </script>
 </body>
 </html>

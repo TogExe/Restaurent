@@ -1,14 +1,14 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 session_start();
 if (!isset($_SESSION['logged_in']) || $_SESSION['user_role'] !== 'admin') {
     header("Location: connect.php"); exit();
 }
 
-$usersFile    = 'users.json';
-$commandsFile = 'commandes.json';
-$platsFile    = 'plats.json';
-$logsFile     = 'historique_actions.json'; // Fichier de log pour les plats retirés
+$usersFile    = 'data/users.json';
+$commandsFile = 'data/commandes.json';
+$platsFile    = 'data/plats.json';
+$logsFile     = 'data/historique_actions.json'; // Fichier de log pour les plats retirés
 
 $allUsers    = file_exists($usersFile)    ? json_decode(file_get_contents($usersFile),    true) : [];
 $allOrders   = file_exists($commandsFile) ? json_decode(file_get_contents($commandsFile), true) : [];

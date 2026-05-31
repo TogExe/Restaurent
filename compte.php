@@ -1,10 +1,10 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 
 ensure_ban();
 $message = "";
 
-$file = 'users.json';
+$file = 'data/users.json';
 $allUsers = load_json($file);
 
 $postedFullname = '';
@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = 'client';
     $errors = [];
 
-    // --- VALIDATION SERVEUR ---
+    // Server-side registration validation for new account creation
     if (!validate_user_name($fullname)) {
         $errors[] = "Le nom complet est invalide (2 à 50 lettres).";
     }
@@ -92,6 +92,8 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
         .signup-char-counter.limit-reached { color: #e74c3c; font-weight: bold; }
         .input-error { border-color: #e74c3c !important; background: rgba(231, 76, 60, 0.05) !important; }
     </style>
+    <script src="scripts.js" defer></script>
+
 </head>
 <body>
 
@@ -167,13 +169,12 @@ $isLoggedIn  = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
     </section>
 </main>
 
-<script src="scripts.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('signupForm');
     const inputs = form.querySelectorAll('input');
 
-    // 1. RÈGLES DE VALIDATION JS
+    // 1. Client-side validation rules matching server checks
     const rules = {
         fullname: { regex: /^[a-zA-ZÀ-ÿ\s\-\']{2,50}$/, msg: "2 à 50 lettres (espaces et tirets acceptés)." },
         email: { regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, msg: "Adresse email invalide." },
@@ -182,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         confirm_password: { regex: /./, msg: "Les mots de passe ne correspondent pas." } // La regex n'importe pas ici, logique gérée manuellement
     };
 
-    // 2. GESTION DU COMPTEUR
+    // 2. Input character counters and live length feedback
     const updateCounter = (input) => {
         const max = input.getAttribute('maxlength');
         const counterEl = document.getElementById(`counter-${input.id}`);
@@ -197,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 3. LOGIQUE DE VALIDATION
+    // 3. Field validation routines and password confirmation handling
     const validateInput = (input) => {
         const errorEl = document.getElementById(`error-${input.id}`);
         const rule = rules[input.id];
@@ -242,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return isValid;
     };
 
-    // 4. ATTACHEMENT DES ÉVÉNEMENTS
+    // 4. Attach event listeners for live validation and counters
     inputs.forEach(input => {
         updateCounter(input); // Initialisation au chargement
         
@@ -256,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 5. BLOCAGE À LA SOUMISSION
+    // 5. Prevent submit when validation fails
     form.addEventListener('submit', (e) => {
         let isFormValid = true;
         
@@ -266,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Validation HTML5 de secours
+        // Fallback to browser HTML5 validity checks if needed
         if (!isFormValid || !form.checkValidity()) {
             e.preventDefault();
             form.reportValidity(); // Fait apparaître les bulles natives du navigateur

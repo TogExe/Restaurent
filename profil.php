@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/inc/common.php';
 
 require_login();
@@ -7,7 +7,7 @@ $userId    = current_user_id();
 $secretKey = $_SESSION['secret_key'];
 $userRole  = $_SESSION['user_role'] ?? 'client';
 
-$file     = 'users.json';
+$file     = 'data/users.json';
 $allUsers = load_json($file);
 
 if (!isset($allUsers[$userId]) || !is_array($allUsers[$userId])) {
@@ -49,8 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $errors = [];
 
-        // Validation Serveur
-       // --- DÉBUT : VÉRIFICATIONS CÔTÉ SERVEUR ---
+        // Validate updated profile data on the server
+       // --- BEGIN SERVER-SIDE FIELD VALIDATION ---
         $errors = [];
 
         // Nom (Lettres)
@@ -92,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $message = "<div class='msg-error'>$errorText</div>";
             }
         } else {
-            // Sauvegarde
+            // Persist cleaned profile fields and remove any legacy encrypted payloads
             if ($name !== '') {
                 $allUsers[$userId]['plain_name'] = $name;
                 unset($allUsers[$userId]['fullname_enc']);
@@ -175,6 +175,8 @@ $isLoggedIn  = true;
             border-bottom: 1px solid var(--softlime);
         }
     </style>
+    <script src="scripts.js" defer></script>
+
 </head>
 
 <body>
@@ -317,7 +319,6 @@ $isLoggedIn  = true;
 
 </main>
 
-<script src="scripts.js" defer></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -329,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById('logoutBtn');
     const inputs = form.querySelectorAll('.inline-edit input');
 
-    // Activer l'édition
+    // Enable inline editing for profile inputs
     if (enableEditBtn) {
         enableEditBtn.addEventListener('click', () => {
             inputs.forEach(input => input.removeAttribute('readonly'));
@@ -340,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Annuler l'édition
+    // Cancel inline editing and restore the readonly view
     if (cancelEditBtn) {
         cancelEditBtn.addEventListener('click', () => {
             form.reset(); 
@@ -359,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Règles JS alignées sur le PHP
+    // JavaScript validation rules mirror the PHP server-side checks
     const rules = {
         fullname: { regex: /^[a-zA-ZÀ-ÿ\s\-\']{2,50}$/, msg: "2 à 50 lettres (espaces et tirets acceptés)." },
         email: { regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, msg: "Adresse email invalide." },
@@ -396,13 +397,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return isValid;
     };
 
-    // Vérification en temps réel
+    // Validate fields in real time as the user types or leaves the field
     inputs.forEach(input => {
         input.addEventListener('input', () => validateInput(input));
         input.addEventListener('blur', () => validateInput(input));
     });
 
-    // Blocage à la soumission
+    // Prevent submit when a field fails inline validation
     form.addEventListener('submit', (e) => {
         let isFormValid = true;
         inputs.forEach(input => {

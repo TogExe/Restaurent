@@ -1,0 +1,42 @@
+{
+    "__admin__": {
+        "password_auth": "$2y$12$c/7IjPceiuTSmrjJChcUu.5myXfk/rltnyEsSjTFRc2oI74ZxAVJ2",
+        "email_enc": "",
+        "fullname_enc": "",
+        "phone_enc": "",
+        "plain_email": "admin@restaurant.fr",
+        "plain_name": "Administrateur",
+        "role": "admin"
+    },
+    "33bd9c901d465658cbd821d8cdb72d86f1b1aae030f43615c39eca4b0b4a0b4c": {
+        "password_auth": "$2y$10$fYaCvtFz3md9ASQdqlN5aubystgOy0xiOd3ZV3RBsYOF1doT/O5tq",
+        "email_enc": "D8iPPYpaUtmgEstQC/0rLitJWjBSVGJPemJjdkg1YWwzcFAyQ0RKRm5IVU10TGJJaVVDejB4NXA4bnM9",
+        "plain_email": "johndoe@john.com",
+        "plain_name": "John Doe",
+        "phone": "9999999999",
+        "role": "livreur"
+    },
+    "ea4a7c4983a6baf89cd3624ec2b70c7e4e8b6b374e5f5ce4ff80a4980bd25a7b": {
+        "password_auth": "$2y$10$iDd2QQ/EUqBVSFw4rJURTO2elQE6OdhHV1HKYYfmBX0m32PXevRT.",
+        "email_enc": "W/ubvJ+tQr0m+z6nsfx1fHpoUEdhbDVVZFhHVk5TQ09HV2FmRGdOWjgxM1pNc3d1bWNBNmlCWmQydDA9",
+        "plain_email": "marie@themarie.com",
+        "plain_name": "Marie Doe",
+        "phone": "5555555555",
+        "role": "cuisinier"
+    },
+    "5517e17e79ea15cfdf6337dd07147183561baece32984821a20a6fa836886675": {
+        "password_auth": "$2y$10$eNZF.cqXqHkijPvvrwI6kecGXHH5yOP08NJxPQgb3Aar163C0ZDH2",
+        "email_enc": "GmxaqsaU8z5p7m8ZYHRsxWJ4OVhZZURDSUJPVHNuVUIvS1djUXo3YnZ1OTNoMWU2WThXcnh4a3U1SVE9",
+        "plain_email": "itsmemaario@gmail.com",
+        "plain_name": "mario",
+        "phone": "123456789",
+        "role": "client",
+        "address": {
+            "street": "Koopaland",
+            "number": "5",
+            "complement": "",
+            "postal": "89415",
+            "city": "Koopa Realm"
+        }
+    }
+}

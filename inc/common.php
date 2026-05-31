@@ -1,11 +1,18 @@
 <?php
-// Common helpers for the application
+// Shared helpers for JSON persistence, validation, encryption, session handling and role utilities
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 function load_json(string $path): array {
-    return file_exists($path) ? json_decode(file_get_contents($path), true) : [];
+    if (!file_exists($path)) {
+        return [];
+    }
+
+    $content = file_get_contents($path);
+    $decoded = json_decode($content, true);
+
+    return is_array($decoded) ? $decoded : [];
 }
 
 function save_json(string $path, array $data): bool {
